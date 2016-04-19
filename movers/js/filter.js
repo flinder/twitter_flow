@@ -2,25 +2,26 @@ filter = {};
 
 filter.init = function() {
     
-    console.log('Initializing Filter...');
     // Set data
     filter.data = data;
     filter.data.userHash = _makeUserHash();
     filter.currentData = filter.data;
 
     // Generate a hashmap user -> tweets
-    filter.tweetsByUser = _makeUserTweetHashMap();
-    
+    filter.tweetsByUser = _makeUserTweetHashMap(); 
+
     // Generate hashmap language -> userIds
     filter.languageHashMap = _makeLanguageHashMap();
 
     // Main object holding the status of all filter controls
-    filter.state = {'excludedUsers': [], 'excludedLanguages': []};
+    filter.state = {};
+    filter.state.excludedUsers = [];
+    filter.state.excludedLanguages = [];
 
     // Initialize visualizations
     filter.num_users = 10;
     timeTravel.init();    
-    console.log('Done');
+    console.log('filter.js initialized');
 }
 
 /*
@@ -29,6 +30,16 @@ filter.init = function() {
  * =============================================================================
  */
 
+
+// Function to update filter.excludedLanguage in buttons in main.js
+filter.updateStateLanguage = function(language, add) {
+    if(add) {
+        filter.state.excludedLanguages.push(language);
+    } else {
+        index = filter.state.excludedLanguages.indexOf(language);
+        filter.state.excludedLanguages.splice(index, 1);
+    }
+}
 
 // Main filter function. This function always operates on the original data and
 // sequentially reduces it, depending on filter.state
@@ -39,12 +50,13 @@ filter.filter = function() {
 
     // Apply all filters to original data
     var activeUsers = filter.data.userHash;
+    console.log(activeUsers);
     
     // Filter excluded users 
     activeUsers = filter.byId(activeUsers);
 
     // Filter by language
-    // activeUsers = filter.byLanguage(activeUsers);
+    activeUsers = filter.byLanguage(activeUsers);
     
     // Filter by country visited
     // activeUsers = filter.byCountryVisited(activeUsers);
@@ -53,6 +65,7 @@ filter.filter = function() {
 
     // Synchronized data (this updates filter.currentData)
     _synchData(activeUsers);
+    console.log(filter.currentData);
 
     // Update everything
     timeTravel.update();
@@ -97,11 +110,10 @@ var _synchData = function(activeUsers) {
     // If no selected Users stop here and keep current data empty
     if(_isEmpty(activeUsers)) {
         return(null)
-
     } else {  // otherwise push the relevant data into the arrays
         for(var key in activeUsers) {
             filter.currentData.users.push(activeUsers[key]);
-            filter.currentData.tweets.push(filter.tweetsByUser[key]);
+            filter.currentData.tweets.concat(filter.tweetsByUser[key]);
         }
     }
 }
@@ -119,10 +131,10 @@ var _makeUserTweetHashMap = function() {
         var id_ = tweets[i]['u_id'];
 
         if(id_ in tweetsByUser){
-            tweetsByUser[id_].push(data.tweet);
+            tweetsByUser[id_].push(tweet);
         } else {
             tweetsByUser[id_] = [];
-            tweetsByUser[id_].push(data.tweet);
+            tweetsByUser[id_].push(tweet);
         }
     } 
     return(tweetsByUser);
@@ -320,7 +332,7 @@ filter.byLanguage = function(activeUsers) {
     // according to filter criterion in respective filter.state
     var usersToExclude = [];
     for(var language in filter.languageHashMap) {
-        userToExclude.concat(filter.languageHashMap[language]);
+        usersToExclude.concat(filter.languageHashMap[language]);
     }
     for(i = 0; i < usersToExclude.length; i++) {
         delete activeUsers[usersToExclude[i]];
