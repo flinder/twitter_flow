@@ -4,8 +4,7 @@ filter.init = function() {
     
     // Set data
     filter.data = data;
-    filter.data.userHash = _makeUserHash();
-    filter.currentData = filter.data;
+    filter.currentData = data;
 
     // Generate a hashmap user -> tweets
     filter.tweetsByUser = _makeUserTweetHashMap(); 
@@ -49,8 +48,9 @@ filter.updateStateLanguage = function(language, add) {
 filter.filter = function() {
 
     // Apply all filters to original data
-    var activeUsers = filter.data.userHash;
-    console.log(activeUsers);
+    // TODO: This is a hack! Find a better way to keep original users and make
+    // active users a reference to the respective users:
+    var activeUsers = _makeUserHash(); 
     
     // Filter excluded users 
     activeUsers = filter.byId(activeUsers);
@@ -113,7 +113,8 @@ var _synchData = function(activeUsers) {
     } else {  // otherwise push the relevant data into the arrays
         for(var key in activeUsers) {
             filter.currentData.users.push(activeUsers[key]);
-            filter.currentData.tweets.concat(filter.tweetsByUser[key]);
+            var t = filter.tweetsByUser[key];
+            filter.currentData.tweets = filter.currentData.tweets.concat(t);
         }
     }
 }
@@ -317,6 +318,7 @@ filter.byId = function(activeUsers) {
 //
 filter.byLanguage = function(activeUsers) {
     
+    var exclLang = filter.state.excludedLanguages;
     // Handle empty selection
     if(_isEmpty(activeUsers)) {
         return(activeUsers);
@@ -324,18 +326,22 @@ filter.byLanguage = function(activeUsers) {
     
     // Handle the case where this filter makes no deletions (e.g. noting is
     // checked)
-    if(filter.state.excludedLanguages.length == 0) {
+    if(exclLang.length == 0) {
         return(activeUsers);
     }
       
     // Filtering operation happens here. Remove all users from activeUsers
     // according to filter criterion in respective filter.state
-    var usersToExclude = [];
+    var exclUsers = [];
     for(var language in filter.languageHashMap) {
-        usersToExclude.concat(filter.languageHashMap[language]);
+        if(exclLang.indexOf(language) > -1) {
+            exclUsers = exclUsers.concat(filter.languageHashMap[language]);
+        } else { 
+            continue;
+        }
     }
-    for(i = 0; i < usersToExclude.length; i++) {
-        delete activeUsers[usersToExclude[i]];
+    for(i = 0; i < exclUsers.length; i++) {
+        delete activeUsers[exclUsers[i]];
     }
 
     return(activeUsers);

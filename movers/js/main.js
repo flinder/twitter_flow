@@ -14,24 +14,24 @@ $(document).ready(function(){
 	function init_btns(){
 		$("body").on("click", "#filter-language-english", function() {
 			if ($(this).is(":checked")) {
-	            // Is now checked
-	            filter.checkedLanguages.english = true;
-	            //filter.byLanguage();
+	                    // Is now checked
+                            filter.updateStateLanguage('en', add=false);
+                            filter.filter();
 			} else {
-                // Is now unchecked
-                filter.checkedLanguages.english = false;
-                //filter.byLanguage();
+                            // Is now unchecked
+                            filter.updateStateLanguage('en', add=true);
+                            filter.filter();
 			}
 		});
-		$("body").on("click", "#filter-language-chinese", function() {
+		$("body").on("click", "#filter-language-turkish", function() {
 			if ($(this).is(":checked")) { 
-                // Is now checked
-                filter.checkedLanguages.chinese = true;
-                //filter.byLanguage();
+                            // Is now checked
+                            filter.updateStateLanguage('tr', add=false);
+                            filter.filter();
 			} else {
-                // Is now unchecked
-                filter.checkedLanguages.chinese = false;
-                //filter.byLanguage();
+                            // Is now unchecked
+                            filter.updateStateLanguage('tr', add=true);
+                            filter.filter();
 			}
 		});
 
