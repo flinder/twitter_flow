@@ -12,10 +12,14 @@ filter.init = function() {
     // Generate hashmap language -> userIds
     filter.languageHashMap = _makeLanguageHashMap();
 
+    // Generate a hashmap country -> user_id
+    filter.countryHashMap = _makeCountryHashMap(); 
+
     // Main object holding the status of all filter controls
     filter.state = {};
     filter.state.excludedUsers = [];
     filter.state.excludedLanguages = [];
+    filter.state.excludedCountries = [];
 
     // Initialize visualizations
     filter.num_users = 10;
@@ -40,6 +44,17 @@ filter.updateStateLanguage = function(language, add) {
     }
 }
 
+// Function to update filter.excludedCountries from input in main.js
+filter.updateStateCountry = function(country, visit) {
+    if(visit){
+	filter.state.excludedCountries.push(country);
+    } else {
+	index = filter.state.excludedCountries.indexof(country);
+	filter.state.excludedCountries.splice(index,1);
+    }
+
+}
+
 // Main filter function. This function always operates on the original data and
 // sequentially reduces it, depending on filter.state
 // It then updates filter.currentData with the newly filtered data and triggers
@@ -59,9 +74,11 @@ filter.filter = function() {
     activeUsers = filter.byLanguage(activeUsers);
     
     // Filter by country visited
-    // activeUsers = filter.byCountryVisited(activeUsers);
+    activeUsers = filter.byCountryVisited(activeUsers);
 
-    // Filter by 
+    // Filter by number of countris visited
+
+    // Filter by time
 
     // Synchronized data (this updates filter.currentData)
     _synchData(activeUsers);
@@ -99,6 +116,23 @@ var _makeUserHash = function() {
         out[currentId] = filter.data.users[i];
     }
     return(out);
+}
+
+
+// Hashmap for countries {'country1': [user1, user2], 'country2':[user1], ...}
+var _makeCountryHashMap = function () {
+    var countryHash = {};
+    
+    for(i = 0; i < filter.data.tweets.length; i++) {
+	var currentCntry = filter.data.tweets[i]['cntry'];
+	if (currentCntry in countryHash){
+	    countryHash[currentCntry].add(filter.data.tweets[i]['u_id']);
+	} else {
+	    countryHash[currentCntry] = new Set();
+	    countryHash[currentCntry].add(filter.data.tweets[i]['u_id']);
+	}				  
+    }   
+    return(countryHash);
 }
 
 // Synchronize the user and tweet array given the activeUsers object
@@ -342,6 +376,39 @@ filter.byLanguage = function(activeUsers) {
     }
     for(i = 0; i < exclUsers.length; i++) {
         delete activeUsers[exclUsers[i]];
+    }
+
+    return(activeUsers);
+}
+
+filter.byCountryVisited = function (activeUsers) {
+
+    var exclCountry = filter.state.excludedCountries;
+
+    // Handle empty selection
+    if(_isEmpty(activeUsers)){
+	return(activeUsers);
+    }
+
+    // Handle the case where this filter makes no deletions
+    if(exclCountry.length == 0) {
+        return(activeUsers);
+    } 
+    
+    // Filtering happens
+    // Exclude users from activeUsers by input from filter box checking
+    
+    var excludedUsers = [];
+    for(var country in filter.countryHashMap) {
+	if(exclCountry.indexOf(country) > -1) {
+	    excludedUsers = excludedUsers.concat(filter.countryHashMap[country]);
+	} else {
+	    continue;
+	}
+    }
+
+    for(i= 0; i<excludedUser.length; i++) {
+	delete activeUsers[excludedUsers[i]];
     }
 
     return(activeUsers);
