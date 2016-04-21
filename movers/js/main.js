@@ -39,6 +39,10 @@ $(document).ready(function(){
 			filter.num_users = this.value;
 			timeTravel.update();
 		});
+
+		$("#filter-country-dropbtn").on("click", function() {
+			document.getElementById("myDropdown").classList.toggle("show");
+		})
 	};
 
 
