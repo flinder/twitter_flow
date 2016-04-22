@@ -4,7 +4,9 @@ filter.init = function() {
     
     // Set data
     filter.data = data;
-    filter.currentData = data;
+    filter.currentData = {};
+    filter.currentData.users = filter.data.users;
+    filter.currentData.tweets = filter.data.tweets;
 
     // Generate a hashmap user -> tweets
     filter.tweetsByUser = _makeUserTweetHashMap(); 
@@ -55,6 +57,15 @@ filter.updateStateCountry = function(country, visit) {
 
 }
 
+var _makeUserArray = function() {
+    var out = []; 
+    for(i = 0; i < filter.data.users.length; i++){
+        out.push(filter.data.users[i]);
+    }
+    return(out);
+}
+
+
 // Main filter function. This function always operates on the original data and
 // sequentially reduces it, depending on filter.state
 // It then updates filter.currentData with the newly filtered data and triggers
@@ -65,8 +76,8 @@ filter.filter = function() {
     // Apply all filters to original data
     // TODO: This is a hack! Find a better way to keep original users and make
     // active users a reference to the respective users:
-    var activeUsers = _makeUserHash(); 
-    
+    var activeUsers = _makeUserArray(); 
+
     // Filter excluded users 
     activeUsers = filter.byId(activeUsers);
 
@@ -74,7 +85,7 @@ filter.filter = function() {
     activeUsers = filter.byLanguage(activeUsers);
     
     // Filter by country visited
-    activeUsers = filter.byCountryVisited(activeUsers);
+    //activeUsers = filter.byCountryVisited(activeUsers);
 
     // Filter by number of countris visited
 
@@ -83,7 +94,6 @@ filter.filter = function() {
     // Synchronized data (this updates filter.currentData)
     _synchData(activeUsers);
     console.log(filter.currentData);
-
     // Update everything
     timeTravel.update();
     // map.update();
@@ -138,16 +148,14 @@ var _makeCountryHashMap = function () {
 // Synchronize the user and tweet array given the activeUsers object
 var _synchData = function(activeUsers) {
 
-    filter.currentData.users = [];
+    filter.currentData.users = activeUsers;
     filter.currentData.tweets = [];
-    filter.currentData.userHash = activeUsers;
     // If no selected Users stop here and keep current data empty
-    if(_isEmpty(activeUsers)) {
+    if(activeUsers.length === 0) {
         return(null)
     } else {  // otherwise push the relevant data into the arrays
-        for(var key in activeUsers) {
-            filter.currentData.users.push(activeUsers[key]);
-            var t = filter.tweetsByUser[key];
+        for(i = 0; i < activeUsers.length; i++) {
+            var t = filter.tweetsByUser[activeUsers[i]['u_id']];
             filter.currentData.tweets = filter.currentData.tweets.concat(t);
         }
     }
@@ -298,6 +306,19 @@ var _isEmpty = function(obj) {
  * =============================================================================
  */
 
+// This function contains the condition to include or exclude a user written for
+// use in array.Prototype.filter(callback). An array toFilter must exist in the
+// function namespace
+var byExclList = function(toFilter) {    
+    return function(element) {
+        if(toFilter.indexOf(element['u_id']) > -1){
+            return(false);
+        } else {
+            return(true);
+        }
+    }
+}
+
 // Template for all filters
 //
 // Arguments:
@@ -313,8 +334,11 @@ filter.template = function(activeUsers) {
     // Handle the case where this filter makes no deletions (e.g. noting is
     // checked)
       
-    // Filtering operation happens here. Remove all users from activeUsers
-    // according to filter criterion in respective filter.state
+    // Filtering operation happens here: Put all users you want to exclude into
+    // the usersToExclude array:
+
+    var toFilter = [];
+    activeUsers = activeUsers.filter(byExclList(toFilter));
 
     return(activeUsers);
 }
@@ -326,7 +350,7 @@ filter.byId = function(activeUsers) {
    
 
     // Handle empty selection
-    if(_isEmpty(activeUsers)) {
+    if(activeUsers.length === 0) {
         return(activeUsers)
     }
     
@@ -336,15 +360,12 @@ filter.byId = function(activeUsers) {
         return(activeUsers)
     }
 
+    // Filtering operation happens here. 
+    var toFilter = filter.state.excludedUsers;
 
-    // Filtering operation happens here. Remove all users from userHash,
-    // according to filter criterion in respective filter.state  
-    var userIds = filter.state.excludedUsers;
-    for(i = 0; i < userIds.length; i++) {
-        delete activeUsers[userIds[i]];
-    }
+    activeUsers = activeUsers.filter(byExclList(toFilter));
 
-    return(userHash);
+    return(activeUsers);
 }
 
 
@@ -366,18 +387,15 @@ filter.byLanguage = function(activeUsers) {
       
     // Filtering operation happens here. Remove all users from activeUsers
     // according to filter criterion in respective filter.state
-    var exclUsers = [];
+    var toFilter = [];
     for(var language in filter.languageHashMap) {
         if(exclLang.indexOf(language) > -1) {
-            exclUsers = exclUsers.concat(filter.languageHashMap[language]);
+            toFilter = toFilter.concat(filter.languageHashMap[language]);
         } else { 
             continue;
         }
     }
-    for(i = 0; i < exclUsers.length; i++) {
-        delete activeUsers[exclUsers[i]];
-    }
-
+    activeUsers = activeUsers.filter(byExclList(toFilter));
     return(activeUsers);
 }
 
