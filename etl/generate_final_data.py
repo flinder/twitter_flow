@@ -32,18 +32,24 @@ def process_tweet(doc):
     d['coord'] = doc['coordinates']
     d['cntry'] = doc['country_abbr']
     tweets.append(d)
-
+    
+def process_country(doc):
+    d = users[doc['u_id']]
+    d['cntryCount'] = doc['cntryCount']
+    d['cntries'] = doc['cntry']
+    
 def process_file(FILE, process): 
     with io.open(FILE, 'r', encoding='utf-8') as infile:
         for i,line in enumerate(infile):
             doc = json.loads(line)
             process(doc)
-
+            
 if __name__ == '__main__':
  
     TWEETFILE = '../data/countries_alluser_to.txt'
     FEATUREFILE_1 = '../data/user_tweet_features.json'
     FEATUREFILE_2 = '../data/user_features.json'
+    CNTRYFILE = '../data/user_countries.json'
     OUTFILE = '../data/main_data.json'
     OUTFILE_SAMPLE = '../data/main_data_sample.json'
 
@@ -54,6 +60,7 @@ if __name__ == '__main__':
     process_file(TWEETFILE, process_tweet)
     process_file(FEATUREFILE_1, process_user1)
     process_file(FEATUREFILE_2, process_user2)
+    process_file(CNTRYFILE, process_country)
 
     users_list = [users[u] for u in users]
 
