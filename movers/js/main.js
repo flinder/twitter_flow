@@ -35,8 +35,26 @@ $(document).ready(function(){
 			}
 		});
 
-		$("#slider-user-num").on("change", function(){
-			filter.num_users = this.value;
+		var slider = document.getElementById('test5');
+			noUiSlider.create(slider, {
+			start: [filter.u_index_min, filter.u_index_max],
+			connect: true,
+			step: 1,
+			range: {
+			 	'min': 0,
+			 	'max': 100
+			},
+			format: wNumb({
+			 	decimals: 0
+			})
+		});
+		slider.noUiSlider.on('change', function( values, handle ) {
+			var value = values[handle];
+			if ( handle ) {
+				filter.u_index_max = Number(value);
+			} else {
+				filter.u_index_min = Number(value);
+			}
 			timeTravel.update();
 		});
 	};

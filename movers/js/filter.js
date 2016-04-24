@@ -16,7 +16,8 @@ filter.init = function() {
                                'chinese': true}; 
 
     // Initialize visualizations
-    filter.num_users = 10;
+    filter.u_index_min = 0;
+    filter.u_index_max = 9;
     timeTravel.init();    
     console.log('Done');
 }
