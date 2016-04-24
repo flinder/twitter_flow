@@ -13,6 +13,18 @@ $(document).ready(function(){
 
 	function init_btns(){
 
+		$( "#filter-speed-slider-range" ).slider({
+		range: true,
+		min: 0,
+		max: 500,
+		values: [ 75, 300 ],
+		slide: function( event, ui ) {
+		$( "#filter-speed-amount" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+		}
+		});
+		$( "#filter-speed-amount" ).val( $( "#filter-speed-slider-range" ).slider( "values", 0 ) +
+		" - " + $( "#filter-speed-slider-range" ).slider( "values", 1 ) );
+
 		$('#country-selection-list .ui.dropdown')
 			.dropdown({
 				allowAdditions: true
