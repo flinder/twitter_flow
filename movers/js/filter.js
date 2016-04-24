@@ -1,13 +1,25 @@
 filter = {};
 
+var _print_time = function(component) {
+    var end = new Date().getTime();
+    var time = end - start;
+    var msg = component + ': ' + time;
+    console.log(msg);
+    start = new Date().getTime();
+}
+
+var startTimer = function() {
+    start = new Date().getTime();
+}
+
 filter.init = function() {
-    
+     
     // Set data
     filter.data = data;
     filter.currentData = {};
     filter.currentData.users = filter.data.users;
     filter.currentData.tweets = filter.data.tweets;
-
+    
     // Generate a hashmap user -> tweets
     filter.tweetsByUser = _makeUserTweetHashMap(); 
 
@@ -26,8 +38,8 @@ filter.init = function() {
     // Initialize visualizations
     filter.u_index_min = 0;
     filter.u_index_max = 9;
+
     timeTravel.init();    
-    console.log('filter.js initialized');
 }
 
 /*
@@ -73,7 +85,7 @@ var _makeUserArray = function() {
 // updating of all visualizations
 
 filter.filter = function() {
-
+    
     // Apply all filters to original data
     // TODO: This is a hack! Find a better way to keep original users and make
     // active users a reference to the respective users:
@@ -92,10 +104,15 @@ filter.filter = function() {
 
     // Filter by time
 
+    // Chunker
+    activeUsers = filter.chunker(activeUsers);
+
     // Synchronized data (this updates filter.currentData)
     _synchData(activeUsers);
-    console.log(filter.currentData);
+
+    console.log('Filtered Data:');
     // Update everything
+
     timeTravel.update();
     // map.update();
     // timeLine.update();
@@ -150,14 +167,24 @@ var _makeCountryHashMap = function () {
 var _synchData = function(activeUsers) {
 
     filter.currentData.users = activeUsers;
-    filter.currentData.tweets = [];
+    var n = 0, t, i, j, k = 0;
+    for(i = 0; i < activeUsers.length; i++) { 
+        t = filter.tweetsByUser[activeUsers[i]['u_id']];
+        n += t.length;
+    }
+
+    filter.currentData.tweets = new Array(n);
     // If no selected Users stop here and keep current data empty
     if(activeUsers.length === 0) {
         return(null)
     } else {  // otherwise push the relevant data into the arrays
-        for(i = 0; i < activeUsers.length; i++) {
-            var t = filter.tweetsByUser[activeUsers[i]['u_id']];
-            filter.currentData.tweets = filter.currentData.tweets.concat(t);
+        for(i = 0; i < activeUsers.length; i++) { 
+            t = filter.tweetsByUser[activeUsers[i]['u_id']];
+            for(j = 0; j < t.length; j++) { 
+                filter.currentData.tweets[k + j] = t[j];
+
+            }
+            k += j
         }
     }
 }
@@ -339,6 +366,12 @@ filter.template = function(activeUsers) {
     // the usersToExclude array:
 
     var toFilter = [];
+
+//    var filterFunction = function () {
+//
+//
+//    }
+
     activeUsers = activeUsers.filter(byExclList(toFilter));
 
     return(activeUsers);
