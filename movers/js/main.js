@@ -12,6 +12,18 @@ $(document).ready(function(){
 	});
 
 	function init_btns(){
+                $("body").on("click", "#more-data-bttn", function() {
+                   filter.state.chunker++;
+                   filter.filter();
+                });
+                $("body").on("click", "#less-data-bttn", function() {
+                   if(filter.state.chunker === 1) {
+                       alert("Can't remove more data.");
+                       return(null);
+                   }
+                   filter.state.chunker--;
+                   filter.filter();
+                });
 		$("body").on("click", "#filter-language-english", function() {
 			if ($(this).is(":checked")) {
 	                    // Is now checked
