@@ -191,6 +191,16 @@ $(document).ready(function(){
 			});
 		};
 
+		var country1 = mCntrys.indexOf("DEU");
+		var country2 = mCntrys.indexOf("SYR");
+		svg.append('line')
+			.attr({ x1: 0, y1: y(country1), x2: width, y2: y(country1)})
+			.style("stroke-dasharray", ("3, 3"))
+			.style("stroke", "grey");
+		svg.append('line')
+			.attr({ x1: 0, y1: y(country2), x2: width, y2: y(country2)})
+			.style("stroke-dasharray", ("3, 3"))
+			.style("stroke", "grey");
 	}
 
 	timeTravel.update = function() {
