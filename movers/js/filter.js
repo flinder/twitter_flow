@@ -13,25 +13,18 @@ var startTimer = function() {
 }
 
 filter.init = function() {
-     
+
     // Set data
     filter.data = data;
     filter.currentData = {};
     filter.currentData.users = filter.data.users;
-    filter.currentData.tweets = filter.data.tweets;
-    var n = filter.data.users.length;
-    filter.currentData.includedUsers = new Array(n);
-    var i;
-    for(i = 0; i < n; i++) {
-        filter.currentData.includedUsers[i] = filter.data.users[i]['u_id'];
-    }
+    filter.currentData.tweets = filter.data.tweets; 
+    filter.currentData.includedUsers = [];
     
     // Generate a hashmap user -> tweets
     filter.tweetsByUser = _makeUserTweetHashMap(); 
-
     // Generate hashmap language -> userIds
     filter.languageHashMap = _makeLanguageHashMap();
-
     // Generate a hashmap country -> user_id
     filter.countryHashMap = _makeCountryHashMap(); 
 
@@ -40,6 +33,10 @@ filter.init = function() {
     filter.state.excludedUsers = [];
     filter.state.excludedLanguages = [];
     filter.state.excludedCountries = [];
+    filter.state.chunker = 1;
+ 
+    // First filtering because of the chunker
+    filter.filter(init=true);
 
     // Initialize visualizations
     filter.u_index_min = 0;
@@ -90,12 +87,17 @@ var _makeUserArray = function() {
 // It then updates filter.currentData with the newly filtered data and triggers
 // updating of all visualizations
 
-filter.filter = function() {
+filter.filter = function(init=false) {
     
     // Apply all filters to original data
     // TODO: This is a hack! Find a better way to keep original users and make
     // active users a reference to the respective users:
     var activeUsers = _makeUserArray(); 
+    
+    // NO FILTERS ABOVE THIS POINT!
+    // Filter by Chunker
+    activeUsers = filter.byChunker(activeUsers);
+
 
     // Filter excluded users 
     activeUsers = filter.byId(activeUsers);
@@ -109,15 +111,17 @@ filter.filter = function() {
     // Filter by number of countris visited
 
     // Filter by time
+    //
 
     // Synchronized data (this updates filter.currentData)
     _synchData(activeUsers);
 
     // Update everything
-
-    timeTravel.update();
-    // map.update();
-    // timeLine.update();
+    if(!init) {
+        timeTravel.update();
+        // map.update();
+        // timeLine.update();
+    }
 
 }
 
@@ -373,15 +377,38 @@ filter.template = function(activeUsers) {
 
     var toFilter = [];
 
-//    var filterFunction = function () {
-//
-//
-//    }
+    activeUsers = activeUsers.filter(byExclList(toFilter));
+
+    return(activeUsers);
+}
+
+filter.byChunker = function(activeUsers) {
+    
+    // Handle empty selection
+    if(_isEmpty(activeUsers)) {
+        return(activeUsers);
+    }
+    
+    // Handle the case where this filter makes no deletions (e.g. noting is
+    // checked)
+    
+      
+    // Filtering operation happens here: Put all users you want to exclude into
+    // the usersToExclude array:
+    var chunkSize = 50;
+    var start = chunkSize * filter.state.chunker;
+    var howMany = activeUsers.length - start;
+    activeUsers.splice(start, howMany); 
+
+    var toFilter = [];
 
     activeUsers = activeUsers.filter(byExclList(toFilter));
 
     return(activeUsers);
 }
+
+
+
 
 // Function to filter out one or more users
 // Arguments:
