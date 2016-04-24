@@ -75,7 +75,7 @@ $(document).ready(function(){
                     '</div>' +
                     '</form>' +
                     '<div class = "col s1">' +
-                        '<button>Cancel</button>' +
+                        '<button class = "ctryCancelButton" id="ctryCancelBtn'+countryDropNumber+'">Cancel</button>' +
                     '</div>' +
                 '</div>'
 
@@ -92,7 +92,33 @@ $(document).ready(function(){
 			
 			};
 			*/
-		})
+			var buttonID = "#ctryCancelBtn" +countryDropNumber
+
+			$(buttonID).on("click",function(){
+				//onsole.log($(this).attr('id'));
+				//ar theStr = $(this).attr('id')
+				var delNum = ($(this).attr('id')).replace(/^\D+/g, "");
+				var delRowID = "filter-country-row" + delNum;
+				console.log(delRowID);
+				var elem = document.getElementById(delRowID);
+	    		elem.parentNode.removeChild(elem);
+	    		//return false;
+	    		//console.log('cancel button clicked');
+			});
+		});
+		
+		$("#ctryCancelBtn1").on("click",function(){
+			//console.log($(this).attr('id'));
+			//ar theStr = $(this).attr('id')
+			var delNum = ($(this).attr('id')).replace(/^\D+/g, "");
+			var delRowID = "filter-country-row" + delNum;
+			console.log(delRowID);
+			var elem = document.getElementById(delRowID);
+    		elem.parentNode.removeChild(elem);
+    		//return false;
+    		//console.log('cancel button clicked');
+		});
+
 	};
 
 
