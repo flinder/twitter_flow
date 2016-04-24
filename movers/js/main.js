@@ -40,19 +40,45 @@ $(document).ready(function(){
 			timeTravel.update();
 		});
 
+		var countryDropNumber = 1;
+
 		$("#filter-country-button").on("click", function() {
+
+			
+			var currentRowID = "#filter-country-row" + countryDropNumber;
+			countryDropNumber += 1;
+			var nextRowID = "filter-country-row" + countryDropNumber;
+
 			var countryList = ["Other World", "Other Europe", "Germany", "Italy", 
 			"Switzerland", "Austria", "Czech Rep", "SlovakiaHungary", "Romania", 
 			"Croatia", "Slovenia", "Bosnia & Herzegovina", "Serbia & Montenegro", 
 			"Macedonia", "Bulgaria", "Albania", "Greece", "Turkey", "Syria", 
 			"Lebanon", "Jordan", "Iraq", "Iran", "Egypt", "Other Asia", "Other Africa"];
 			
-			$("#filter-country-p").append(
+			$("#filter-country").append(
 			//$(this).append(
-				'<select>' +
-				    '<option value="Greek">Greek</option>' +
-                    '<option value="Turkey">Turkey</option>' +
-            	'</select>'
+
+            	'<div class = "row" id="'+nextRowID+'">' +
+                    '<div class = "col s2">' +
+                        '<select>' +
+                            '<option value="" disabled selected>Select a country</option>' +
+                            '<option value="Greek">Greek</option>' +
+                            '<option value="Turkey">Turkey</option>' +
+                        '</select>' +
+                    '</div>' +
+                    '<div class = "col s1">' +
+                    '<form action = "#">' +
+                        '<input name="group'+countryDropNumber+'" type="radio" id="ctryKeep'+countryDropNumber+'" />' +
+                        '<label for="ctryKeep'+countryDropNumber+'">Keep</label>' +
+                        '<input name="group'+countryDropNumber+'" type="radio" id="ctryRmv'+countryDropNumber+'" />' +
+                        '<label for="ctryRmv'+countryDropNumber+'">Remove</label>' +
+                    '</div>' +
+                    '</form>' +
+                    '<div class = "col s1">' +
+                        '<button>Cancel</button>' +
+                    '</div>' +
+                '</div>'
+
 				);
 
 			$('select').material_select();
