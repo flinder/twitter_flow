@@ -16,6 +16,9 @@ filter.init = function() {
 
     // Set data
     filter.data = data;
+    filter.data.nTotalUsers = filter.data.users.length;
+    filter.data.nTotalTweets = filter.data.tweets.length;
+    filter.data.nActiveUsers = filter.data.nTotalUsers;
     filter.currentData = {};
     filter.currentData.users = filter.data.users;
     filter.currentData.tweets = filter.data.tweets; 
@@ -97,7 +100,6 @@ filter.filter = function(init=false) {
     // NO FILTERS ABOVE THIS POINT!
     // Filter by Chunker
     activeUsers = filter.byChunker(activeUsers);
-
 
     // Filter excluded users 
     activeUsers = filter.byId(activeUsers);
