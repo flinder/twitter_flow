@@ -52,7 +52,7 @@ $(document).ready(function(){
 		$("#timeTravel-container").html("");
 
 		console.log("timeTravel.js init");
-		timeTravel.data = crossfilter(data.tweets);
+		timeTravel.data = crossfilter(filter.currentData.tweets);
 		var timedataByTime = timeTravel.data.dimension(function(d) { return d.time; });
 		timeTravel.timerange = [timedataByTime.bottom(Infinity)[0].time, timedataByTime.top(Infinity)[0].time];
 		var timedataByUserid = timeTravel.data.dimension(function(d) { return d.u_id; });
@@ -202,7 +202,7 @@ $(document).ready(function(){
 		timeTravel.timerange = [];
 
 		console.log("timeTravel.js update");
-		timeTravel.data = crossfilter(data.tweets);
+		timeTravel.data = crossfilter(filter.currentData.tweets);
 		var timedataByTime = timeTravel.data.dimension(function(d) { return d.time; });
 		timeTravel.timerange = [timedataByTime.bottom(Infinity)[0].time, timedataByTime.top(Infinity)[0].time];
 		var timedataByUserid = timeTravel.data.dimension(function(d) { return d.u_id; });

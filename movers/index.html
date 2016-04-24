@@ -57,11 +57,53 @@
                     <label for="filter-language-english">English</label>
                 </p>
                 <p>
-                    <input type="checkbox" id="filter-language-chinese" checked="checked" />
-                    <label for="filter-language-chinese">Chinese</label>
+                    <input type="checkbox" id="filter-language-turkish" checked="checked" />
+                    <label for="filter-language-turkish">Turkish</label>
                 </p>
             </form>
+
+            <div id="filter-country" class="container">
+                <div class = "row">
+                    <div class="col s6"><span>Select and Remove by Countries</span></div>
+                </div>
+            <!--   
+            <a class='dropdown-button btn' data-beloworigin="true" href='#' data-activates='dropdown1'>Country</a>
+                <ul id='dropdown1' class='dropdown-content'>
+                    <li><a href="#!">one</a></li>
+                    <li><a href="#!">two</a></li>
+                    <li><a href="#!">three</a></li>
+                </ul> 
+            -->
+                <div class = "row">
+                    <div class = "col s6">
+                        <input type="button" id="filter-country-button" value="Add a country"/>                        
+                    </div>
+                </div>
+                <div class = "row" id="filter-country-row1">
+                    <div class = "col s2">
+                        <select>
+                            <option value="" disabled selected>Select a country</option>
+                            <option value="Greek">Greek</option>
+                            <option value="Turkey">Turkey</option>
+                        </select>
+                    </div>
+                    <div class = "col s1">
+                    <form action = "#">
+                        <input name="group1" type="radio" id="ctryKeep" />
+                        <label for="ctryKeep">Keep</label>
+                        <input name="group1" type="radio" id="ctryRmv" />
+                        <label for="ctryRmv">Remove</label>
+                    </div>
+                    </form>
+                    <div class = "col s1">
+                        <button class = "ctryCancelButton" id="ctryCancelBtn1">Cancel</button>
+                    </div>
+                </div>
+                
+            </div>
+
         </div>
+
 		<div id="main-container">
 			<div id="filter-container"></div>
 			<div id="timeTravel-container"></div>
