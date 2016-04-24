@@ -41,7 +41,31 @@ $(document).ready(function(){
 		});
 
 		$("#filter-country-button").on("click", function() {
-			var countryList = []
+			var countryList = ["Other World", "Other Europe", "Germany", "Italy", 
+			"Switzerland", "Austria", "Czech Rep", "SlovakiaHungary", "Romania", 
+			"Croatia", "Slovenia", "Bosnia & Herzegovina", "Serbia & Montenegro", 
+			"Macedonia", "Bulgaria", "Albania", "Greece", "Turkey", "Syria", 
+			"Lebanon", "Jordan", "Iraq", "Iran", "Egypt", "Other Asia", "Other Africa"];
+			
+			$("#filter-country-p").append(
+			//$(this).append(
+				'<select>' +
+				    '<option value="Greek">Greek</option>' +
+                    '<option value="Turkey">Turkey</option>' +
+            	'</select>'
+				);
+
+			$('select').material_select();
+			//$("p").append("text")
+			//$(this).hide();
+			//console.log("pp");
+			/*
+			var countryAdd = '';
+			for (var i = 0; i < countryList.length; i++) {
+				countryAdd += countryList[i];
+			
+			};
+			*/
 		})
 	};
 
