@@ -19,6 +19,12 @@ filter.init = function() {
     filter.currentData = {};
     filter.currentData.users = filter.data.users;
     filter.currentData.tweets = filter.data.tweets;
+    var n = filter.data.users.length;
+    filter.currentData.includedUsers = new Array(n);
+    var i;
+    for(i = 0; i < n; i++) {
+        filter.currentData.includedUsers[i] = filter.data.users[i]['u_id'];
+    }
     
     // Generate a hashmap user -> tweets
     filter.tweetsByUser = _makeUserTweetHashMap(); 
@@ -104,13 +110,9 @@ filter.filter = function() {
 
     // Filter by time
 
-    // Chunker
-    activeUsers = filter.chunker(activeUsers);
-
     // Synchronized data (this updates filter.currentData)
     _synchData(activeUsers);
 
-    console.log('Filtered Data:');
     // Update everything
 
     timeTravel.update();
@@ -167,19 +169,23 @@ var _makeCountryHashMap = function () {
 var _synchData = function(activeUsers) {
 
     filter.currentData.users = activeUsers;
-    var n = 0, t, i, j, k = 0;
+    var n = 0, t, i, j, k = 0, u_id;
     for(i = 0; i < activeUsers.length; i++) { 
         t = filter.tweetsByUser[activeUsers[i]['u_id']];
         n += t.length;
     }
 
     filter.currentData.tweets = new Array(n);
+    filter.currentData.includedUsers = new Array(filter.currentData.users.length);
+
     // If no selected Users stop here and keep current data empty
     if(activeUsers.length === 0) {
         return(null)
     } else {  // otherwise push the relevant data into the arrays
         for(i = 0; i < activeUsers.length; i++) { 
-            t = filter.tweetsByUser[activeUsers[i]['u_id']];
+            u_id = activeUsers[i]['u_id'];
+            t = filter.tweetsByUser[u_id];
+            filter.currentData.includedUsers[i] = u_id;
             for(j = 0; j < t.length; j++) { 
                 filter.currentData.tweets[k + j] = t[j];
 
