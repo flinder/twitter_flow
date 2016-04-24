@@ -1,19 +1,30 @@
 filter = {};
 
+var _print_time = function(component) {
+    var end = new Date().getTime();
+    var time = end - start;
+    var msg = component + ': ' + time;
+    console.log(msg);
+    start = new Date().getTime();
+}
+
+var startTimer = function() {
+    start = new Date().getTime();
+}
+
 filter.init = function() {
-    
+
     // Set data
     filter.data = data;
     filter.currentData = {};
     filter.currentData.users = filter.data.users;
-    filter.currentData.tweets = filter.data.tweets;
-
+    filter.currentData.tweets = filter.data.tweets; 
+    filter.currentData.includedUsers = [];
+    
     // Generate a hashmap user -> tweets
     filter.tweetsByUser = _makeUserTweetHashMap(); 
-
     // Generate hashmap language -> userIds
     filter.languageHashMap = _makeLanguageHashMap();
-
     // Generate a hashmap country -> user_id
     filter.countryHashMap = _makeCountryHashMap(); 
 
@@ -22,12 +33,16 @@ filter.init = function() {
     filter.state.excludedUsers = [];
     filter.state.excludedLanguages = [];
     filter.state.excludedCountries = [];
+    filter.state.chunker = 1;
+ 
+    // First filtering because of the chunker
+    filter.filter(init=true);
 
     // Initialize visualizations
     filter.u_index_min = 0;
     filter.u_index_max = 9;
+
     timeTravel.init();    
-    console.log('filter.js initialized');
 }
 
 /*
@@ -72,12 +87,17 @@ var _makeUserArray = function() {
 // It then updates filter.currentData with the newly filtered data and triggers
 // updating of all visualizations
 
-filter.filter = function() {
-
+filter.filter = function(init=false) {
+    
     // Apply all filters to original data
     // TODO: This is a hack! Find a better way to keep original users and make
     // active users a reference to the respective users:
     var activeUsers = _makeUserArray(); 
+    
+    // NO FILTERS ABOVE THIS POINT!
+    // Filter by Chunker
+    activeUsers = filter.byChunker(activeUsers);
+
 
     // Filter excluded users 
     activeUsers = filter.byId(activeUsers);
@@ -91,14 +111,17 @@ filter.filter = function() {
     // Filter by number of countris visited
 
     // Filter by time
+    //
 
     // Synchronized data (this updates filter.currentData)
     _synchData(activeUsers);
-    console.log(filter.currentData);
+
     // Update everything
-    timeTravel.update();
-    // map.update();
-    // timeLine.update();
+    if(!init) {
+        timeTravel.update();
+        // map.update();
+        // timeLine.update();
+    }
 
 }
 
@@ -150,14 +173,28 @@ var _makeCountryHashMap = function () {
 var _synchData = function(activeUsers) {
 
     filter.currentData.users = activeUsers;
-    filter.currentData.tweets = [];
+    var n = 0, t, i, j, k = 0, u_id;
+    for(i = 0; i < activeUsers.length; i++) { 
+        t = filter.tweetsByUser[activeUsers[i]['u_id']];
+        n += t.length;
+    }
+
+    filter.currentData.tweets = new Array(n);
+    filter.currentData.includedUsers = new Array(filter.currentData.users.length);
+
     // If no selected Users stop here and keep current data empty
     if(activeUsers.length === 0) {
         return(null)
     } else {  // otherwise push the relevant data into the arrays
-        for(i = 0; i < activeUsers.length; i++) {
-            var t = filter.tweetsByUser[activeUsers[i]['u_id']];
-            filter.currentData.tweets = filter.currentData.tweets.concat(t);
+        for(i = 0; i < activeUsers.length; i++) { 
+            u_id = activeUsers[i]['u_id'];
+            t = filter.tweetsByUser[u_id];
+            filter.currentData.includedUsers[i] = u_id;
+            for(j = 0; j < t.length; j++) { 
+                filter.currentData.tweets[k + j] = t[j];
+
+            }
+            k += j
         }
     }
 }
@@ -339,10 +376,39 @@ filter.template = function(activeUsers) {
     // the usersToExclude array:
 
     var toFilter = [];
+
     activeUsers = activeUsers.filter(byExclList(toFilter));
 
     return(activeUsers);
 }
+
+filter.byChunker = function(activeUsers) {
+    
+    // Handle empty selection
+    if(_isEmpty(activeUsers)) {
+        return(activeUsers);
+    }
+    
+    // Handle the case where this filter makes no deletions (e.g. noting is
+    // checked)
+    
+      
+    // Filtering operation happens here: Put all users you want to exclude into
+    // the usersToExclude array:
+    var chunkSize = 50;
+    var start = chunkSize * filter.state.chunker;
+    var howMany = activeUsers.length - start;
+    activeUsers.splice(start, howMany); 
+
+    var toFilter = [];
+
+    activeUsers = activeUsers.filter(byExclList(toFilter));
+
+    return(activeUsers);
+}
+
+
+
 
 // Function to filter out one or more users
 // Arguments:
