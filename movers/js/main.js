@@ -4,6 +4,9 @@ $(document).ready(function(){
 	data = {}
 
 	$.getJSON("data/main_data_sample.json", function(json) {
+                $.getJSON("data/tips.json", function(geojson) {
+                    data.geoJsonTrips;  
+                });
 		data.tweets = json.tweets;
 		data.users = json.users;
 		filter.init();
