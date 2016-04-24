@@ -12,6 +12,19 @@ $(document).ready(function(){
 	});
 
 	function init_btns(){
+
+		$('#country-selection-list .ui.dropdown')
+			.dropdown({
+				allowAdditions: true
+			})
+		;
+
+		$('#language-selection-list .ui.dropdown')
+			.dropdown({
+				allowAdditions: true
+			})
+		;
+
 		$("body").on("click", "#filter-language-english", function() {
 			if ($(this).is(":checked")) {
 	                    // Is now checked
@@ -35,28 +48,28 @@ $(document).ready(function(){
 			}
 		});
 
-		var slider = document.getElementById('test5');
-			noUiSlider.create(slider, {
-			start: [filter.u_index_min, filter.u_index_max],
-			connect: true,
-			step: 1,
-			range: {
-			 	'min': 0,
-			 	'max': 100
-			},
-			format: wNumb({
-			 	decimals: 0
-			})
-		});
-		slider.noUiSlider.on('change', function( values, handle ) {
-			var value = values[handle];
-			if ( handle ) {
-				filter.u_index_max = Number(value);
-			} else {
-				filter.u_index_min = Number(value);
-			}
-			timeTravel.update();
-		});
+		// var slider = document.getElementById('test5');
+		// 	noUiSlider.create(slider, {
+		// 	start: [filter.u_index_min, filter.u_index_max],
+		// 	connect: true,
+		// 	step: 1,
+		// 	range: {
+		// 	 	'min': 0,
+		// 	 	'max': 100
+		// 	},
+		// 	format: wNumb({
+		// 	 	decimals: 0
+		// 	})
+		// });
+		// slider.noUiSlider.on('change', function( values, handle ) {
+		// 	var value = values[handle];
+		// 	if ( handle ) {
+		// 		filter.u_index_max = Number(value);
+		// 	} else {
+		// 		filter.u_index_min = Number(value);
+		// 	}
+		// 	timeTravel.update();
+		// });
 
 		var countryDropNumber = 1;
 

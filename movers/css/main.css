@@ -2,32 +2,33 @@
  * Custom
  */
 
-html,
-body {
-  height: 100%;
-  background-color: white;
-}
-
-html, body, .container, #map {
-  height: 100%;
-  width: 100%;
-  padding: 0px;
-  margin: 0px;
-}
-
-.navbar-brand {
-    margin-left: 1em !important;
-}
-
 #main-container{
+  padding: 0 0.5em;
+}
+
+#filter-container {
+  width: 250px;
+  position: fixed;
+  left: 0;
+  top: 53px;
+  padding: 0 0.5em;
+}
+
+#main-container {
+  position: fixed;
+  left: 250px;
+  right: 0;
+  top: 53px; 
 }
 
 #map-container {
   height: 500px;
+  padding: 0;
 }
 
 #timeTravel-container {
   height: 500px;
+  padding: 0;
 }
 
 path { 
