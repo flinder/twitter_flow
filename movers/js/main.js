@@ -10,8 +10,8 @@ $(document).ready(function(){
                     data.tweets = json.tweets;
                     data.users = json.users;
                     initRefTable();
-                    init_btns();
                     filter.init();
+                    init_btns();                    
                     console.log('All initialized');
                 });	
 	});
@@ -19,17 +19,23 @@ $(document).ready(function(){
 	function init_btns(){
 
 		$( "#filter-speed-slider-range" ).slider({
+
 			range: true,
-			min: 0,
-			max: 500,
+			min: filter.state.excludedMinSpeed,
+			max: filter.state.excludedMaxSpeed,
+			values: [ 0, 10000 ],
 			values: [ 75, 300 ],
 			slide: function( event, ui ) {
 			$( "#filter-speed-amount" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
 			}
+
 		});
 		$( "#filter-speed-amount" ).val( $( "#filter-speed-slider-range" ).slider( "values", 0 ) +
 		" - " + $( "#filter-speed-slider-range" ).slider( "values", 1 ) );
 
+		$("#filter-speed-amount").on("change", function(){
+			console.log("Value changed");
+		})
         $("body").on("click", "#more-data-bttn", function() {
 
 			if(filter.nCurrentChunk >= filter.nTotalUsers) {
@@ -177,5 +183,6 @@ $(document).ready(function(){
 			"english": 	"en"
 		};
 	}
+
 });
 
