@@ -58,22 +58,32 @@ $(document).ready(function(){
 
 		$("body").on("click", "#filter-country-add", function() {
 			$('#country-selection-list').find(".label").each(function(){
-				var language = $(this).attr("data-value");
-				var tmp = '<a class="ui label country-item" data-value=' + language + '>' + language + '<i class="delete icon"></i></a>'
-				$("#filter-country-panel").prepend(tmp);
+
 			});
+			filter.filter();
 			$('#country-selection-list .ui.dropdown').dropdown('clear');	
+		});
+
+		$("body").on("click", "#filter-language-add", function() {
+			$('#language-selection-list').find(".label").each(function(){
+				var language = $(this).attr("data-value");
+				var tmp = '<a class="ui label language-item" data-value=' + language + '>' + language + '<i class="delete icon"></i></a>'
+				$("#filter-language-panel").prepend(tmp);
+				filter.updateStateLanguage(language_full2abbr[language], add=true);
+			});
+			filter.filter();
+			$('#language-selection-list .ui.dropdown').dropdown('clear');	
 		});
 
 		$("body").on("click", "#filter-language-english", function() {
 			if ($(this).is(":checked")) {
-	                    // Is now checked
-                            filter.updateStateLanguage('en', add=false);
-                            filter.filter();
+            	// Is now checked
+                filter.updateStateLanguage('en', add=false);
+                filter.filter();
 			} else {
-                            // Is now unchecked
-                            filter.updateStateLanguage('en', add=true);
-                            filter.filter();
+                // Is now unchecked
+                filter.updateStateLanguage('en', add=true);
+                filter.filter();
 			}
 		});
 		$("body").on("click", "#filter-language-turkish", function() {
@@ -184,7 +194,8 @@ $(document).ready(function(){
 			"hebrew": 	"he",
 			"arabic": 	"ar",
 			"spainish": "es",
-			"dutch": 	"nl"
+			"dutch": 	"nl",
+			"english": 	"en"
 		};
 	}
 });

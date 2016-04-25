@@ -18,6 +18,10 @@
   margin-top: 0.5em !important; 
 }
 
+.country-item {
+  margin-top: 0.5em !important; 
+}
+
 #main-container {
   position: fixed;
   left: 250px;
