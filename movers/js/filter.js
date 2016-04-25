@@ -26,7 +26,9 @@ filter.init = function() {
     filter.countryNumHashMap = _makeCountryNumHashMap();
 
     // Generate a hashmap maxspeed -> user_id
+
     //filter.maxSpeedHashMap = _makeMaxSpeedHashMap();
+
 
     // Generate a hashmap minspeed -> user_id
     //filter.minSpeedHashMap = _makeMinSpeedHashMap();
