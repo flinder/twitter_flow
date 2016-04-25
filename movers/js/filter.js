@@ -26,10 +26,10 @@ filter.init = function() {
     filter.countryNumHashMap = _makeCountryNumHashMap();
 
     // Generate a hashmap maxspeed -> user_id
-    filter.maxSpeedHashMap = _makeMaxSpeedHashMap();
+    //filter.maxSpeedHashMap = _makeMaxSpeedHashMap();
 
     // Generate a hashmap minspeed -> user_id
-    filter.minSpeedHashMap = _makeMinSpeedHashMap();
+    //filter.minSpeedHashMap = _makeMinSpeedHashMap();
 
     // Main object holding the status of all filter controls
     filter.state = {};
@@ -44,7 +44,7 @@ filter.init = function() {
     filter.u_index_min = 0;
     filter.u_index_max = 9;
     timeTravel.init();    
-    console.log('filter.js initialized');
+    map.init();
 }
 
 /*
@@ -131,10 +131,11 @@ filter.filter = function() {
     _synchData(activeUsers);
     console.log(filter.currentData);
     // Update everything
-    timeTravel.update();
-    // map.update();
-    // timeLine.update();
-
+    if(!init) {
+        timeTravel.update();
+        map.update();
+        // timeLine.update();
+    }
 }
 
 // Generate hashmap for language -> users for quick filtering
@@ -219,7 +220,6 @@ var _makeMinSpeedHashMap = function (){
     // }
     // return(lSpeedHS);
 }
-
 
 
 // Hashmap for country number {'num1: [user1, user2], 'num2':[user3],..}
@@ -346,47 +346,6 @@ var _getDisLatLon = function(lat1,lon1,lat2,lon2){
   	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
   	var d = R * c; // Distance in km
   	return d;
-}
-
-//Caculate a speed list for the user
-//In the list, each value is a speed calculated for one segment of the trip
-//The speed are calculated according to location and time of concecutive tweets
-//So the results are the lower bounds
-//Speed are km/hour
-//The tweets are asssumed to be stored in time order
-// Arguments:
-// ---------
-// userId: u_id of users and tweets
-var _speedList = function(userId){
-	// var speedList = [];
-	// var lat1 = -1.0, lon1 = -1.0, lat2 = -1.0, lon2 = -1.0;
-	// var timestamp1, timestamp2;
-	// for (tweet in filter.tweetsByUser[userId]){
-	// 	if (lat1 == -1.0){
-	// 		lat1 = tweet.coord[1];
-	// 		lon1 = tweet.coord[0];
-	// 		timestamp1 = tweet.time;
-	// 	} else {
-	// 		lat2 = tweet.coord[1];
-	// 		lon2 = tweet.coord[0];
-	// 		timestamp2 = tweet.time;
-	// 		var distanceKm = _getDisLatLon(lat1,lon1,lat2,lon2);
-	// 		var timeHour = (timestamp2.getTime() - timestamp1.getTime())/1000/3600;
-	// 		var speedKmPerHour = Math.round(distanceKm/timeHour);
-	// 		speedlist.push(speed);
-
-	// 		lat1 = lat2;
-	// 		lon1 = lon2;
-	// 		timestamp1 = timestamp2;
-	// 	}
-	// }
- //    if(speedlist.length > 0){
- //        return speedList;
- //    }else{
- //        return [0];
- //    }
-
-	
 }
 
 
@@ -569,7 +528,6 @@ filter.bySpeed = function(activeUsers) {
     // if(_isEmpty(activeUsers)) {
     //     return(activeUsers);
     // }
-    
     // // Handle the case where this filter makes no deletions (e.g. noting is
     // // checked)
     // if(exclMaxSpeed >= 10000 && exclMinSpeed <= 0){
@@ -597,6 +555,33 @@ filter.bySpeed = function(activeUsers) {
     // return(activeUsers);
 
     // }
+    // Handle the case where this filter makes no deletions (e.g. noting is
+    // checked)
+    if(exclMaxSpeed >= 10000 && exclMinSpeed <= 0){
+        return(activeUsers);
+    }
+    // Filtering operation happens here: Put all users you want to exclude into
+    // the usersToExclude array:
+
+    var toFilter = [];
+    for(var speed in filter.maxSpeedHashMap){
+        if(speed > exclMaxSpeed){
+            toFilter = excludedUsers.concat(filter.SpeedHashMap[speed.toString()]);
+        }
+    }
+    for(var speed in filter.minSpeedHashMap){
+        if(speed < exclMinSpeed){
+            toFilter = excludedUsers.concat(filter.SpeedHashMap[speed.toString()]);
+        }
+
+    uniqueArray = a.filter(function(toFilter, pos) {
+        return a.indexOf(toFilter) == pos;
+    });
+
+    activeUsers = activeUsers.filter(byExclList(uniqueArray));
+    return(activeUsers);
+
+    }
 }
 
 filter.byCountryNum = function (activeUsers) {
