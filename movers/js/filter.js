@@ -16,9 +16,11 @@ filter.init = function() {
 
     // Set data
     filter.data = data;
-    filter.data.nTotalUsers = filter.data.users.length;
-    filter.data.nTotalTweets = filter.data.tweets.length;
-    filter.data.nActiveUsers = filter.data.nTotalUsers;
+    filter.nTotalUsers = filter.data.users.length;
+    filter.nTotalTweets = filter.data.tweets.length;
+    filter.nActiveUsers = filter.data.nTotalUsers;
+    filter.chunkSize = 50;
+    filter.nCurrentChunk = filter.chunkSize;
     filter.currentData = {};
     filter.currentData.users = filter.data.users;
     filter.currentData.tweets = filter.data.tweets; 
@@ -401,7 +403,7 @@ filter.byChunker = function(activeUsers) {
     var start = chunkSize * filter.state.chunker;
     var howMany = activeUsers.length - start;
     activeUsers.splice(start, howMany); 
-
+    filter.nCurrentChunk = activeUsers.length;
     var toFilter = [];
 
     activeUsers = activeUsers.filter(byExclList(toFilter));
