@@ -43,6 +43,7 @@ filter.init = function() {
     filter.u_index_max = 9;
 
     timeTravel.init();    
+    //map.init();
 }
 
 /*
