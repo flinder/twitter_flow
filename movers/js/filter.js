@@ -131,11 +131,9 @@ filter.filter = function() {
     _synchData(activeUsers);
     console.log(filter.currentData);
     // Update everything
-    if(!init) {
-        timeTravel.update();
-        map.update();
-        // timeLine.update();
-    }
+    timeTravel.update();
+    map.update();
+    // timeLine.update();
 }
 
 // Generate hashmap for language -> users for quick filtering
@@ -491,7 +489,7 @@ filter.byCountryVisited = function (activeUsers) {
 
     // Handle empty selection
     if(_isEmpty(activeUsers)){
-	return(activeUsers);
+	   return(activeUsers);
     }
 
     // Handle the case where this filter makes no deletions
@@ -504,15 +502,15 @@ filter.byCountryVisited = function (activeUsers) {
     
     var excludedUsers = [];
     for(var country in filter.countryHashMap) {
-	if(exclCountry.indexOf(country) > -1) {
-	    excludedUsers = excludedUsers.concat(filter.countryHashMap[country]);
-	} else {
-	    continue;
-	}
+    	if(exclCountry.indexOf(country) > -1) {
+    	    excludedUsers = excludedUsers.concat(filter.countryHashMap[country]);
+    	} else {
+    	    continue;
+    	}
     }
 
-    for(i= 0; i<excludedUser.length; i++) {
-	delete activeUsers[excludedUsers[i]];
+    for(i= 0; i<excludedUsers.length; i++) {
+	   delete activeUsers[excludedUsers[i]];
     }
 
     return(activeUsers);
