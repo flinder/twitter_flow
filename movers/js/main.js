@@ -4,15 +4,16 @@ $(document).ready(function(){
 	data = {}
 
 	$.getJSON("data/main_data_sample.json", function(json) {
-                $.getJSON("data/trips.json", function(geojson) {
-                    data.geoJsonTrips;  
-                });
-		data.tweets = json.tweets;
-		data.users = json.users;
-		initRefTable();
-		filter.init();
-		init_btns();
-        console.log('All initialized');
+                $.getJSON("data/sample_trips.json", function(geojson) {
+                    data.geoJsonTrips = geojson;  
+                    console.log(data.geoJsonTrips);
+                    data.tweets = json.tweets;
+                    data.users = json.users;
+                    initRefTable();
+                    init_btns();
+                    filter.init();
+                    console.log('All initialized');
+                });	
 	});
 
 	function init_btns(){
