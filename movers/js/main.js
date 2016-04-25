@@ -4,11 +4,12 @@ $(document).ready(function(){
 	data = {}
 
 	$.getJSON("data/main_data_sample.json", function(json) {
-                $.getJSON("data/tips.json", function(geojson) {
+                $.getJSON("data/trips.json", function(geojson) {
                     data.geoJsonTrips;  
                 });
 		data.tweets = json.tweets;
 		data.users = json.users;
+		initRefTable();
 		filter.init();
 		init_btns();
         console.log('All initialized');
@@ -17,13 +18,13 @@ $(document).ready(function(){
 	function init_btns(){
 
 		$( "#filter-speed-slider-range" ).slider({
-		range: true,
-		min: 0,
-		max: 500,
-		values: [ 75, 300 ],
-		slide: function( event, ui ) {
-		$( "#filter-speed-amount" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-		}
+			range: true,
+			min: 0,
+			max: 500,
+			values: [ 75, 300 ],
+			slide: function( event, ui ) {
+			$( "#filter-speed-amount" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+			}
 		});
 		$( "#filter-speed-amount" ).val( $( "#filter-speed-slider-range" ).slider( "values", 0 ) +
 		" - " + $( "#filter-speed-slider-range" ).slider( "values", 1 ) );
@@ -48,62 +49,32 @@ $(document).ready(function(){
            filter.filter();
         });
 
-		$('#country-selection-list .ui.dropdown')
-			.dropdown({
-				allowAdditions: true
-			})
-		;
-
-		$('#language-selection-list .ui.dropdown')
-			.dropdown({
-				allowAdditions: true
-			})
-		;
-		$("body").on("click", "#filter-language-english", function() {
-			if ($(this).is(":checked")) {
-	                    // Is now checked
-                            filter.updateStateLanguage('en', add=false);
-                            filter.filter();
-			} else {
-                            // Is now unchecked
-                            filter.updateStateLanguage('en', add=true);
-                            filter.filter();
-			}
-		});
-		$("body").on("click", "#filter-language-turkish", function() {
-			if ($(this).is(":checked")) { 
-                            // Is now checked
-                            filter.updateStateLanguage('tr', add=false);
-                            filter.filter();
-			} else {
-                            // Is now unchecked
-                            filter.updateStateLanguage('tr', add=true);
-                            filter.filter();
-			}
+		$('#country-selection-list .ui.dropdown').dropdown({
+			allowAdditions: true
 		});
 
-		// var slider = document.getElementById('test5');
-		// 	noUiSlider.create(slider, {
-		// 	start: [filter.u_index_min, filter.u_index_max],
-		// 	connect: true,
-		// 	step: 1,
-		// 	range: {
-		// 	 	'min': 0,
-		// 	 	'max': 100
-		// 	},
-		// 	format: wNumb({
-		// 	 	decimals: 0
-		// 	})
-		// });
-		// slider.noUiSlider.on('change', function( values, handle ) {
-		// 	var value = values[handle];
-		// 	if ( handle ) {
-		// 		filter.u_index_max = Number(value);
-		// 	} else {
-		// 		filter.u_index_min = Number(value);
-		// 	}
-		// 	timeTravel.update();
-		// });
+		$('#language-selection-list .ui.dropdown').dropdown({
+				allowAdditions: true
+		});
+
+		$("body").on("click", "#filter-country-add", function() {
+			$('#country-selection-list').find(".label").each(function(){
+
+			});
+			filter.filter();
+			$('#country-selection-list .ui.dropdown').dropdown('clear');	
+		});
+
+		$("body").on("click", "#filter-language-add", function() {
+			$('#language-selection-list').find(".label").each(function(){
+				var language = $(this).attr("data-value");
+				var tmp = '<a class="ui label language-item" data-value=' + language + '>' + language + '<i class="delete icon"></i></a>'
+				$("#filter-language-panel").prepend(tmp);
+				filter.updateStateLanguage(language_full2abbr[language], add=true);
+			});
+			$('#language-selection-list .ui.dropdown').dropdown('clear');
+			filter.filter();
+		});
 
 		var countryDropNumber = 1;
 
@@ -146,17 +117,6 @@ $(document).ready(function(){
 
 				);
 
-			$('select').material_select();
-			//$("p").append("text")
-			//$(this).hide();
-			//console.log("pp");
-			/*
-			var countryAdd = '';
-			for (var i = 0; i < countryList.length; i++) {
-				countryAdd += countryList[i];
-			
-			};
-			*/
 			var buttonID = "#ctryCancelBtn" +countryDropNumber
 
 			$(buttonID).on("click",function(){
@@ -204,18 +164,17 @@ $(document).ready(function(){
 	    return "rgba(" + [r, g, b, a].join(",") + ")";
 	}
 
-	$('select').material_select();
-
-	$('.dropdown-button').dropdown({
-	    	inDuration: 300,
-	    	outDuration: 225,
-	    	constrain_width: false, // Does not change width of dropdown to that of the activator
-	    	hover: true, // Activate on hover
-	    	gutter: 0, // Spacing from edge
-	    	belowOrigin: false, // Displays dropdown below the button
-	    	alignment: 'left' // Displays dropdown with edge aligned to the left of button
-	  	}
-	);
-
+	initRefTable = function () {
+		language_full2abbr = {
+			"russian": 	"ru",
+			"german": 	"de",
+			"turkish": 	"tr",
+			"hebrew": 	"he",
+			"arabic": 	"ar",
+			"spainish": "es",
+			"dutch": 	"nl",
+			"english": 	"en"
+		};
+	}
 });
 

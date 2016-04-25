@@ -69,7 +69,7 @@ $(document).ready(function(){
 		//     timeTravel.cntry_val_map[arr[i].key] = i;
 		// }
 
-		timeTravel.u_ids = timeTravel.u_ids.slice(filter.u_index_min, filter.u_index_max + 1);
+		// timeTravel.u_ids = timeTravel.u_ids.slice(filter.u_index_min, filter.u_index_max + 1);
 
 		timeTravel.u_ids.forEach(function(u_id) {
 			timedataByUserid.filter(u_id);
@@ -229,7 +229,7 @@ $(document).ready(function(){
 		//     timeTravel.cntry_val_map[arr[i].key] = i;
 		// }
 
-		timeTravel.u_ids = timeTravel.u_ids.slice(filter.u_index_min, filter.u_index_max + 1);
+		// timeTravel.u_ids = timeTravel.u_ids.slice(filter.u_index_min, filter.u_index_max + 1);
 
 		timeTravel.u_ids.forEach(function(u_id) {
 			timedataByUserid.filter(u_id);
