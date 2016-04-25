@@ -18,9 +18,9 @@ $(document).ready(function(){
 
 		$( "#filter-speed-slider-range" ).slider({
 		range: true,
-		min: 0,
-		max: 500,
-		values: [ 75, 300 ],
+		min: filter.state.excludedMinSpeed,
+		max: filter.state.excludedMaxSpeed,
+		values: [ 0, 10000 ],
 		slide: function( event, ui ) {
 		$( "#filter-speed-amount" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
 		}
@@ -28,6 +28,9 @@ $(document).ready(function(){
 		$( "#filter-speed-amount" ).val( $( "#filter-speed-slider-range" ).slider( "values", 0 ) +
 		" - " + $( "#filter-speed-slider-range" ).slider( "values", 1 ) );
 
+		$("#filter-speed-amount").on("change", function(){
+			console.log("Value changed");
+		})
         $("body").on("click", "#more-data-bttn", function() {
            filter.state.chunker++;
            filter.filter();
@@ -197,7 +200,7 @@ $(document).ready(function(){
 	    return "rgba(" + [r, g, b, a].join(",") + ")";
 	}
 
-	$('select').material_select();
+	//$('select').material_select();
 
 	$('.dropdown-button').dropdown({
 	    	inDuration: 300,

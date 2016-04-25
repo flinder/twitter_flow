@@ -189,7 +189,7 @@ var _makeMaxSpeedHashMap = function (){
 
     for(i = 0; i < users.length; i++) {
         var spList = _speedList(users[i]['u_id']);
-        var maxSp = Math.max(...splist);
+        var maxSp = Math.max(...spList);
         //var minSp = Math.min(...splist);
         
         if(maxSp in hSpeedHS) {
@@ -208,7 +208,7 @@ var _makeMinSpeedHashMap = function (){
 
     for(i = 0; i < users.length; i++) {
         var spList = _speedList(users[i]['u_id']);
-        var minSp = Math.min(...splist);
+        var minSp = Math.min(...spList);
         //var minSp = Math.min(...splist);
         
         if(minSp in lSpeedHS) {
@@ -358,10 +358,18 @@ var _getDisLatLon = function(lat1,lon1,lat2,lon2){
 // ---------
 // userId: u_id of users and tweets
 var _speedList = function(userId){
+    //console.log(userId);
 	var speedList = [];
 	var lat1 = -1.0, lon1 = -1.0, lat2 = -1.0, lon2 = -1.0;
 	var timestamp1, timestamp2;
-	for (tweet in filter.tweetsByUser[userId]){
+
+    var tweetsByCurrentUser = filter.tweetsByUser[userId];
+
+	for (var i = 0; i < tweetsByCurrentUser.length; i++){
+
+        var tweet = tweetsByCurrentUser[i];
+
+        //console.log(tweet);
 		if (lat1 == -1.0){
 			lat1 = tweet.coord[1];
 			lon1 = tweet.coord[0];
@@ -371,16 +379,17 @@ var _speedList = function(userId){
 			lon2 = tweet.coord[0];
 			timestamp2 = tweet.time;
 			var distanceKm = _getDisLatLon(lat1,lon1,lat2,lon2);
-			var timeHour = (timestamp2.getTime() - timestamp1.getTime())/1000/3600;
-			var speedKmPerHour = Math.round(distanceKm/timeHour);
-			speedlist.push(speed);
+			//var timeHour = (timestamp2.getTime() - timestamp1.getTime())/1000/3600;
+			var timeHour = (Date.parse(timestamp2) - Date.parse(timestamp1))/1000/3600;
+            var speedKmPerHour = Math.round(distanceKm/timeHour);
+			speedList.push(speedKmPerHour);
 
 			lat1 = lat2;
 			lon1 = lon2;
 			timestamp1 = timestamp2;
 		}
 	}
-    if(speedlist.length > 0){
+    if(speedList.length > 0){
         return speedList;
     }else{
         return [0];
@@ -572,7 +581,7 @@ filter.bySpeed = function(activeUsers) {
     
     // Handle the case where this filter makes no deletions (e.g. noting is
     // checked)
-    if(exclMaxSpeed >= 10000 and exclMinSpeed <= 0){
+    if(exclMaxSpeed >= 10000 && exclMinSpeed <= 0){
         return(activeUsers);
     }
     // Filtering operation happens here: Put all users you want to exclude into
