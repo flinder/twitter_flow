@@ -1,31 +1,18 @@
 filter = {};
 
-var _print_time = function(component) {
-    var end = new Date().getTime();
-    var time = end - start;
-    var msg = component + ': ' + time;
-    console.log(msg);
-    start = new Date().getTime();
-}
-
-var startTimer = function() {
-    start = new Date().getTime();
-}
-
 filter.init = function() {
-     
+    
     // Set data
     filter.data = data;
+    filter.nTotalUsers = filter.data.users.length;
+    filter.nTotalTweets = filter.data.tweets.length;
+    filter.nActiveUsers = filter.data.nTotalUsers;
+    filter.chunkSize = 50;
+    filter.nCurrentChunk = filter.chunkSize;
     filter.currentData = {};
     filter.currentData.users = filter.data.users;
     filter.currentData.tweets = filter.data.tweets;
-    var n = filter.data.users.length;
-    filter.currentData.includedUsers = new Array(n);
-    var i;
-    for(i = 0; i < n; i++) {
-        filter.currentData.includedUsers[i] = filter.data.users[i]['u_id'];
-    }
-    
+
     // Generate a hashmap user -> tweets
     filter.tweetsByUser = _makeUserTweetHashMap(); 
 
@@ -33,7 +20,10 @@ filter.init = function() {
     filter.languageHashMap = _makeLanguageHashMap();
 
     // Generate a hashmap country -> user_id
-    filter.countryHashMap = _makeCountryHashMap(); 
+    filter.countryHashMap = _makeCountryHashMap();
+
+    // Generate a hashmap country number -> user_id
+    filter.countryNumHashMap = _makeCountryNumHashMap();
 
     // Generate a hashmap maxspeed -> user_id
     filter.maxSpeedHashMap = _makeMaxSpeedHashMap();
@@ -48,11 +38,13 @@ filter.init = function() {
     filter.state.excludedCountries = [];
     filter.state.excludedMaxSpeed = 10000;
     filter.state.excludedMinSpeed = 0;
+    filter.state.excludedCountryNum = [];
+
     // Initialize visualizations
     filter.u_index_min = 0;
     filter.u_index_max = 9;
-
     timeTravel.init();    
+    console.log('filter.js initialized');
 }
 
 /*
@@ -77,7 +69,7 @@ filter.updateStateCountry = function(country, visit) {
     if(visit){
 	filter.state.excludedCountries.push(country);
     } else {
-	index = filter.state.excludedCountries.indexof(country);
+	index = filter.state.excludedCountries.indexOf(country);
 	filter.state.excludedCountries.splice(index,1);
     }
 
@@ -88,6 +80,12 @@ filter.updateStateSpeed = function(maxSpeed, minSpeed) {
     filter.state.excludedMaxSpeed = maxSpeed;
     filter.state.excludedMinSpeed = minSpeed;
 
+}
+
+// Function to update filter.excludedCountryNum from input in main.js
+filter.updateStateCountryNum = function(countryMinNum, countryMaxNum) {
+    filter.state.excludedCountryNum[0] = countryMinNum;
+    filter.state.excludedCountryNum[1] = countryMaxNum;
 }
 
 var _makeUserArray = function() {
@@ -105,11 +103,15 @@ var _makeUserArray = function() {
 // updating of all visualizations
 
 filter.filter = function() {
-    
+
     // Apply all filters to original data
     // TODO: This is a hack! Find a better way to keep original users and make
     // active users a reference to the respective users:
     var activeUsers = _makeUserArray(); 
+    
+    // NO FILTERS ABOVE THIS POINT!
+    // Filter by Chunker
+    activeUsers = filter.byChunker(activeUsers);
 
     // Filter excluded users 
     activeUsers = filter.byId(activeUsers);
@@ -121,14 +123,14 @@ filter.filter = function() {
     //activeUsers = filter.byCountryVisited(activeUsers);
 
     // Filter by number of countris visited
-
+    activeUsers = filter.byCountryNum(activeUsers);
+    
     // Filter by time
 
     // Synchronized data (this updates filter.currentData)
     _synchData(activeUsers);
-
+    console.log(filter.currentData);
     // Update everything
-
     timeTravel.update();
     // map.update();
     // timeLine.update();
@@ -179,6 +181,7 @@ var _makeCountryHashMap = function () {
     return(countryHash);
 }
 
+
 //Hashmap for max speed {'speed1': [user1, user2], 'speed2': [user3], ...}
 var _makeMaxSpeedHashMap = function (){
     var users = filter.data.users;
@@ -218,32 +221,36 @@ var _makeMinSpeedHashMap = function (){
 }
 
 
+
+// Hashmap for country number {'num1: [user1, user2], 'num2':[user3],..}
+var _makeCountryNumHashMap = function () {
+
+    var countryNumHash = {};
+
+    for (i = 0; i < filter.data.users.length; i++) {
+	var currentNum = filter.data.users[i]['cntryCount'];
+	if (currentNum in countryNumHash) {
+	    countryNumHash[currentNum].push(filter.data.users[i]['u_id']);
+	} else {
+	    countryNumHash[currentNum] = [];
+	    countryNumHash[currentNum].push(filter.data.users[i]['u_id']);
+	}
+    }
+    return(countryNumHash);
+}
+
 // Synchronize the user and tweet array given the activeUsers object
 var _synchData = function(activeUsers) {
 
     filter.currentData.users = activeUsers;
-    var n = 0, t, i, j, k = 0, u_id;
-    for(i = 0; i < activeUsers.length; i++) { 
-        t = filter.tweetsByUser[activeUsers[i]['u_id']];
-        n += t.length;
-    }
-
-    filter.currentData.tweets = new Array(n);
-    filter.currentData.includedUsers = new Array(filter.currentData.users.length);
-
+    filter.currentData.tweets = [];
     // If no selected Users stop here and keep current data empty
     if(activeUsers.length === 0) {
         return(null)
     } else {  // otherwise push the relevant data into the arrays
-        for(i = 0; i < activeUsers.length; i++) { 
-            u_id = activeUsers[i]['u_id'];
-            t = filter.tweetsByUser[u_id];
-            filter.currentData.includedUsers[i] = u_id;
-            for(j = 0; j < t.length; j++) { 
-                filter.currentData.tweets[k + j] = t[j];
-
-            }
-            k += j
+        for(i = 0; i < activeUsers.length; i++) {
+            var t = filter.tweetsByUser[activeUsers[i]['u_id']];
+            filter.currentData.tweets = filter.currentData.tweets.concat(t);
         }
     }
 }
@@ -431,16 +438,37 @@ filter.template = function(activeUsers) {
     // the usersToExclude array:
 
     var toFilter = [];
+    activeUsers = activeUsers.filter(byExclList(toFilter));
 
-//    var filterFunction = function () {
-//
-//
-//    }
+    return(activeUsers);
+}
+
+
+filter.byChunker = function(activeUsers) {
+    
+    // Handle empty selection
+    if(_isEmpty(activeUsers)) {
+        return(activeUsers);
+    }
+    
+    // Handle the case where this filter makes no deletions (e.g. noting is
+    // checked)
+    
+      
+    // Filtering operation happens here: Put all users you want to exclude into
+    // the usersToExclude array:
+    var chunkSize = 50;
+    var start = chunkSize * filter.state.chunker;
+    var howMany = activeUsers.length - start;
+    activeUsers.splice(start, howMany); 
+    filter.nCurrentChunk = activeUsers.length;
+    var toFilter = [];
 
     activeUsers = activeUsers.filter(byExclList(toFilter));
 
     return(activeUsers);
 }
+
 
 // Function to filter out one or more users
 // Arguments:
@@ -531,6 +559,7 @@ filter.byCountryVisited = function (activeUsers) {
     return(activeUsers);
 }
 
+
 filter.bySpeed = function(activeUsers) {
     
     var exclMaxSpeed = filter.state.excludedMaxSpeed;
@@ -569,3 +598,30 @@ filter.bySpeed = function(activeUsers) {
 
     }
 }
+
+filter.byCountryNum = function (activeUsers) {
+
+    var exclMaxNumCountry = filter.state.excludedCountryMaxNum;
+    var exclMinNumCountry = filter.state.excludedCountryMinNum;
+
+    if(_isEmpty(activeUsers)){
+	return(activeUsers);
+    }
+
+    // Exclude users from active Users by input from country number slider
+
+    var excludedUsers = [];
+    for ( var num in filter.countryNumHashMap) {
+	if(num > exclMaxNumCountry || num < exclMinNumCountry) {
+	    excludedUsers = exludedUsers.concat(filter.countryNumHashMap[num]);
+	} else {
+	    continue;
+	}
+    }
+    for (i = 0; i < excludedUser.length; i++) {
+	delete activeUsers[excludedUsers[i]];
+    }
+
+    return(activeUsers);
+}
+
