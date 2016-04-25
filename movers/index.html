@@ -76,9 +76,9 @@
             <div class="ui top attached">
                 Languages
             </div>
-            <div class="ui attached segment">
-                <a id="filter-language-english" class="ui label">English<i class="delete icon"></i></a>
-                <a id="filter-language-turkish" class="ui label">Turkish<i class="delete icon"></i></a>
+            <div id="filter-language-panel" class="ui attached segment">
+                <a id="filter-language-sample1" class="ui label language-item">Sample1<i class="delete icon"></i></a>
+                <a id="filter-language-sample2" class="ui label language-item">Sample2<i class="delete icon"></i></a>
                 <div id="language-selection-list" style="margin-top: 0.5em; width: calc(100% - 45px); display:inline-block;">
                     <select name="languages" multiple="" class="ui fluid dropdown">
                         <option value="">Language(s)</option>
@@ -87,9 +87,13 @@
                     <option value="greek">Greek</option>
                     </select>
                 </div>
-                <button class="ui tiny icon button">
-                  <i class="add icon"></i>
+                <button id="filter-language-add" class="ui tiny icon button">
+                    <i class="add icon"></i>
                 </button>
+                <div class="ui tiny buttons" style="width:100%; margin-top:8px;">
+                    <button class="ui button">Reset</button>
+                    <button class="ui button">Add all</button>
+                </div>
             </div>
             <div style="height:0.5em;"></div>
 
@@ -97,9 +101,9 @@
             <div class="ui top attached">
                 Country
             </div>
-            <div class="ui attached segment">
-                <a id="filter-country-country1" class="ui label">country1<i class="delete icon"></i></a>
-                <a id="filter-country-country2" class="ui label">country2<i class="delete icon"></i></a>
+            <div id="filter-country-panel" class="ui attached segment">
+                <a id="filter-country-country1" class="ui label country-item">country1<i class="delete icon"></i></a>
+                <a id="filter-country-country2" class="ui label country-item">country2<i class="delete icon"></i></a>
                 <div id="country-selection-list" style="margin-top: 0.5em; width: calc(100% - 45px); display:inline-block;">
                     <select name="countries" multiple="" class="ui fluid dropdown">
                         <option value="">Country(s)</option>
@@ -108,9 +112,13 @@
                     <option value="country3">country3</option>
                     </select>
                 </div>
-                <button class="ui tiny icon button">
+                <button id="filter-country-add" class="ui tiny icon button">
                   <i class="add icon"></i>
                 </button>
+                <div class="ui tiny buttons" style="width:100%; margin-top:8px;">
+                    <button class="ui button">Reset</button>
+                    <button class="ui button">Add all</button>
+                </div>
             </div>
             <div style="height:0.5em;"></div>
 
@@ -137,16 +145,8 @@
 
             <div id="filter-country" class="container">
                 <div class = "row">
-                    <div class="col s6"><span>Select and Remove by Countries</span></div>
+                    <div class="col s6"><span>Select and Remove by Countries?</span></div>
                 </div>
-            <!--
-            <a class='dropdown-button btn' data-beloworigin="true" href='#' data-activates='dropdown1'>Country</a>
-                <ul id='dropdown1' class='dropdown-content'>
-                    <li><a href="#!">one</a></li>
-                    <li><a href="#!">two</a></li>
-                    <li><a href="#!">three</a></li>
-                </ul>
-            -->
                <div class = "row" id="filter-country-row1">
                     <div class = "col s2">
                         <select>
@@ -169,7 +169,6 @@
                 </div>
 
             </div>
-
         </div>
 		<div id="main-container">
             <div class="ui pointing menu" style="margin-top:1em;">
