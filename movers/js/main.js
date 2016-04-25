@@ -4,7 +4,7 @@ $(document).ready(function(){
 	data = {}
 
 	$.getJSON("data/main_data_sample.json", function(json) {
-                $.getJSON("data/sample_trips.json", function(geojson) {
+                $.getJSON("data/main_data_trips.json", function(geojson) {
                     data.geoJsonTrips = geojson;  
                     console.log(data.geoJsonTrips);
                     data.tweets = json.tweets;
