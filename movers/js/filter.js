@@ -26,10 +26,12 @@ filter.init = function() {
     filter.countryNumHashMap = _makeCountryNumHashMap();
 
     // Generate a hashmap maxspeed -> user_id
-   // filter.maxSpeedHashMap = _makeMaxSpeedHashMap();
+
+    //filter.maxSpeedHashMap = _makeMaxSpeedHashMap();
+
 
     // Generate a hashmap minspeed -> user_id
-    filter.minSpeedHashMap = _makeMinSpeedHashMap();
+    //filter.minSpeedHashMap = _makeMinSpeedHashMap();
 
     // Main object holding the status of all filter controls
     filter.state = {};
@@ -184,42 +186,42 @@ var _makeCountryHashMap = function () {
 
 
 //Hashmap for max speed {'speed1': [user1, user2], 'speed2': [user3], ...}
-var _makeMaxSpeedHashMap = function (){
-    var users = filter.data.users;
-    var hSpeedHS = {};
-
-    for(i = 0; i < users.length; i++) {
-        var spList = _speedList(users[i]['u_id']);
-        var maxSp = Math.max(...splist);
-        //var minSp = Math.min(...splist);
-        
-        if(maxSp in hSpeedHS) {
-            hSpeedHS[maxSp.toString()].push(users[i]['u_id']);
-        } else {
-            hSpeedHS[maxSp.toString()] = [users[i]['u_id']];
-        }
-    }
-    return(hSpeedHS);
-}
+//var _makeMaxSpeedHashMap = function (){
+//    var users = filter.data.users;
+//    var hSpeedHS = {};
+//
+//    for(i = 0; i < users.length; i++) {
+//        var spList = _speedList(users[i]['u_id']);
+//        var maxSp = Math.max(...splist);
+//        //var minSp = Math.min(...splist);
+//        
+//        if(maxSp in hSpeedHS) {
+//            hSpeedHS[maxSp.toString()].push(users[i]['u_id']);
+//        } else {
+//            hSpeedHS[maxSp.toString()] = [users[i]['u_id']];
+//        }
+//    }
+//    return(hSpeedHS);
+//}
 
 //Hashmap for min speed {'speed1': [user1, user2], 'speed2': [user3], ...}
-var _makeMinSpeedHashMap = function (){
-    var users = filter.data.users;
-    var lSpeedHS = {};
-
-    for(i = 0; i < users.length; i++) {
-        var spList = _speedList(users[i]['u_id']);
-        var minSp = Math.min(...splist);
-        //var minSp = Math.min(...splist);
-        
-        if(minSp in lSpeedHS) {
-            lSpeedHS[minSp.toString()].push(users[i]['u_id']);
-        } else {
-            lSpeedHS[minSp.toString()] = [users[i]['u_id']];
-        }
-    }
-    return(lSpeedHS);
-}
+//var _makeMinSpeedHashMap = function (){
+//    var users = filter.data.users;
+//    var lSpeedHS = {};
+//
+//    for(i = 0; i < users.length; i++) {
+//        var spList = _speedList(users[i]['u_id']);
+//        var minSp = Math.min(...splist);
+//        //var minSp = Math.min(...splist);
+//        
+//        if(minSp in lSpeedHS) {
+//            lSpeedHS[minSp.toString()].push(users[i]['u_id']);
+//        } else {
+//            lSpeedHS[minSp.toString()] = [users[i]['u_id']];
+//        }
+//    }
+//    return(lSpeedHS);
+//}
 
 
 
@@ -358,37 +360,37 @@ var _getDisLatLon = function(lat1,lon1,lat2,lon2){
 // Arguments:
 // ---------
 // userId: u_id of users and tweets
-var _speedList = function(userId){
-	var speedList = [];
-	var lat1 = -1.0, lon1 = -1.0, lat2 = -1.0, lon2 = -1.0;
-	var timestamp1, timestamp2;
-	for (tweet in filter.tweetsByUser[userId]){
-		if (lat1 == -1.0){
-			lat1 = tweet.coord[1];
-			lon1 = tweet.coord[0];
-			timestamp1 = tweet.time;
-		} else {
-			lat2 = tweet.coord[1];
-			lon2 = tweet.coord[0];
-			timestamp2 = tweet.time;
-			var distanceKm = _getDisLatLon(lat1,lon1,lat2,lon2);
-			var timeHour = (timestamp2.getTime() - timestamp1.getTime())/1000/3600;
-			var speedKmPerHour = Math.round(distanceKm/timeHour);
-			speedlist.push(speed);
-
-			lat1 = lat2;
-			lon1 = lon2;
-			timestamp1 = timestamp2;
-		}
-	}
-    if(speedlist.length > 0){
-        return speedList;
-    }else{
-        return [0];
-    }
-
-	
-}
+//var _speedList = function(userId){
+//	var speedList = [];
+//	var lat1 = -1.0, lon1 = -1.0, lat2 = -1.0, lon2 = -1.0;
+//	var timestamp1, timestamp2;
+//	for (tweet in filter.tweetsByUser[userId]){
+//		if (lat1 == -1.0){
+//			lat1 = tweet.coord[1];
+//			lon1 = tweet.coord[0];
+//			timestamp1 = tweet.time;
+//		} else {
+//			lat2 = tweet.coord[1];
+//			lon2 = tweet.coord[0];
+//			timestamp2 = tweet.time;
+//			var distanceKm = _getDisLatLon(lat1,lon1,lat2,lon2);
+//			var timeHour = (timestamp2.getTime() - timestamp1.getTime())/1000/3600;
+//			var speedKmPerHour = Math.round(distanceKm/timeHour);
+//			speedlist.push(speed);
+//
+//			lat1 = lat2;
+//			lon1 = lon2;
+//			timestamp1 = timestamp2;
+//		}
+//	}
+//    if(speedlist.length > 0){
+//        return speedList;
+//    }else{
+//        return [0];
+//    }
+//
+//	
+//}
 
 
 // Check if js object is empty
