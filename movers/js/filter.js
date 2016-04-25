@@ -500,8 +500,8 @@ filter.byCountryVisited = function (activeUsers) {
 
 filter.byCountryNum = function (activeUsers) {
 
-    var exclMaxNumCountry = filter.state.excludedCountryMaxNum;
-    var exclMinNumCountry = filter.state.excludedCountryMinNum;
+    var exclMaxNumCountry = filter.state.excludedCountryNum[1];
+    var exclMinNumCountry = filter.state.excludedCountryNum[0];
 
     if(_isEmpty(activeUsers)){
 	return(activeUsers);
