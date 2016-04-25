@@ -26,7 +26,7 @@ filter.init = function() {
     filter.countryNumHashMap = _makeCountryNumHashMap();
 
     // Generate a hashmap maxspeed -> user_id
-    filter.maxSpeedHashMap = _makeMaxSpeedHashMap();
+   // filter.maxSpeedHashMap = _makeMaxSpeedHashMap();
 
     // Generate a hashmap minspeed -> user_id
     filter.minSpeedHashMap = _makeMinSpeedHashMap();
@@ -573,7 +573,7 @@ filter.bySpeed = function(activeUsers) {
     
     // Handle the case where this filter makes no deletions (e.g. noting is
     // checked)
-    if(exclMaxSpeed >= 10000 and exclMinSpeed <= 0){
+    if(exclMaxSpeed >= 10000 && exclMinSpeed <= 0){
         return(activeUsers);
     }
     // Filtering operation happens here: Put all users you want to exclude into
