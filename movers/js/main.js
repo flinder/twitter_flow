@@ -19,19 +19,18 @@ $(document).ready(function(){
 	function init_btns(){
 
 		$( "#filter-speed-slider-range" ).slider({
-
 			range: true,
 			min: filter.state.excludedMinSpeed,
 			max: filter.state.excludedMaxSpeed,
 			values: [ 0, 10000 ],
-			values: [ 75, 300 ],
+			values: [ 500, 9500 ],
 			slide: function( event, ui ) {
 			$( "#filter-speed-amount" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
 			}
 
 		});
 		$( "#filter-speed-amount" ).val( $( "#filter-speed-slider-range" ).slider( "values", 0 ) +
-		" - " + $( "#filter-speed-slider-range" ).slider( "values", 1 ) );
+		" - " + $( "#filter-speed-slider-range" ).slider( "values", 1 ) + "(mph)" );
 
 		$("body").on("click", "#view-selector .item", function() {
 			$("#view-selector .item").removeClass("active");
@@ -84,9 +83,19 @@ $(document).ready(function(){
 				var language = $(this).attr("data-value");
 				var tmp = '<a class="ui label language-item" data-value=' + language + '>' + language + '<i class="delete icon"></i></a>'
 				$("#filter-language-panel").prepend(tmp);
+				$('#language-selection-list').find(".item[data-value='" + language + "']").hide();
 				filter.updateStateLanguage(language_full2abbr[language], add=true);
 			});
 			$('#language-selection-list .ui.dropdown').dropdown('clear');
+
+			filter.filter();
+		});
+
+		$("body").on("click", ".language-item .delete", function() {
+			var language = $(this).parent().attr("data-value");
+			$(this).parent().remove();
+			$('#language-selection-list').find(".item[data-value='" + language + "']").show();
+			filter.updateStateLanguage(language_full2abbr[language], add=false);
 			filter.filter();
 		});
 

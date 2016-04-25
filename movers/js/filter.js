@@ -20,7 +20,7 @@ filter.init = function() {
 
     filter.nTotalUsers = filter.data.users.length;
 
-    filter.chunkSize = 50;
+    filter.chunkSize = 20;
   
     filter.currentData = {};
 
@@ -157,6 +157,7 @@ filter.filter = function(init=false) {
         timeTravel.update();
         // map.update();
         // timeLine.update();
+        _updateStatusTable();
     }
 
 }
