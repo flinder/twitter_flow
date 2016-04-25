@@ -16,11 +16,20 @@ filter.init = function() {
 
     // Set data
     filter.data = data;
+   
+
+    filter.nTotalUsers = filter.data.users.length;
+
+    filter.chunkSize = 50;
+  
     filter.currentData = {};
+
     filter.currentData.users = filter.data.users;
     filter.currentData.tweets = filter.data.tweets; 
     filter.currentData.includedUsers = [];
     
+    filter.nCurrentChunk;
+
     // Generate a hashmap user -> tweets
     filter.tweetsByUser = _makeUserTweetHashMap(); 
     // Generate hashmap language -> userIds
@@ -35,15 +44,23 @@ filter.init = function() {
     filter.state.excludedCountries = [];
     filter.state.chunker = 1;
  
+    
+    
     // First filtering because of the chunker
     filter.filter(init=true);
 
+    
+    _updateStatusTable();
+
     // Initialize visualizations
     filter.u_index_min = 0;
-    filter.u_index_max = 9;
+    filter.u_index_max = 9
 
     timeTravel.init();    
     //map.init();
+
+    
+
 }
 
 /*
@@ -51,6 +68,22 @@ filter.init = function() {
  * Helper Funcitons
  * =============================================================================
  */
+
+
+// update status table
+ var _updateStatusTable = function() {
+     //visibile users
+     var nActiveUsers = filter.currentData.users.length;
+ 
+     document.getElementById("nActiveUsers").innerHTML = nActiveUsers;
+ 
+     //users in loaded chunks
+     filter.nCurrentChunk = filter.chunkSize*filter.state.chunker;
+ 
+     document.getElementById("nCurrentChunk").innerHTML = filter.nCurrentChunk;
+     //all users in project
+     document.getElementById("nTotalUsers").innerHTML = filter.nTotalUsers;
+ }
 
 
 // Function to update filter.excludedLanguage in buttons in main.js
@@ -396,7 +429,8 @@ filter.byChunker = function(activeUsers) {
       
     // Filtering operation happens here: Put all users you want to exclude into
     // the usersToExclude array:
-    var chunkSize = 50;
+    
+    var chunkSize = filter.chunkSize;
     var start = chunkSize * filter.state.chunker;
     var howMany = activeUsers.length - start;
     activeUsers.splice(start, howMany); 
