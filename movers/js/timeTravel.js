@@ -51,7 +51,6 @@ $(document).ready(function(){
 		timeTravel.timerange = [];
 		$("#timeTravel-container").html("");
 
-		console.log("timeTravel.js init");
 		timeTravel.data = crossfilter(filter.currentData.tweets);
 		var timedataByTime = timeTravel.data.dimension(function(d) { return d.time; });
 		timeTravel.timerange = [timedataByTime.bottom(Infinity)[0].time, timedataByTime.top(Infinity)[0].time];
@@ -213,7 +212,6 @@ $(document).ready(function(){
 		// timeTravel.cntry_val_map = {};
 		timeTravel.timerange = [];
 
-		console.log("timeTravel.js update");
 		timeTravel.data = crossfilter(filter.currentData.tweets);
 		var timedataByTime = timeTravel.data.dimension(function(d) { return d.time; });
 		timeTravel.timerange = [timedataByTime.bottom(Infinity)[0].time, timedataByTime.top(Infinity)[0].time];

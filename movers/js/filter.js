@@ -1,32 +1,20 @@
+// "Import" profiling funcions
+var st = utils.startTimer;
+var pt = utils.printTime;
+ 
 filter = {};
 
-var _print_time = function(component) {
-    var end = new Date().getTime();
-    var time = end - start;
-    var msg = component + ': ' + time;
-    console.log(msg);
-    start = new Date().getTime();
-}
-
-var startTimer = function() {
-    start = new Date().getTime();
-}
-
 filter.init = function() {
-
+    st();
     // Set data
     filter.data = data;
-   
-
-    filter.nTotalUsers = filter.data.users.length;
-
     filter.chunkSize = 20;
-  
-    filter.currentData = {};
 
+    filter.currentData = {};
     filter.currentData.users = filter.data.users;
     filter.currentData.tweets = filter.data.tweets; 
     filter.currentData.includedUsers = [];
+    filter.nTotalUsers = filter.data.users.length;
     
     filter.nCurrentChunk;
 
@@ -51,17 +39,20 @@ filter.init = function() {
     
     // First filtering because of the chunker
     filter.filter(init=true);
-
-    
-    _updateStatusTable();
-
     // Initialize visualizations
     filter.u_index_min = 0;
     filter.u_index_max = 9
-
+    pt('filter.inti() [Filter part]');     
+ 
+    // Push initial data status to display 
+    _updateStatusTable();
+    pt('_updateStatusTable()');
+   
+    // Initialize visualizations
     timeTravel.init();    
-
+    pt('timeTravel.init()');
     map.init();
+    pt('map.init();');
 
 }
 
@@ -125,37 +116,47 @@ var _makeUserArray = function() {
 
 filter.filter = function(init=false) {
     
+    console.log('Filtering...');
+    st();
     // Apply all filters to original data
     // TODO: This is a hack! Find a better way to keep original users and make
     // active users a reference to the respective users:
     var activeUsers = _makeUserArray(); 
-    
+    pt('_makeUserArray()'); 
     // NO FILTERS ABOVE THIS POINT!
     // Filter by Chunker
     activeUsers = filter.byChunker(activeUsers);
-
+    pt('filter.byChunker()');
 
     // Filter excluded users 
     activeUsers = filter.byId(activeUsers);
+    pt('filter.byId()');
 
     // Filter by language
     activeUsers = filter.byLanguage(activeUsers);
-    
+    pt('filter.byLanguage()');
+     
     // Filter by country visited
     //activeUsers = filter.byCountryVisited(activeUsers);
 
     // Filter by number of countris visited
 
     // Filter by time
-    //
+   
 
     // Synchronized data (this updates filter.currentData)
     _synchData(activeUsers);
+    pt('_synchData()');
+    
+    // Update data status display
+    _updateStatusTable();
 
     // Update everything
     if(!init) {
         timeTravel.update();
-        // map.update();
+        pt('timeTravel.update()');
+        map.update();
+        pt('map.update()');
         // timeLine.update();
         _updateStatusTable();
     }

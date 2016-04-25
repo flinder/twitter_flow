@@ -1,17 +1,21 @@
 $(document).ready(function(){
 
-	console.log("main.js loaded");
 	data = {}
-
-	$.getJSON("data/main_data_sample.json", function(json) {
+        // "Import" profiling funcions
+        var st = utils.startTimer;
+        var pt = utils.printTime;
+        st(); 
+	$.getJSON("data/main_data.json", function(json) {
                 $.getJSON("data/sample_trips.json", function(geojson) {
                     data.geoJsonTrips = geojson;  
-                    console.log(data.geoJsonTrips);
                     data.tweets = json.tweets;
                     data.users = json.users;
+                    pt('Load data');
                     initRefTable();
+                    pt('initRefTable()');
                     filter.init();
                     init_btns();                    
+                    pt('init_btns()');
                     console.log('All initialized');
                 });	
 	});
