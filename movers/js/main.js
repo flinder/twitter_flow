@@ -30,12 +30,19 @@ $(document).ready(function(){
 		" - " + $( "#filter-speed-slider-range" ).slider( "values", 1 ) );
 
         $("body").on("click", "#more-data-bttn", function() {
+
+			if(filter.nCurrentChunk >= filter.nTotalUsers) {
+               alert("ERROR: There is no more data to add.");
+               return(null);
+           }
+
            filter.state.chunker++;
            filter.filter();
         });
+
         $("body").on("click", "#less-data-bttn", function() {
            if(filter.state.chunker === 1) {
-               alert("Can't remove more data.");
+               alert("ERROR: Can't remove more data.");
                return(null);
            }
            filter.state.chunker--;

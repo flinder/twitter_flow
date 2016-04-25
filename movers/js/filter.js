@@ -4,14 +4,19 @@ filter.init = function() {
     
     // Set data
     filter.data = data;
+
     filter.nTotalUsers = filter.data.users.length;
-    filter.nTotalTweets = filter.data.tweets.length;
-    filter.nActiveUsers = filter.data.nTotalUsers;
+    
     filter.chunkSize = 50;
-    filter.nCurrentChunk = filter.chunkSize;
     filter.currentData = {};
+
     filter.currentData.users = filter.data.users;
-    filter.currentData.tweets = filter.data.tweets;
+
+    filter.currentData.tweets = filter.data.tweets; 
+    filter.currentData.includedUsers = [];
+    
+    filter.nCurrentChunk;
+
 
     // Generate a hashmap user -> tweets
     filter.tweetsByUser = _makeUserTweetHashMap(); 
@@ -131,12 +136,34 @@ filter.filter = function() {
 
     // Synchronized data (this updates filter.currentData)
     _synchData(activeUsers);
-    console.log(filter.currentData);
+
+    //update status table
+    _updateStatusTable();
+
     // Update everything
     timeTravel.update();
     map.update();
     // timeLine.update();
 }
+
+
+// update status table
+var _updateStatusTable = function() {
+    //visibile users
+    var nActiveUsers = filter.currentData.users.length;
+
+    document.getElementById("nActiveUsers").innerHTML = nActiveUsers;
+
+    //users in loaded chunks
+    filter.nCurrentChunk = filter.chunkSize*filter.state.chunker;
+
+    document.getElementById("nCurrentChunk").innerHTML = filter.nCurrentChunk;
+    //all users in project
+    document.getElementById("nTotalUsers").innerHTML = filter.nTotalUsers;
+ 
+
+}
+
 
 // Generate hashmap for language -> users for quick filtering
 var _makeLanguageHashMap = function() {
@@ -416,7 +443,7 @@ filter.byChunker = function(activeUsers) {
       
     // Filtering operation happens here: Put all users you want to exclude into
     // the usersToExclude array:
-    var chunkSize = 50;
+    var chunkSize = filter.chunkSize;
     var start = chunkSize * filter.state.chunker;
     var howMany = activeUsers.length - start;
     activeUsers.splice(start, howMany); 
