@@ -48,6 +48,7 @@ filter.init = function() {
     filter.u_index_max = 9;
 
     timeTravel.init();    
+    map.init();
 }
 
 /*
@@ -123,7 +124,7 @@ filter.filter = function(init=false) {
     // Update everything
     if(!init) {
         timeTravel.update();
-        // map.update();
+        map.update();
         // timeLine.update();
     }
 
