@@ -81,7 +81,7 @@
                   <tr>
                     <td><span id="nActiveUsers"></td>
                     <td><span id="nCurrentChunk"></td>
-                    <td><span id="nTotalUsers">></td>
+                    <td><span id="nTotalUsers"></td>
                   </tr>
                 </table>
             </p>
@@ -176,19 +176,19 @@
 
         </div>
 		<div id="main-container">
-            <div class="ui pointing menu" style="margin-top:1em;">
-                <a class="active item">
-                    Time Travel
-                </a>
-                <a class="item">
+            <div id="view-selector" class="ui pointing menu" style="margin-top:1em;">
+                <a class="active item" data-value="map-container">
                     Map
+                </a>
+                <a class="item" data-value="timeTravel-container">
+                    Time Travel
                 </a>
                 <a class="item">
                     Other View
                 </a>
             </div>
-            <div id="map-container" class="ui segment"></div>
-            <div id="timeTravel-container" class="ui segment"></div>
+            <div id="map-container" class="ui segment view"></div>
+            <div id="timeTravel-container" style="display:none;" class="ui segment view"></div>
 	</div>
     </body>
 </html>
