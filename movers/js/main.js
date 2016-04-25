@@ -33,6 +33,13 @@ $(document).ready(function(){
 		$( "#filter-speed-amount" ).val( $( "#filter-speed-slider-range" ).slider( "values", 0 ) +
 		" - " + $( "#filter-speed-slider-range" ).slider( "values", 1 ) );
 
+		$("body").on("click", "#view-selector .item", function() {
+			$("#view-selector .item").removeClass("active");
+			$(this).addClass("active");
+			$(".view").hide();
+			$("#" + $(this).attr("data-value")).show();
+        });
+
 		$("#filter-speed-amount").on("change", function(){
 			console.log("Value changed");
 		})
