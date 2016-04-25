@@ -4,6 +4,9 @@ $(document).ready(function(){
 	data = {}
 
 	$.getJSON("data/main_data_sample.json", function(json) {
+                $.getJSON("data/tips.json", function(geojson) {
+                    data.geoJsonTrips;  
+                });
 		data.tweets = json.tweets;
 		data.users = json.users;
 		filter.init();
@@ -12,6 +15,31 @@ $(document).ready(function(){
 	});
 
 	function init_btns(){
+
+		$( "#filter-speed-slider-range" ).slider({
+		range: true,
+		min: 0,
+		max: 500,
+		values: [ 75, 300 ],
+		slide: function( event, ui ) {
+		$( "#filter-speed-amount" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+		}
+		});
+		$( "#filter-speed-amount" ).val( $( "#filter-speed-slider-range" ).slider( "values", 0 ) +
+		" - " + $( "#filter-speed-slider-range" ).slider( "values", 1 ) );
+
+        $("body").on("click", "#more-data-bttn", function() {
+           filter.state.chunker++;
+           filter.filter();
+        });
+        $("body").on("click", "#less-data-bttn", function() {
+           if(filter.state.chunker === 1) {
+               alert("Can't remove more data.");
+               return(null);
+           }
+           filter.state.chunker--;
+           filter.filter();
+        });
 
 		$('#country-selection-list .ui.dropdown')
 			.dropdown({
@@ -24,7 +52,6 @@ $(document).ready(function(){
 				allowAdditions: true
 			})
 		;
-
 		$("body").on("click", "#filter-language-english", function() {
 			if ($(this).is(":checked")) {
 	                    // Is now checked

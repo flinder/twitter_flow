@@ -4,6 +4,11 @@ filter.init = function() {
     
     // Set data
     filter.data = data;
+    filter.nTotalUsers = filter.data.users.length;
+    filter.nTotalTweets = filter.data.tweets.length;
+    filter.nActiveUsers = filter.data.nTotalUsers;
+    filter.chunkSize = 50;
+    filter.nCurrentChunk = filter.chunkSize;
     filter.currentData = {};
     filter.currentData.users = filter.data.users;
     filter.currentData.tweets = filter.data.tweets;
@@ -89,6 +94,10 @@ filter.filter = function() {
     // TODO: This is a hack! Find a better way to keep original users and make
     // active users a reference to the respective users:
     var activeUsers = _makeUserArray(); 
+    
+    // NO FILTERS ABOVE THIS POINT!
+    // Filter by Chunker
+    activeUsers = filter.byChunker(activeUsers);
 
     // Filter excluded users 
     activeUsers = filter.byId(activeUsers);
@@ -372,6 +381,33 @@ filter.template = function(activeUsers) {
 
     return(activeUsers);
 }
+
+
+filter.byChunker = function(activeUsers) {
+    
+    // Handle empty selection
+    if(_isEmpty(activeUsers)) {
+        return(activeUsers);
+    }
+    
+    // Handle the case where this filter makes no deletions (e.g. noting is
+    // checked)
+    
+      
+    // Filtering operation happens here: Put all users you want to exclude into
+    // the usersToExclude array:
+    var chunkSize = 50;
+    var start = chunkSize * filter.state.chunker;
+    var howMany = activeUsers.length - start;
+    activeUsers.splice(start, howMany); 
+    filter.nCurrentChunk = activeUsers.length;
+    var toFilter = [];
+
+    activeUsers = activeUsers.filter(byExclList(toFilter));
+
+    return(activeUsers);
+}
+
 
 // Function to filter out one or more users
 // Arguments:
