@@ -71,7 +71,7 @@ map.filter = function (fullData, userlist) {
     // Implement filtering logic
     
     var lastAddedUserIndex = 0;
-
+ 
     for (var i = 0; i < fullData.features.length; i++){
         
         var currentFeature = fullData.features[i];
@@ -92,9 +92,10 @@ map.filter = function (fullData, userlist) {
 
 
     // Dummy filter!
-    //return fullData;
+    return fullData;
 
-    return filteredData;
+    //return filteredData;
+    
 
 }
 
