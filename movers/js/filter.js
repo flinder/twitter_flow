@@ -184,40 +184,40 @@ var _makeCountryHashMap = function () {
 
 //Hashmap for max speed {'speed1': [user1, user2], 'speed2': [user3], ...}
 var _makeMaxSpeedHashMap = function (){
-    var users = filter.data.users;
-    var hSpeedHS = {};
+    // var users = filter.data.users;
+    // var hSpeedHS = {};
 
-    for(i = 0; i < users.length; i++) {
-        var spList = _speedList(users[i]['u_id']);
-        var maxSp = Math.max(...splist);
-        //var minSp = Math.min(...splist);
+    // for(i = 0; i < users.length; i++) {
+    //     var spList = _speedList(users[i]['u_id']);
+    //     var maxSp = Math.max(...splist);
+    //     //var minSp = Math.min(...splist);
         
-        if(maxSp in hSpeedHS) {
-            hSpeedHS[maxSp.toString()].push(users[i]['u_id']);
-        } else {
-            hSpeedHS[maxSp.toString()] = [users[i]['u_id']];
-        }
-    }
-    return(hSpeedHS);
+    //     if(maxSp in hSpeedHS) {
+    //         hSpeedHS[maxSp.toString()].push(users[i]['u_id']);
+    //     } else {
+    //         hSpeedHS[maxSp.toString()] = [users[i]['u_id']];
+    //     }
+    // }
+    // return(hSpeedHS);
 }
 
 //Hashmap for min speed {'speed1': [user1, user2], 'speed2': [user3], ...}
 var _makeMinSpeedHashMap = function (){
-    var users = filter.data.users;
-    var lSpeedHS = {};
+    // var users = filter.data.users;
+    // var lSpeedHS = {};
 
-    for(i = 0; i < users.length; i++) {
-        var spList = _speedList(users[i]['u_id']);
-        var minSp = Math.min(...splist);
-        //var minSp = Math.min(...splist);
+    // for(i = 0; i < users.length; i++) {
+    //     var spList = _speedList(users[i]['u_id']);
+    //     var minSp = Math.min(...splist);
+    //     //var minSp = Math.min(...splist);
         
-        if(minSp in lSpeedHS) {
-            lSpeedHS[minSp.toString()].push(users[i]['u_id']);
-        } else {
-            lSpeedHS[minSp.toString()] = [users[i]['u_id']];
-        }
-    }
-    return(lSpeedHS);
+    //     if(minSp in lSpeedHS) {
+    //         lSpeedHS[minSp.toString()].push(users[i]['u_id']);
+    //     } else {
+    //         lSpeedHS[minSp.toString()] = [users[i]['u_id']];
+    //     }
+    // }
+    // return(lSpeedHS);
 }
 
 
@@ -358,33 +358,33 @@ var _getDisLatLon = function(lat1,lon1,lat2,lon2){
 // ---------
 // userId: u_id of users and tweets
 var _speedList = function(userId){
-	var speedList = [];
-	var lat1 = -1.0, lon1 = -1.0, lat2 = -1.0, lon2 = -1.0;
-	var timestamp1, timestamp2;
-	for (tweet in filter.tweetsByUser[userId]){
-		if (lat1 == -1.0){
-			lat1 = tweet.coord[1];
-			lon1 = tweet.coord[0];
-			timestamp1 = tweet.time;
-		} else {
-			lat2 = tweet.coord[1];
-			lon2 = tweet.coord[0];
-			timestamp2 = tweet.time;
-			var distanceKm = _getDisLatLon(lat1,lon1,lat2,lon2);
-			var timeHour = (timestamp2.getTime() - timestamp1.getTime())/1000/3600;
-			var speedKmPerHour = Math.round(distanceKm/timeHour);
-			speedlist.push(speed);
+	// var speedList = [];
+	// var lat1 = -1.0, lon1 = -1.0, lat2 = -1.0, lon2 = -1.0;
+	// var timestamp1, timestamp2;
+	// for (tweet in filter.tweetsByUser[userId]){
+	// 	if (lat1 == -1.0){
+	// 		lat1 = tweet.coord[1];
+	// 		lon1 = tweet.coord[0];
+	// 		timestamp1 = tweet.time;
+	// 	} else {
+	// 		lat2 = tweet.coord[1];
+	// 		lon2 = tweet.coord[0];
+	// 		timestamp2 = tweet.time;
+	// 		var distanceKm = _getDisLatLon(lat1,lon1,lat2,lon2);
+	// 		var timeHour = (timestamp2.getTime() - timestamp1.getTime())/1000/3600;
+	// 		var speedKmPerHour = Math.round(distanceKm/timeHour);
+	// 		speedlist.push(speed);
 
-			lat1 = lat2;
-			lon1 = lon2;
-			timestamp1 = timestamp2;
-		}
-	}
-    if(speedlist.length > 0){
-        return speedList;
-    }else{
-        return [0];
-    }
+	// 		lat1 = lat2;
+	// 		lon1 = lon2;
+	// 		timestamp1 = timestamp2;
+	// 	}
+	// }
+ //    if(speedlist.length > 0){
+ //        return speedList;
+ //    }else{
+ //        return [0];
+ //    }
 
 	
 }
@@ -562,41 +562,41 @@ filter.byCountryVisited = function (activeUsers) {
 
 filter.bySpeed = function(activeUsers) {
     
-    var exclMaxSpeed = filter.state.excludedMaxSpeed;
-    var exclMinSpeed = filter.state.excludedMinSpeed;
+    // var exclMaxSpeed = filter.state.excludedMaxSpeed;
+    // var exclMinSpeed = filter.state.excludedMinSpeed;
 
-    // Handle empty selection
-    if(_isEmpty(activeUsers)) {
-        return(activeUsers);
-    }
+    // // Handle empty selection
+    // if(_isEmpty(activeUsers)) {
+    //     return(activeUsers);
+    // }
     
-    // Handle the case where this filter makes no deletions (e.g. noting is
-    // checked)
-    if(exclMaxSpeed >= 10000 and exclMinSpeed <= 0){
-        return(activeUsers);
-    }
-    // Filtering operation happens here: Put all users you want to exclude into
-    // the usersToExclude array:
+    // // Handle the case where this filter makes no deletions (e.g. noting is
+    // // checked)
+    // if(exclMaxSpeed >= 10000 && exclMinSpeed <= 0){
+    //     return(activeUsers);
+    // }
+    // // Filtering operation happens here: Put all users you want to exclude into
+    // // the usersToExclude array:
 
-    var toFilter = [];
-    for(var speed in filter.maxSpeedHashMap){
-        if(speed > exclMaxSpeed){
-            toFilter = excludedUsers.concat(filter.SpeedHashMap[speed.toString()]);
-        }
-    }
-    for(var speed in filter.minSpeedHashMap){
-        if(speed < exclMinSpeed){
-            toFilter = excludedUsers.concat(filter.SpeedHashMap[speed.toString()]);
-        }
+    // var toFilter = [];
+    // for(var speed in filter.maxSpeedHashMap){
+    //     if(speed > exclMaxSpeed){
+    //         toFilter = excludedUsers.concat(filter.SpeedHashMap[speed.toString()]);
+    //     }
+    // }
+    // for(var speed in filter.minSpeedHashMap){
+    //     if(speed < exclMinSpeed){
+    //         toFilter = excludedUsers.concat(filter.SpeedHashMap[speed.toString()]);
+    //     }
 
-    uniqueArray = a.filter(function(toFilter, pos) {
-        return a.indexOf(toFilter) == pos;
-    });
+    // uniqueArray = a.filter(function(toFilter, pos) {
+    //     return a.indexOf(toFilter) == pos;
+    // });
 
-    activeUsers = activeUsers.filter(byExclList(uniqueArray));
-    return(activeUsers);
+    // activeUsers = activeUsers.filter(byExclList(uniqueArray));
+    // return(activeUsers);
 
-    }
+    // }
 }
 
 filter.byCountryNum = function (activeUsers) {
@@ -612,14 +612,14 @@ filter.byCountryNum = function (activeUsers) {
 
     var excludedUsers = [];
     for ( var num in filter.countryNumHashMap) {
-	if(num > exclMaxNumCountry || num < exclMinNumCountry) {
-	    excludedUsers = exludedUsers.concat(filter.countryNumHashMap[num]);
-	} else {
-	    continue;
-	}
+    	if(num > exclMaxNumCountry || num < exclMinNumCountry) {
+    	    excludedUsers = exludedUsers.concat(filter.countryNumHashMap[num]);
+    	} else {
+    	    continue;
+    	}
     }
-    for (i = 0; i < excludedUser.length; i++) {
-	delete activeUsers[excludedUsers[i]];
+    for (i = 0; i < excludedUsers.length; i++) {
+	   delete activeUsers[excludedUsers[i]];
     }
 
     return(activeUsers);
