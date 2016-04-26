@@ -66,8 +66,8 @@ filter.init = function() {
     // Initialize visualizations
     timeTravel.init();    
     pt('timeTravel.init()');
-    //map.init();
-    //pt('map.init();');
+    map.init();
+    pt('map.init();');
 
 }
 
@@ -184,8 +184,8 @@ filter.filter = function(init=false) {
     if(!init) {
         timeTravel.update();
         pt('timeTravel.update()');
-        //map.update();
-        //pt('map.update()');
+        map.update();
+        pt('map.update()');
         // timeLine.update();
         _updateStatusTable();
     }
