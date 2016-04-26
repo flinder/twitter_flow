@@ -54,25 +54,38 @@ $(document).ready(function(){
 		$("#filter-speed-amount").on("change", function(){
 			console.log("Value changed");
 		})
-        $("body").on("click", "#more-data-bttn", function() {
 
-			if(filter.nCurrentChunk >= filter.nTotalUsers) {
-               alert("ERROR: There is no more data to add.");
-               return(null);
-           }
 
-           filter.state.chunker++;
-           filter.filter();
-        });
+                // More and less Data Buttons
+                // -------------------------
+                $("body").on("click", "#more-data-bttn", function() {
 
-        $("body").on("click", "#less-data-bttn", function() {
-           if(filter.state.chunker === 1) {
-               alert("ERROR: Can't remove more data.");
-               return(null);
-           }
-           filter.state.chunker--;
-           filter.filter();
-        });
+                                if(filter.nCurrentChunk >= filter.nTotalUsers) {
+                       alert("ERROR: There is no more data to add.");
+                       return(null);
+                   }
+                   filter.state.chunker++;
+                   filter.filter();
+                });
+                $("body").on("click", "#less-data-bttn", function() {
+                   if(filter.state.chunker === 1) {
+                       alert("ERROR: Can't remove more data.");
+                       return(null);
+                   }
+                   filter.state.chunker--;
+                   filter.filter();
+                });
+                
+                // Export Import Buttons
+                // --------------------
+                $("body").on("click", "#export-bttn", function() { 
+                   filter.exportState();
+                });
+                $("body").on("click", "#export-bttn", function() { 
+                   alert('Not implemented');
+                });
+
+
 
 		$('#country-selection-list .ui.dropdown').dropdown({
 			allowAdditions: true
