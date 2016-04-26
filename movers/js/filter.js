@@ -418,11 +418,15 @@ var _speedList = function(userId){
     var tweetsByCurrentUser = filter.tweetsByUser[userId];
 
 	for (var i = 0; i < tweetsByCurrentUser.length; i++){
-
+        /*
+        var orderedTweets = tweetsByCurrentUser.sort(function(a,b){
+            return new Date(a.time).getTime() - new Date(b.time).getTime();
+        })
+        */
         var tweet = tweetsByCurrentUser[i];
         
         //console.log(tweet);
-		if (lat1 == -1.0){
+		if(lat1 == -1.0){
 			lat1 = tweet.coord[1];
 			lon1 = tweet.coord[0];
 			timestamp1 = tweet.time;
@@ -434,6 +438,9 @@ var _speedList = function(userId){
 
 			//var timeHour = (timestamp2.getTime() - timestamp1.getTime())/1000/3600;
 			var timeHour = (Date.parse(timestamp2) - Date.parse(timestamp1))/1000/3600;
+            if(timeHour == 0){
+                continue;
+            }
             var speedKmPerHour = Math.round(distanceKm/timeHour);
             var speedMph = speedKmPerHour * 0.621371;
 			//speedList.push(speedKmPerHour);
@@ -455,6 +462,7 @@ var _speedList = function(userId){
 		}
         
 	}
+    //if(maxUserSp == "NaN")
     speedList.push(maxUserSp);
     speedList.push(minUserSp);
     if(speedList.length > 0){
@@ -671,11 +679,10 @@ filter.bySpeed = function(activeUsers) {
     //uniqueArray = a.filter(function(toFilter, pos) {
         //return a.indexOf(toFilter) == pos;
     //});
-
+    }
+    
     activeUsers = activeUsers.filter(byExclList(toFilter));
     return(activeUsers);
-
-    }
 }
 
 filter.byCountryNum = function (activeUsers) {
