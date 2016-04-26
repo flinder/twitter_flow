@@ -150,19 +150,22 @@ $(document).ready(function(){
 	            .attr("d", line(d.values))
 	            .attr("stroke", c)
 	            .attr("opacity", 0.5)
-				.on("mouseover", function(d) {
-					d3.select(this).moveToFront();
-					d3.select(this).classed("top", true);
-				}).on("mouseout", function(d) {
-			    	d3.select(this).classed("top", false);
-			    }).on("contextmenu", function(data, index) {
-                                     id_ = this.getAttribute("u_id");
-                                     filter.state.excludedUsers.push(id_);
-                                     console.log(filter.state);
-				     d3.event.preventDefault();
-				     //$(this).remove();
-                                    filter.filter();
-				});
+                            .on("mouseover", function(d) {
+                                    d3.select(this).moveToFront();
+                                    d3.select(this).classed("top", true);
+                            }).on("mouseout", function(d) {
+                                    d3.select(this).classed("top", false);
+                            }).on("contextmenu", function(data, index) {
+                                 var id_ = this.getAttribute("u_id");
+                                 filter.state.excludedUsers.push(id_);
+                                 console.log(filter.state);
+                                 d3.event.preventDefault();
+                                 //$(this).remove();
+                                filter.filter();
+                            }).on("click", function(d) {
+                                var id_ = this.getAttribute("u_id");
+                                tweetDisplay.show(id_);
+                            });
 
 			// svg.selectAll("dot")
 			// 	.data(d.values)
@@ -292,13 +295,16 @@ $(document).ready(function(){
 			    	d3.select(this).classed("top", false);
 			    })
 			    .on("contextmenu", function(data, index) {
-                                     id_ = this.getAttribute("u_id");
+                                     var id_ = this.getAttribute("u_id");
                                      filter.state.excludedUsers.push(id_);
                                      console.log(filter.state);
 				     d3.event.preventDefault();
 				     //$(this).remove();
                                      filter.filter();
-				});
+                            }).on("click", function(d) {
+                                var id_ = this.getAttribute("u_id");
+                                tweetDisplay.show(id_);
+                            });
 
 			// svg.selectAll("dot")
 			// 	.data(d.values)
