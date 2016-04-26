@@ -158,8 +158,10 @@ $(document).ready(function(){
 			    }).on("contextmenu", function(data, index) {
                                      id_ = this.getAttribute("u_id");
                                      filter.state.excludedUsers.push(id_);
+                                     console.log(filter.state);
 				     d3.event.preventDefault();
-				     $(this).remove();
+				     //$(this).remove();
+                                    filter.filter();
 				});
 
 			// svg.selectAll("dot")
@@ -278,6 +280,7 @@ $(document).ready(function(){
 
 	        svg.append("path")
 	            .attr("class", "line")
+	            .attr("u_id", d.key)
 	            .attr("d", line(d.values))
 	            .attr("stroke", c)
 	            .attr("opacity", 0.5)
@@ -289,8 +292,12 @@ $(document).ready(function(){
 			    	d3.select(this).classed("top", false);
 			    })
 			    .on("contextmenu", function(data, index) {
+                                     id_ = this.getAttribute("u_id");
+                                     filter.state.excludedUsers.push(id_);
+                                     console.log(filter.state);
 				     d3.event.preventDefault();
-				     $(this).remove();
+				     //$(this).remove();
+                                     filter.filter();
 				});
 
 			// svg.selectAll("dot")
