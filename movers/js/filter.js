@@ -8,15 +8,17 @@ filter.init = function() {
     st();
     // Set data
     filter.data = data;
+    filter.chunkSize = 20;
 
     filter.currentData = {};
     filter.currentData.users = filter.data.users;
     filter.currentData.tweets = filter.data.tweets; 
     filter.currentData.includedUsers = [];
+    filter.nTotalUsers = filter.data.users.length;
 
     // Get values for status table
-    filter.nTotalUsers = filter.data.users.length; 
-    filter.chunkSize = 20;
+    //filter.nTotalUsers = filter.data.users.length; 
+    //filter.chunkSize = 20;
     filter.nCurrentChunk;
 
     // Generate a hashmap user -> tweets
@@ -347,6 +349,15 @@ var _makeUserTweetHashMap = function() {
         }
     } 
     return(tweetsByUser);
+}
+
+// Take the excludedUsers generate a new currentData object and update all
+// visualizations
+filter.update = function() { 
+    //map.update();
+    //timeTravel.update();
+    //timeLine.update();
+    timeTravel.init();
 }
 
 // Check if current user should be included or excluded depending on language
