@@ -26,8 +26,8 @@ filter.init = function() {
 
     filter.countryHashMap = _makeCountryHashMap();
     // Generate a hashmap speed->user_id
-    filter.maxSpeedHashMap = _makeMaxSpeedHashMap();
-    filter.minSpeedHashMap = _makeMinSpeedHashMap();
+    //filter.maxSpeedHashMap = _makeMaxSpeedHashMap();
+    //filter.minSpeedHashMap = _makeMinSpeedHashMap();
     // Generate a hashmap number of visited counties -> user_id
     filter.numctryHashMap = _makeCountryNumHashMap();
 
@@ -48,10 +48,6 @@ filter.init = function() {
     filter.state.excludedCountryMaxNum = 50;
     filter.state.excludedCountryMinNum = 0;
 
- 
-    
-    
-
     // First filtering because of the chunker
     filter.filter(init=true);
     // Initialize visualizations
@@ -66,8 +62,8 @@ filter.init = function() {
     // Initialize visualizations
     timeTravel.init();    
     pt('timeTravel.init()');
-    //map.init();
-    //pt('map.init();');
+    map.init();
+    pt('map.init();');
 
 }
 
@@ -236,7 +232,7 @@ var _makeCountryHashMap = function () {
     return(countryHash);
 }
 
-//Hashmap for max speed {'speed1': [user1, user2], 'speed2': [user3], ...}
+////Hashmap for max speed {'speed1': [user1, user2], 'speed2': [user3], ...}
 var _makeMaxSpeedHashMap = function (){
     var users = filter.data.users;
     var hSpeedHS = {};
