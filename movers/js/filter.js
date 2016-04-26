@@ -658,7 +658,7 @@ filter.bySpeed = function(activeUsers) {
 
     var toFilter = [];
     for(var speed in filter.maxSpeedHashMap){
-        console.log(speed);
+        //console.log(speed);
         if(Number(speed) > exclMaxSpeed){
             toFilter = toFilter.concat(filter.maxSpeedHashMap[speed]);
         }
