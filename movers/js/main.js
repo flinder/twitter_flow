@@ -103,24 +103,12 @@ $(document).ready(function(){
                    filter.exportState();
                 });
 
-
-
-		$('#country-selection-list .ui.dropdown').dropdown({
-			allowAdditions: true
-		});
-
-		$('#language-selection-list .ui.dropdown').dropdown({
+                
+                // Language Filter UI functionality
+                // -------------------------------
+ 		$('#language-selection-list .ui.dropdown').dropdown({
 				allowAdditions: true
 		});
-
-		$("body").on("click", "#filter-country-add", function() {
-			$('#country-selection-list').find(".label").each(function(){
-
-			});
-			filter.filter();
-			$('#country-selection-list .ui.dropdown').dropdown('clear');	
-		});
-
 		$("body").on("click", "#filter-language-add", function() {
 			$('#language-selection-list').find(".label").each(function(){
 				var language = $(this).attr("data-value");
@@ -142,73 +130,9 @@ $(document).ready(function(){
 			filter.filter();
 		});
 
-		var countryDropNumber = 1;
 
-		$("#filter-country-button").on("click", function() {
-
-			
-			var currentRowID = "#filter-country-row" + countryDropNumber;
-			countryDropNumber += 1;
-			var nextRowID = "filter-country-row" + countryDropNumber;
-
-			var countryList = ["Other World", "Other Europe", "Germany", "Italy", 
-			"Switzerland", "Austria", "Czech Rep", "SlovakiaHungary", "Romania", 
-			"Croatia", "Slovenia", "Bosnia & Herzegovina", "Serbia & Montenegro", 
-			"Macedonia", "Bulgaria", "Albania", "Greece", "Turkey", "Syria", 
-			"Lebanon", "Jordan", "Iraq", "Iran", "Egypt", "Other Asia", "Other Africa"];
-			
-			$("#filter-country").append(
-			//$(this).append(
-
-            	'<div class = "row" id="'+nextRowID+'">' +
-                    '<div class = "col s2">' +
-                        '<select>' +
-                            '<option value="" disabled selected>Select a country</option>' +
-                            '<option value="Greek">Greek</option>' +
-                            '<option value="Turkey">Turkey</option>' +
-                        '</select>' +
-                    '</div>' +
-                    '<div class = "col s1">' +
-                    '<form action = "#">' +
-                        '<input name="group'+countryDropNumber+'" type="radio" id="ctryKeep'+countryDropNumber+'" />' +
-                        '<label for="ctryKeep'+countryDropNumber+'">Keep</label>' +
-                        '<input name="group'+countryDropNumber+'" type="radio" id="ctryRmv'+countryDropNumber+'" />' +
-                        '<label for="ctryRmv'+countryDropNumber+'">Remove</label>' +
-                    '</div>' +
-                    '</form>' +
-                    '<div class = "col s1">' +
-                        '<button class = "ctryCancelButton" id="ctryCancelBtn'+countryDropNumber+'">Cancel</button>' +
-                    '</div>' +
-                '</div>'
-
-				);
-
-			var buttonID = "#ctryCancelBtn" +countryDropNumber
-
-			$(buttonID).on("click",function(){
-				//onsole.log($(this).attr('id'));
-				//ar theStr = $(this).attr('id')
-				var delNum = ($(this).attr('id')).replace(/^\D+/g, "");
-				var delRowID = "filter-country-row" + delNum;
-				console.log(delRowID);
-				var elem = document.getElementById(delRowID);
-	    		elem.parentNode.removeChild(elem);
-	    		//return false;
-	    		//console.log('cancel button clicked');
-			});
-		});
-		
-		$("#ctryCancelBtn1").on("click",function(){
-			//console.log($(this).attr('id'));
-			//ar theStr = $(this).attr('id')
-			var delNum = ($(this).attr('id')).replace(/^\D+/g, "");
-			var delRowID = "filter-country-row" + delNum;
-			console.log(delRowID);
-			var elem = document.getElementById(delRowID);
-    		elem.parentNode.removeChild(elem);
-    		//return false;
-    		//console.log('cancel button clicked');
-		});
+                // Country Filter UI functionality
+                // -------------------------------
 
 	};
 
