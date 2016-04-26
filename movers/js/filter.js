@@ -28,6 +28,8 @@ filter.init = function() {
     // Generate a hashmap speed->user_id
     filter.maxSpeedHashMap = _makeMaxSpeedHashMap();
     filter.minSpeedHashMap = _makeMinSpeedHashMap();
+    // Generate a hashmap number of visited counties -> user_id
+    filter.numctryHashMap = _makeCountryNumHashMap();
 
     // Main object holding the status of all filter controls
     filter.state = {};
@@ -38,6 +40,9 @@ filter.init = function() {
 
     filter.state.excludedMaxSpeed = 1000;
     filter.state.excludedMinSpeed = 0;
+
+    filter.state.excludedCountryMaxNum = 50;
+    filter.state.excludedCountryMinNum = 0;
    
     // First filtering because of the chunker
     filter.filter(init=true);
@@ -53,8 +58,8 @@ filter.init = function() {
     // Initialize visualizations
     timeTravel.init();    
     pt('timeTravel.init()');
-    map.init();
-    pt('map.init();');
+    //map.init();
+    //pt('map.init();');
 
 }
 
@@ -118,6 +123,12 @@ filter.updateStateSpeed = function(maxSpeed, minSpeed){
     filter.state.excludedMinSpeed = minSpeed;
 }
 
+// Funciton to update filter.max/min numb from imput in main.js
+filter.updateStateNumctry = function(maxNumctry, minNumctry){
+    filter.state.excludedCountryMaxNum = maxNumctry;
+    filter.state.excludedCountryMinNum = minNumctry;
+}
+
 var _makeUserArray = function() {
     var out = []; 
     for(i = 0; i < filter.data.users.length; i++){
@@ -176,8 +187,8 @@ filter.filter = function(init=false) {
     if(!init) {
         timeTravel.update();
         pt('timeTravel.update()');
-        map.update();
-        pt('map.update()');
+        //map.update();
+        //pt('map.update()');
         // timeLine.update();
         _updateStatusTable();
     }

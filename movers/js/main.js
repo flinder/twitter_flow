@@ -22,6 +22,7 @@ $(document).ready(function(){
 
 	function init_btns(){
 
+		//functions for the speed filter slider bar
 		$( "#filter-speed-slider-range" ).slider({
 			range: true,
 			//min: filter.state.excludedMinSpeed,
@@ -32,17 +33,36 @@ $(document).ready(function(){
 			values: [ filter.state.excludedMinSpeed, filter.state.excludedMaxSpeed ],
 			slide: function( event, ui ) {
 			$( "#filter-speed-amount" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] + " (mph)" );
-			console.log("Value changed");
+			//console.log("Value changed");
 
 			filter.updateStateSpeed(ui.values[1],ui.values[0]);
+			filter.filter();
+			}
+		});
+
+		$( "#filter-speed-amount" ).val( $( "#filter-speed-slider-range" ).slider( "values", 0 ) +
+		" - " + $( "#filter-speed-slider-range" ).slider( "values", 1 ) + " (mph)" );
+		
+		//functions for the number of country slider bar
+		$( "#filter-numctry-slider-range" ).slider({
+			range: true,
+			min: 0,
+			max: 50,
+			//values: [ 0, 10000 ],
+			values: [ filter.state.excludedMinNumCtry, filter.state.excludedMaxNumCtry ],
+			slide: function( event, ui ) {
+			$( "#filter-numctry-slider" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+			//console.log("Value changed");
+
+			filter.updateState(ui.values[1],ui.values[0]);
 			filter.filter();
 			}
 
 
 		});
 
-		$( "#filter-speed-amount" ).val( $( "#filter-speed-slider-range" ).slider( "values", 0 ) +
-		" - " + $( "#filter-speed-slider-range" ).slider( "values", 1 ) + " (mph)" );
+		$( "#filter-numctry-slider" ).val( $( "#filter-numctry-slider-range" ).slider( "values", 0 ) +
+		" - " + $( "#filter-numctry-slider-range" ).slider( "values", 1 ));
 
 		$("body").on("click", "#view-selector .item", function() {
 			$("#view-selector .item").removeClass("active");
