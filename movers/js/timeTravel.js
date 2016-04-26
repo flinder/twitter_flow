@@ -156,6 +156,8 @@ $(document).ready(function(){
 				}).on("mouseout", function(d) {
 			    	d3.select(this).classed("top", false);
 			    }).on("contextmenu", function(data, index) {
+                                     id_ = this.getAttribute("u_id");
+                                     filter.state.excludedUsers.push(id_);
 				     d3.event.preventDefault();
 				     $(this).remove();
 				});
