@@ -86,16 +86,12 @@ $(document).ready(function(){
                 });
 
 
-
+                // Country Filter Interface
+                // ------------------------
 		$('#country-selection-list .ui.dropdown').dropdown({
 			allowAdditions: true
 		});
-
-		$('#language-selection-list .ui.dropdown').dropdown({
-				allowAdditions: true
-		});
-
-		$("body").on("click", "#filter-country-add", function() {
+        	$("body").on("click", "#filter-country-add", function() {
 			$('#country-selection-list').find(".label").each(function(){
 
 			});
@@ -103,28 +99,7 @@ $(document).ready(function(){
 			$('#country-selection-list .ui.dropdown').dropdown('clear');	
 		});
 
-		$("body").on("click", "#filter-language-add", function() {
-			$('#language-selection-list').find(".label").each(function(){
-				var language = $(this).attr("data-value");
-				var tmp = '<a class="ui label language-item" data-value=' + language + '>' + language + '<i class="delete icon"></i></a>'
-				$("#filter-language-panel").prepend(tmp);
-				$('#language-selection-list').find(".item[data-value='" + language + "']").hide();
-				filter.updateStateLanguage(language_full2abbr[language], add=true);
-			});
-			$('#language-selection-list .ui.dropdown').dropdown('clear');
-
-			filter.filter();
-		});
-
-		$("body").on("click", ".language-item .delete", function() {
-			var language = $(this).parent().attr("data-value");
-			$(this).parent().remove();
-			$('#language-selection-list').find(".item[data-value='" + language + "']").show();
-			filter.updateStateLanguage(language_full2abbr[language], add=false);
-			filter.filter();
-		});
-
-		var countryDropNumber = 1;
+ 		var countryDropNumber = 1;
 
 		$("#filter-country-button").on("click", function() {
 
@@ -193,6 +168,34 @@ $(document).ready(function(){
 		});
 
 	};
+       
+                // Language Filter Interface
+                // ------------------------
+		$('#language-selection-list .ui.dropdown').dropdown({
+				allowAdditions: true
+		});
+
+		$("body").on("click", "#filter-language-add", function() {
+			$('#language-selection-list').find(".label").each(function(){
+				var language = $(this).attr("data-value");
+				var tmp = '<a class="ui label language-item" data-value=' + language + '>' + language + '<i class="delete icon"></i></a>'
+				$("#filter-language-panel").prepend(tmp);
+				$('#language-selection-list').find(".item[data-value='" + language + "']").hide();
+				filter.updateStateLanguage(language_full2abbr[language], add=true);
+			});
+			$('#language-selection-list .ui.dropdown').dropdown('clear');
+
+			filter.filter();
+		});
+
+		$("body").on("click", ".language-item .delete", function() {
+			var language = $(this).parent().attr("data-value");
+			$(this).parent().remove();
+			$('#language-selection-list').find(".item[data-value='" + language + "']").show();
+			filter.updateStateLanguage(language_full2abbr[language], add=false);
+			filter.filter();
+		});
+
 
 
 	getRandomColor = function () {
