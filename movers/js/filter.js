@@ -667,20 +667,21 @@ filter.bySpeed = function(activeUsers) {
     var toFilter = [];
     for(var speed in filter.maxSpeedHashMap){
         //console.log(speed);
-        if(Number(speed) > exclMaxSpeed){
+        if(Number(speed) > exclMaxSpeed || Number(speed) < exclMinSpeed){
             toFilter = toFilter.concat(filter.maxSpeedHashMap[speed]);
         }
     }
+    /*
     for(var speed in filter.minSpeedHashMap){
         if(Number(speed) < exclMinSpeed){
             toFilter = toFilter.concat(filter.minSpeedHashMap[speed]);
         }
-
+    
     //uniqueArray = a.filter(function(toFilter, pos) {
         //return a.indexOf(toFilter) == pos;
     //});
     }
-    
+    */
     activeUsers = activeUsers.filter(byExclList(toFilter));
     return(activeUsers);
 }
