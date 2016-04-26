@@ -11,8 +11,6 @@ $(document).ready(function(){
                     data.tweets = json.tweets;
                     data.users = json.users;
                     pt('Load data');
-                    initRefTable();
-                    pt('initRefTable()');
                     filter.init();
                     init_btns();                    
                     pt('init_btns()');
@@ -109,7 +107,7 @@ $(document).ready(function(){
 				var tmp = '<a class="ui label language-item" data-value=' + language + '>' + language + '<i class="delete icon"></i></a>'
 				$("#filter-language-panel").prepend(tmp);
 				$('#language-selection-list').find(".item[data-value='" + language + "']").hide();
-				filter.updateStateLanguage(language_full2abbr[language], add=true);
+				filter.updateStateLanguage(Language.getAbbrFromFull(language), add=true);
 			});
 			$('#language-selection-list .ui.dropdown').dropdown('clear');
 
@@ -120,7 +118,7 @@ $(document).ready(function(){
 			var language = $(this).parent().attr("data-value");
 			$(this).parent().remove();
 			$('#language-selection-list').find(".item[data-value='" + language + "']").show();
-			filter.updateStateLanguage(language_full2abbr[language], add=false);
+			filter.updateStateLanguage(Language.getAbbrFromFull(language), add=false);
 			filter.filter();
 		});
 
@@ -210,19 +208,6 @@ $(document).ready(function(){
 	        r = (num & 0xFF0000) >>> 16,
 	        a = 1 ;
 	    return "rgba(" + [r, g, b, a].join(",") + ")";
-	}
-
-	initRefTable = function () {
-		language_full2abbr = {
-			"russian": 	"ru",
-			"german": 	"de",
-			"turkish": 	"tr",
-			"hebrew": 	"he",
-			"arabic": 	"ar",
-			"spainish": "es",
-			"dutch": 	"nl",
-			"english": 	"en"
-		};
 	}
 
 });
