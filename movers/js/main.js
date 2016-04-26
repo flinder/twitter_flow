@@ -78,11 +78,11 @@ $(document).ready(function(){
                 
                 // Export Import Buttons
                 // --------------------
-                $("body").on("click", "#export-bttn", function() { 
-                   filter.exportState();
+                $("body").on("click", "#import-bttn", function() { 
+                   alert('Not implemented');
                 });
                 $("body").on("click", "#export-bttn", function() { 
-                   alert('Not implemented');
+                   filter.exportState();
                 });
 
 
