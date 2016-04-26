@@ -29,6 +29,8 @@
         <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
         <!-- Main code -->
+        <script src="js/tweetDisplay.js" type="text/javascript" charset="utf-8"></script>
+        <script src="js/utils.js" type="text/javascript" charset="utf-8"></script>
         <script src="js/data.js" type="text/javascript" charset="utf-8"></script>
         <script src="js/filter.js" type="text/javascript" charset="utf-8"></script>
         <script src="js/map.js" type="text/javascript" charset="utf-8"></script>
@@ -70,64 +72,63 @@
         <div id="filter-container" style="top: calc(53px + 1em);">
 
             <!-- Status panel -->
-             <div class="ui top attached">
-            <p>
-                <table cellspacing="10">
-                  <tr>
+            Status
+            <table class="ui celled table">
+                <thead><tr>
                     <th>Filtered</th>
                     <th>In Chunk</th>
                     <th>Total</th>
-                  </tr>
-                  <tr>
-                    <td><span id="nActiveUsers"></td>
-                    <td><span id="nCurrentChunk"></td>
-                    <td><span id="nTotalUsers">></td>
-                  </tr>
-                </table>
-            </p>
-            </div>
-            <div style="height:0.5em;"></div>
-
-
-            <!-- Add Remove Data Buttons -->
-            <div id="add-remove-data" class="container">
-               <div class = "row">
-                    <div class = "col s6">
-                        <input type="button" id="more-data-bttn" value="More Data"/>
-                        <input type="button" id="less-data-bttn" value="Less Data"/>
-                    </div>
-                </div>
-            </div>
+                </tr></thead>
+                <tbody>
+                    <tr>
+                        <td><span id="nActiveUsers"></td>
+                        <td><span id="nCurrentChunk"></td>
+                        <td><span id="nTotalUsers"></td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr><th colspan="3">
+                    <div id="add-remove-data">
+                        <div class="ui right floated tiny button" id="more-data-bttn" value="More Data">More Data</div>
+                        <div class="ui tiny button" id="less-data-bttn" value="Less Data">Less Data</div>
+                    </div></th></tr>
+                         <div class="ui tiny button" id="export-bttn"
+                            value="Download Filter State">Export</div>
+                        <div class="ui tiny button" id="import-bttn"
+                            value="Download Filter State">Import</div>
+                </tfoot>
+            </table>
 
             <!-- language panel -->
-            <div class="ui top attached">
-                Languages (removed)
-            </div>
+            Languages (removed)
             <div id="filter-language-panel" class="ui attached segment">
                 <!-- <a id="filter-language-sample1" class="ui label language-item">Sample1<i class="delete icon"></i></a>
                 <a id="filter-language-sample2" class="ui label language-item">Sample2<i class="delete icon"></i></a> -->
                 <div id="language-selection-list" style="margin-top: 0.5em; width: calc(100% - 45px); display:inline-block;">
                     <select name="languages" multiple="" class="ui fluid dropdown">
                         <option value="">Language(s)</option>
-                    <option value="english">English</option>
-                    <option value="turkish">Turkish</option>
-                    <option value="greek">Greek</option>
+                        <option value="english">English</option>
+                        <option value="eussian">Russian</option>
+                        <option value="german">German</option>
+                        <option value="turkish">Turkish</option>
+                        <option value="hebrew">Hebrew</option>
+                        <option value="arabic">Arabic</option>
+                        <option value="spainish">Spainish</option>
+                        <option value="dutch">Dutch</option>
                     </select>
                 </div>
                 <button id="filter-language-add" class="ui tiny icon button">
                     <i class="add icon"></i>
                 </button>
-                <div class="ui tiny buttons" style="width:100%; margin-top:8px;">
-                    <button class="ui button">Reset</button>
-                    <button class="ui button">Add all</button>
+                <div style="margin-top:8px;">
+                    <button class="ui tiny button">Reset</button>
+                    <button class="ui right floated tiny button">Add all</button>
                 </div>
             </div>
             <div style="height:0.5em;"></div>
 
             <!-- country panel -->
-            <div class="ui top attached">
-                Country
-            </div>
+            Country
             <div id="filter-country-panel" class="ui attached segment">
                 <a id="filter-country-country1" class="ui label country-item">country1<i class="delete icon"></i></a>
                 <a id="filter-country-country2" class="ui label country-item">country2<i class="delete icon"></i></a>
@@ -142,9 +143,9 @@
                 <button id="filter-country-add" class="ui tiny icon button">
                   <i class="add icon"></i>
                 </button>
-                <div class="ui tiny buttons" style="width:100%; margin-top:8px;">
-                    <button class="ui button">Reset</button>
-                    <button class="ui button">Add all</button>
+                <div style="margin-top:8px;">
+                    <button class="ui tiny button">Reset</button>
+                    <button class="ui right floated tiny button">Add all</button>
                 </div>
             </div>
             <div style="height:0.5em;"></div>
@@ -157,38 +158,21 @@
             <div id="filter-speed-slider-range"></div>
             <div style="height:0.5em;"></div>
 
-<!-- following code is for country filter, is not necessary with new country filter -->
-            <!--<div id="filter-country" class="container">
-                <div class = "row">
-                    <div class="col s6"><span>Select and Remove by Countries?</span></div>
-                </div>
-
-            
-            <a class='dropdown-button btn' data-beloworigin="true" href='#' data-activates='dropdown1'>Country</a>
-                <ul id='dropdown1' class='dropdown-content'>
-                    <li><a href="#!">one</a></li>
-                    <li><a href="#!">two</a></li>
-                    <li><a href="#!">three</a></li>
-                </ul>
-            
-
-            </div> -->
-
         </div>
 		<div id="main-container">
-            <div class="ui pointing menu" style="margin-top:1em;">
-                <a class="active item">
-                    Time Travel
-                </a>
-                <a class="item">
+            <div id="view-selector" class="ui pointing menu" style="margin-top:1em;">
+                <a class="active item" data-value="map-container">
                     Map
+                </a>
+                <a class="item" data-value="timeTravel-container">
+                    Time Travel
                 </a>
                 <a class="item">
                     Other View
                 </a>
             </div>
-            <div id="map-container" class="ui segment"></div>
-            <div id="timeTravel-container" class="ui segment"></div>
+            <div id="map-container" class="ui segment view"></div>
+            <div id="timeTravel-container" style="display:none;" class="ui segment view"></div>
 	</div>
     </body>
 </html>

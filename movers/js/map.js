@@ -18,7 +18,7 @@ map.fakeRealData = function () {
                         
     }
     
-    jQuery.getJSON('../../data/sample_trips.json', processData);
+    jQuery.getJSON('../../data/main_data_trips.json', processData);
 
 
 }
@@ -166,11 +166,11 @@ map.drawingOnCanvas = function (canvasOverlay, params) {
     ctx.globalCompositeOperation = 'source-over';
 
 
-    console.log('getting tile z' + params.tilePoint.z + '-' + params.tilePoint.x + '-' + params.tilePoint.y);
+    //console.log('getting tile z' + params.tilePoint.z + '-' + params.tilePoint.x + '-' + params.tilePoint.y);
 
     var tile = map.tileIndex.getTile(params.tilePoint.z, params.tilePoint.x, params.tilePoint.y);
     if (!tile) {
-        console.log('tile empty');
+        //console.log('tile empty');
         return;
     }
 

@@ -1,32 +1,33 @@
+// "Import" profiling funcions
+var st = utils.startTimer;
+var pt = utils.printTime;
+ 
 filter = {};
 
-var _print_time = function(component) {
-    var end = new Date().getTime();
-    var time = end - start;
-    var msg = component + ': ' + time;
-    console.log(msg);
-    start = new Date().getTime();
-}
-
-var startTimer = function() {
-    start = new Date().getTime();
-}
-
 filter.init = function() {
-
+    st();
     // Set data
     filter.data = data;
+
     filter.currentData = {};
     filter.currentData.users = filter.data.users;
     filter.currentData.tweets = filter.data.tweets; 
     filter.currentData.includedUsers = [];
-    
+
+    // Get values for status table
+    filter.nTotalUsers = filter.data.users.length; 
+    filter.chunkSize = 20;
+    filter.nCurrentChunk;
+
     // Generate a hashmap user -> tweets
     filter.tweetsByUser = _makeUserTweetHashMap(); 
     // Generate hashmap language -> userIds
     filter.languageHashMap = _makeLanguageHashMap();
     // Generate a hashmap country -> user_id
-    filter.countryHashMap = _makeCountryHashMap(); 
+    filter.countryHashMap = _makeCountryHashMap();
+    // Generate a hashmap speed->user_id
+    filter.maxSpeedHashMap = _makeMaxSpeedHashMap();
+    filter.minSpeedHashMap = _makeMinSpeedHashMap();
 
     // Main object holding the status of all filter controls
     filter.state = {};
@@ -34,16 +35,27 @@ filter.init = function() {
     filter.state.excludedLanguages = [];
     filter.state.excludedCountries = [];
     filter.state.chunker = 1;
- 
+
+    filter.state.excludedMaxSpeed = 1000;
+    filter.state.excludedMinSpeed = 0;
+   
     // First filtering because of the chunker
     filter.filter(init=true);
-
     // Initialize visualizations
     filter.u_index_min = 0;
-    filter.u_index_max = 9;
-
+    filter.u_index_max = 9
+    pt('filter.inti() [Filter part]');     
+ 
+    // Push initial data status to display 
+    _updateStatusTable();
+    pt('_updateStatusTable()');
+   
+    // Initialize visualizations
     timeTravel.init();    
+    pt('timeTravel.init()');
     map.init();
+    pt('map.init();');
+
 }
 
 /*
@@ -51,6 +63,32 @@ filter.init = function() {
  * Helper Funcitons
  * =============================================================================
  */
+
+filter.exportState = function() {
+    var data = JSON.stringify(filter.state);
+    var url = 'data:text/json;charset=utf8,' + encodeURIComponent(data);
+    window.open(url, '_blank');
+    window.focus();
+}
+
+filter.importState = function() {
+
+}
+
+// update status table
+ var _updateStatusTable = function() {
+     //visibile users
+     var nActiveUsers = filter.currentData.users.length;
+ 
+     document.getElementById("nActiveUsers").innerHTML = nActiveUsers;
+ 
+     //users in loaded chunks
+     filter.nCurrentChunk = filter.chunkSize*filter.state.chunker;
+ 
+     document.getElementById("nCurrentChunk").innerHTML = filter.nCurrentChunk;
+     //all users in project
+     document.getElementById("nTotalUsers").innerHTML = filter.nTotalUsers;
+ }
 
 
 // Function to update filter.excludedLanguage in buttons in main.js
@@ -68,10 +106,16 @@ filter.updateStateCountry = function(country, visit) {
     if(visit){
 	filter.state.excludedCountries.push(country);
     } else {
-	index = filter.state.excludedCountries.indexof(country);
+	index = filter.state.excludedCountries.indexOf(country);
 	filter.state.excludedCountries.splice(index,1);
     }
 
+}
+
+// Funciton to update filter.max/minSpeed from imput in main.js
+filter.updateStateSpeed = function(maxSpeed, minSpeed){
+    filter.state.excludedMaxSpeed = maxSpeed;
+    filter.state.excludedMinSpeed = minSpeed;
 }
 
 var _makeUserArray = function() {
@@ -90,38 +134,52 @@ var _makeUserArray = function() {
 
 filter.filter = function(init=false) {
     
+    console.log('Filtering...');
+    st();
     // Apply all filters to original data
     // TODO: This is a hack! Find a better way to keep original users and make
     // active users a reference to the respective users:
     var activeUsers = _makeUserArray(); 
-    
+    pt('_makeUserArray()'); 
     // NO FILTERS ABOVE THIS POINT!
     // Filter by Chunker
     activeUsers = filter.byChunker(activeUsers);
-
+    pt('filter.byChunker()');
 
     // Filter excluded users 
     activeUsers = filter.byId(activeUsers);
+    pt('filter.byId()');
 
     // Filter by language
     activeUsers = filter.byLanguage(activeUsers);
-    
+    pt('filter.byLanguage()');
+     
     // Filter by country visited
     //activeUsers = filter.byCountryVisited(activeUsers);
 
     // Filter by number of countris visited
 
     // Filter by time
-    //
+   
+    // Filter by speed
+    activeUsers = filter.bySpeed(activeUsers);
+    pt('filter.bySpeed()')
 
     // Synchronized data (this updates filter.currentData)
     _synchData(activeUsers);
+    pt('_synchData()');
+    
+    // Update data status display
+    _updateStatusTable();
 
     // Update everything
     if(!init) {
         timeTravel.update();
-        // map.update();
+        pt('timeTravel.update()');
+        map.update();
+        pt('map.update()');
         // timeLine.update();
+        _updateStatusTable();
     }
 
 }
@@ -168,6 +226,64 @@ var _makeCountryHashMap = function () {
 	}				  
     }   
     return(countryHash);
+}
+
+//Hashmap for max speed {'speed1': [user1, user2], 'speed2': [user3], ...}
+var _makeMaxSpeedHashMap = function (){
+    var users = filter.data.users;
+    var hSpeedHS = {};
+
+    for(i = 0; i < users.length; i++) {
+        var spList = _speedList(users[i]['u_id']);
+        //console.log(spList.length)
+        var maxSp = Math.round(Math.max(...spList));
+        //var minSp = Math.min(...splist);
+        
+        if(maxSp in hSpeedHS) {
+            hSpeedHS[maxSp.toString()].push(users[i]['u_id']);
+        } else {
+            hSpeedHS[maxSp.toString()] = [users[i]['u_id']];
+        }
+    }
+    return(hSpeedHS);
+}
+
+//Hashmap for min speed {'speed1': [user1, user2], 'speed2': [user3], ...}
+var _makeMinSpeedHashMap = function (){
+    var users = filter.data.users;
+    var lSpeedHS = {};
+
+    for(i = 0; i < users.length; i++) {
+        var spList = _speedList(users[i]['u_id']);
+        var minSp = Math.round(Math.min(...spList));
+        //var minSp = Math.min(...splist);
+        
+        if(minSp in lSpeedHS) {
+            lSpeedHS[minSp.toString()].push(users[i]['u_id']);
+        } else {
+            lSpeedHS[minSp.toString()] = [users[i]['u_id']];
+        }
+    }
+    return(lSpeedHS);
+}
+
+
+
+// Hashmap for country number {'num1: [user1, user2], 'num2':[user3],..}
+var _makeCountryNumHashMap = function () {
+
+    var countryNumHash = {};
+
+    for (i = 0; i < filter.data.users.length; i++) {
+	var currentNum = filter.data.users[i]['cntryCount'];
+	if (currentNum in countryNumHash) {
+	    countryNumHash[currentNum].push(filter.data.users[i]['u_id']);
+	} else {
+	    countryNumHash[currentNum] = [];
+	    countryNumHash[currentNum].push(filter.data.users[i]['u_id']);
+	}
+    }
+    return(countryNumHash);
 }
 
 // Synchronize the user and tweet array given the activeUsers object
@@ -220,15 +336,6 @@ var _makeUserTweetHashMap = function() {
         }
     } 
     return(tweetsByUser);
-}
-
-// Take the excludedUsers generate a new currentData object and update all
-// visualizations
-filter.update = function() { 
-    //map.update();
-    //timeTravel.update();
-    //timeLine.update();
-    timeTravel.init();
 }
 
 // Check if current user should be included or excluded depending on language
@@ -303,11 +410,23 @@ var _getDisLatLon = function(lat1,lon1,lat2,lon2){
 // ---------
 // userId: u_id of users and tweets
 var _speedList = function(userId){
+    //console.log(userId);
 	var speedList = [];
 	var lat1 = -1.0, lon1 = -1.0, lat2 = -1.0, lon2 = -1.0;
 	var timestamp1, timestamp2;
-	for (tweet in filter.tweetsByUser[userId]){
-		if (lat1 == -1.0){
+    var maxUserSp = -1, minUserSp = -1;
+    var tweetsByCurrentUser = filter.tweetsByUser[userId];
+
+	for (var i = 0; i < tweetsByCurrentUser.length; i++){
+        /*
+        var orderedTweets = tweetsByCurrentUser.sort(function(a,b){
+            return new Date(a.time).getTime() - new Date(b.time).getTime();
+        })
+        */
+        var tweet = tweetsByCurrentUser[i];
+        
+        //console.log(tweet);
+		if(lat1 == -1.0){
 			lat1 = tweet.coord[1];
 			lon1 = tweet.coord[0];
 			timestamp1 = tweet.time;
@@ -316,16 +435,41 @@ var _speedList = function(userId){
 			lon2 = tweet.coord[0];
 			timestamp2 = tweet.time;
 			var distanceKm = _getDisLatLon(lat1,lon1,lat2,lon2);
-			var timeHour = (timestamp2.getTime() - timestamp1.getTime())/1000/3600;
-			var speedKmPerHour = distanceKm/timeHour;
-			speedlist.push(speed);
 
+			//var timeHour = (timestamp2.getTime() - timestamp1.getTime())/1000/3600;
+			var timeHour = (Date.parse(timestamp2) - Date.parse(timestamp1))/1000/3600;
+            if(timeHour == 0){
+                continue;
+            }
+            var speedKmPerHour = Math.round(distanceKm/timeHour);
+            var speedMph = speedKmPerHour * 0.621371;
+			//speedList.push(speedKmPerHour);
+
+            if(maxUserSp == -1){
+                maxUserSp = speedMph;
+                minUserSp = speedMph;
+            }else{
+                if(speedMph > maxUserSp){
+                    maxUserSp = speedMph;
+                }else if(speedMph < minUserSp){
+                    minUserSp = speedMph;
+                }
+            }
+            
 			lat1 = lat2;
 			lon1 = lon2;
 			timestamp1 = timestamp2;
 		}
+        
 	}
-	return speedList;
+    //if(maxUserSp == "NaN")
+    speedList.push(maxUserSp);
+    speedList.push(minUserSp);
+    if(speedList.length > 0){
+        return speedList;
+    }else{
+        return [0];
+    }
 }
 
 
@@ -396,7 +540,8 @@ filter.byChunker = function(activeUsers) {
       
     // Filtering operation happens here: Put all users you want to exclude into
     // the usersToExclude array:
-    var chunkSize = 50;
+    
+    var chunkSize = filter.chunkSize;
     var start = chunkSize * filter.state.chunker;
     var howMany = activeUsers.length - start;
     activeUsers.splice(start, howMany); 
@@ -494,6 +639,73 @@ filter.byCountryVisited = function (activeUsers) {
     }
 
     for(i= 0; i<excludedUser.length; i++) {
+	delete activeUsers[excludedUsers[i]];
+    }
+
+    return(activeUsers);
+}
+
+
+filter.bySpeed = function(activeUsers) {
+    
+    var exclMaxSpeed = filter.state.excludedMaxSpeed;
+    var exclMinSpeed = filter.state.excludedMinSpeed;
+
+    // Handle empty selection
+    if(_isEmpty(activeUsers)) {
+        return(activeUsers);
+    }
+    
+    // Handle the case where this filter makes no deletions (e.g. noting is
+    // checked)
+    if(exclMaxSpeed >= 1000 && exclMinSpeed <= 0){
+        return(activeUsers);
+    }
+    // Filtering operation happens here: Put all users you want to exclude into
+    // the usersToExclude array:
+
+    var toFilter = [];
+    for(var speed in filter.maxSpeedHashMap){
+        //console.log(speed);
+        if(Number(speed) > exclMaxSpeed || Number(speed) < exclMinSpeed){
+            toFilter = toFilter.concat(filter.maxSpeedHashMap[speed]);
+        }
+    }
+    /*
+    for(var speed in filter.minSpeedHashMap){
+        if(Number(speed) < exclMinSpeed){
+            toFilter = toFilter.concat(filter.minSpeedHashMap[speed]);
+        }
+    
+    //uniqueArray = a.filter(function(toFilter, pos) {
+        //return a.indexOf(toFilter) == pos;
+    //});
+    }
+    */
+    activeUsers = activeUsers.filter(byExclList(toFilter));
+    return(activeUsers);
+}
+
+filter.byCountryNum = function (activeUsers) {
+
+    var exclMaxNumCountry = filter.state.excludedCountryMaxNum;
+    var exclMinNumCountry = filter.state.excludedCountryMinNum;
+
+    if(_isEmpty(activeUsers)){
+	return(activeUsers);
+    }
+
+    // Exclude users from active Users by input from country number slider
+
+    var excludedUsers = [];
+    for ( var num in filter.countryNumHashMap) {
+	if(num > exclMaxNumCountry || num < exclMinNumCountry) {
+	    excludedUsers = exludedUsers.concat(filter.countryNumHashMap[num]);
+	} else {
+	    continue;
+	}
+    }
+    for (i = 0; i < excludedUser.length; i++) {
 	delete activeUsers[excludedUsers[i]];
     }
 

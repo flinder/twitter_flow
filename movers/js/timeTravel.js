@@ -51,7 +51,6 @@ $(document).ready(function(){
 		timeTravel.timerange = [];
 		$("#timeTravel-container").html("");
 
-		console.log("timeTravel.js init");
 		timeTravel.data = crossfilter(filter.currentData.tweets);
 		var timedataByTime = timeTravel.data.dimension(function(d) { return d.time; });
 		timeTravel.timerange = [timedataByTime.bottom(Infinity)[0].time, timedataByTime.top(Infinity)[0].time];
@@ -151,23 +150,32 @@ $(document).ready(function(){
 	            .attr("d", line(d.values))
 	            .attr("stroke", c)
 	            .attr("opacity", 0.5)
-				.on("mouseover", function(d) {
-					d3.select(this).moveToFront();
-					d3.select(this).classed("top", true);
-				})
-			    .on("mouseout", function(d) {
-			    	d3.select(this).classed("top", false);
-			    });
+                            .on("mouseover", function(d) {
+                                    d3.select(this).moveToFront();
+                                    d3.select(this).classed("top", true);
+                            }).on("mouseout", function(d) {
+                                    d3.select(this).classed("top", false);
+                            }).on("contextmenu", function(data, index) {
+                                 var id_ = this.getAttribute("u_id");
+                                 filter.state.excludedUsers.push(id_);
+                                 console.log(filter.state);
+                                 d3.event.preventDefault();
+                                 //$(this).remove();
+                                filter.filter();
+                            }).on("click", function(d) {
+                                var id_ = this.getAttribute("u_id");
+                                tweetDisplay.show(id_);
+                            });
 
-			svg.selectAll("dot")
-				.data(d.values)
-				.enter().append("circle")
-				.attr("class", "dot")
-				.attr("r", 3.5)
-				.attr("cx", function(d) { return x(d.date); })
-				.attr("cy", function(d) { return y(d.cntry_val); })
-				.attr("fill", c)
-				.attr("opacity", 0.5);
+			// svg.selectAll("dot")
+			// 	.data(d.values)
+			// 	.enter().append("circle")
+			// 	.attr("class", "dot")
+			// 	.attr("r", 3.5)
+			// 	.attr("cx", function(d) { return x(d.date); })
+			// 	.attr("cy", function(d) { return y(d.cntry_val); })
+			// 	.attr("fill", c)
+			// 	.attr("opacity", 0.5);
 
 	    });
 
@@ -183,7 +191,9 @@ $(document).ready(function(){
 	        .call(yAxis);
 
 	    d3.select(".y.axis").selectAll(".tick").selectAll("text")
-	    	.text(function(d) { return mCntrys[d]; });
+	    	.text(function(d) { return mCntrys[d]; })
+			.filter(function(d) { return mCntrys[d] === "DEU" || mCntrys[d] === "SYR"})
+			.style("font-weight", "bold");
 
 		d3.selection.prototype.moveToFront = function() {  
 			return this.each(function(){
@@ -211,7 +221,6 @@ $(document).ready(function(){
 		// timeTravel.cntry_val_map = {};
 		timeTravel.timerange = [];
 
-		console.log("timeTravel.js update");
 		timeTravel.data = crossfilter(filter.currentData.tweets);
 		var timedataByTime = timeTravel.data.dimension(function(d) { return d.time; });
 		timeTravel.timerange = [timedataByTime.bottom(Infinity)[0].time, timedataByTime.top(Infinity)[0].time];
@@ -276,6 +285,7 @@ $(document).ready(function(){
 
 	        svg.append("path")
 	            .attr("class", "line")
+	            .attr("u_id", d.key)
 	            .attr("d", line(d.values))
 	            .attr("stroke", c)
 	            .attr("opacity", 0.5)
@@ -285,17 +295,28 @@ $(document).ready(function(){
 				})
 			    .on("mouseout", function(d) {
 			    	d3.select(this).classed("top", false);
-			    });
+			    })
+			    .on("contextmenu", function(data, index) {
+                                     var id_ = this.getAttribute("u_id");
+                                     filter.state.excludedUsers.push(id_);
+                                     console.log(filter.state);
+				     d3.event.preventDefault();
+				     //$(this).remove();
+                                     filter.filter();
+                            }).on("click", function(d) {
+                                var id_ = this.getAttribute("u_id");
+                                tweetDisplay.show(id_);
+                            });
 
-			svg.selectAll("dot")
-				.data(d.values)
-				.enter().append("circle")
-				.attr("class", "dot")
-				.attr("r", 3.5)
-				.attr("cx", function(d) { return x(d.date); })
-				.attr("cy", function(d) { return y(d.cntry_val); })
-				.attr("fill", c)
-				.attr("opacity", 0.5);
+			// svg.selectAll("dot")
+			// 	.data(d.values)
+			// 	.enter().append("circle")
+			// 	.attr("class", "dot")
+			// 	.attr("r", 3.5)
+			// 	.attr("cx", function(d) { return x(d.date); })
+			// 	.attr("cy", function(d) { return y(d.cntry_val); })
+			// 	.attr("fill", c)
+			// 	.attr("opacity", 0.5);
 
 	    });
 
