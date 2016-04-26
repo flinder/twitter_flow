@@ -24,17 +24,25 @@ $(document).ready(function(){
 
 		$( "#filter-speed-slider-range" ).slider({
 			range: true,
-			min: filter.state.excludedMinSpeed,
-			max: filter.state.excludedMaxSpeed,
-			values: [ 0, 10000 ],
-			values: [ 500, 9500 ],
+			//min: filter.state.excludedMinSpeed,
+			//max: filter.state.excludedMaxSpeed,
+			min: 0,
+			max: 1000,
+			//values: [ 0, 10000 ],
+			values: [ filter.state.excludedMinSpeed, filter.state.excludedMaxSpeed ],
 			slide: function( event, ui ) {
-			$( "#filter-speed-amount" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+			$( "#filter-speed-amount" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] + " (mph)" );
+			console.log("Value changed");
+
+			filter.updateStateSpeed(ui.values[1],ui.values[0]);
+			filter.filter();
 			}
 
+
 		});
+
 		$( "#filter-speed-amount" ).val( $( "#filter-speed-slider-range" ).slider( "values", 0 ) +
-		" - " + $( "#filter-speed-slider-range" ).slider( "values", 1 ) + "(mph)" );
+		" - " + $( "#filter-speed-slider-range" ).slider( "values", 1 ) + " (mph)" );
 
 		$("body").on("click", "#view-selector .item", function() {
 			$("#view-selector .item").removeClass("active");
@@ -46,25 +54,38 @@ $(document).ready(function(){
 		$("#filter-speed-amount").on("change", function(){
 			console.log("Value changed");
 		})
-        $("body").on("click", "#more-data-bttn", function() {
 
-			if(filter.nCurrentChunk >= filter.nTotalUsers) {
-               alert("ERROR: There is no more data to add.");
-               return(null);
-           }
 
-           filter.state.chunker++;
-           filter.filter();
-        });
+                // More and less Data Buttons
+                // -------------------------
+                $("body").on("click", "#more-data-bttn", function() {
 
-        $("body").on("click", "#less-data-bttn", function() {
-           if(filter.state.chunker === 1) {
-               alert("ERROR: Can't remove more data.");
-               return(null);
-           }
-           filter.state.chunker--;
-           filter.filter();
-        });
+                                if(filter.nCurrentChunk >= filter.nTotalUsers) {
+                       alert("ERROR: There is no more data to add.");
+                       return(null);
+                   }
+                   filter.state.chunker++;
+                   filter.filter();
+                });
+                $("body").on("click", "#less-data-bttn", function() {
+                   if(filter.state.chunker === 1) {
+                       alert("ERROR: Can't remove more data.");
+                       return(null);
+                   }
+                   filter.state.chunker--;
+                   filter.filter();
+                });
+                
+                // Export Import Buttons
+                // --------------------
+                $("body").on("click", "#export-bttn", function() { 
+                   filter.exportState();
+                });
+                $("body").on("click", "#export-bttn", function() { 
+                   alert('Not implemented');
+                });
+
+
 
 		$('#country-selection-list .ui.dropdown').dropdown({
 			allowAdditions: true
