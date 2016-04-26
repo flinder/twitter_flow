@@ -73,6 +73,18 @@ filter.init = function() {
  * =============================================================================
  */
 
+filter.exportState = function() {
+    var data = JSON.stringify(filter.state);
+    var url = 'data:text/json;charset=utf8,' + encodeURIComponent(data);
+    window.open(url, '_blank');
+    window.focus();
+}
+
+filter.importState = function() {
+
+}
+
+
 
 // update status table
  var _updateStatusTable = function() {
