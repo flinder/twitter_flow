@@ -18,7 +18,7 @@ map.fakeRealData = function () {
                         
     }
     
-    jQuery.getJSON('../../data/sample_trips.json', processData);
+    jQuery.getJSON('../../data/main_data_trips.json', processData);
 
 
 }

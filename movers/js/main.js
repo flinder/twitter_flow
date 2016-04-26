@@ -6,7 +6,7 @@ $(document).ready(function(){
         var pt = utils.printTime;
         st(); 
 	$.getJSON("data/main_data.json", function(json) {
-                $.getJSON("data/sample_trips.json", function(geojson) {
+                $.getJSON("data/main_data_trips.json", function(geojson) {
                     data.geoJsonTrips = geojson;  
                     data.tweets = json.tweets;
                     data.users = json.users;

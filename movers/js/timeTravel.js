@@ -184,7 +184,9 @@ $(document).ready(function(){
 	        .call(yAxis);
 
 	    d3.select(".y.axis").selectAll(".tick").selectAll("text")
-	    	.text(function(d) { return mCntrys[d]; });
+	    	.text(function(d) { return mCntrys[d]; })
+			.filter(function(d) { return mCntrys[d] === "DEU" || mCntrys[d] === "SYR"})
+			.style("font-weight", "bold");
 
 		d3.selection.prototype.moveToFront = function() {  
 			return this.each(function(){
