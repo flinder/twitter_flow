@@ -23,7 +23,10 @@ filter.init = function() {
     // Generate hashmap language -> userIds
     filter.languageHashMap = _makeLanguageHashMap();
     // Generate a hashmap country -> user_id
-    filter.countryHashMap = _makeCountryHashMap(); 
+    filter.countryHashMap = _makeCountryHashMap();
+    // Generate a hashmap speed->user_id
+    filter.maxSpeedHashMap = _makeMaxSpeedHashMap();
+    filter.minSpeedHashMap = _makeMinSpeedHashMap();
 
     // Main object holding the status of all filter controls
     filter.state = {};
@@ -32,7 +35,7 @@ filter.init = function() {
     filter.state.excludedCountries = [];
     filter.state.chunker = 1;
 
-    filter.state.excludedMaxSpeed = 10000;
+    filter.state.excludedMaxSpeed = 1000;
     filter.state.excludedMinSpeed = 0;
  
     
@@ -94,10 +97,16 @@ filter.updateStateCountry = function(country, visit) {
     if(visit){
 	filter.state.excludedCountries.push(country);
     } else {
-	index = filter.state.excludedCountries.indexof(country);
+	index = filter.state.excludedCountries.indexOf(country);
 	filter.state.excludedCountries.splice(index,1);
     }
 
+}
+
+// Funciton to update filter.max/minSpeed from imput in main.js
+filter.updateStateSpeed = function(maxSpeed, minSpeed){
+    filter.state.excludedMaxSpeed = maxSpeed;
+    filter.state.excludedMinSpeed = minSpeed;
 }
 
 var _makeUserArray = function() {
@@ -143,6 +152,9 @@ filter.filter = function(init=false) {
 
     // Filter by time
    
+    // Filter by speed
+    activeUsers = filter.bySpeed(activeUsers);
+    pt('filter.bySpeed()')
 
     // Synchronized data (this updates filter.currentData)
     _synchData(activeUsers);
@@ -214,7 +226,8 @@ var _makeMaxSpeedHashMap = function (){
 
     for(i = 0; i < users.length; i++) {
         var spList = _speedList(users[i]['u_id']);
-        var maxSp = Math.max(...spList);
+        //console.log(spList.length)
+        var maxSp = Math.round(Math.max(...spList));
         //var minSp = Math.min(...splist);
         
         if(maxSp in hSpeedHS) {
@@ -233,7 +246,7 @@ var _makeMinSpeedHashMap = function (){
 
     for(i = 0; i < users.length; i++) {
         var spList = _speedList(users[i]['u_id']);
-        var minSp = Math.min(...spList);
+        var minSp = Math.round(Math.min(...spList));
         //var minSp = Math.min(...splist);
         
         if(minSp in lSpeedHS) {
@@ -401,13 +414,13 @@ var _speedList = function(userId){
 	var speedList = [];
 	var lat1 = -1.0, lon1 = -1.0, lat2 = -1.0, lon2 = -1.0;
 	var timestamp1, timestamp2;
-
+    var maxUserSp = -1, minUserSp = -1;
     var tweetsByCurrentUser = filter.tweetsByUser[userId];
 
 	for (var i = 0; i < tweetsByCurrentUser.length; i++){
 
         var tweet = tweetsByCurrentUser[i];
-
+        
         //console.log(tweet);
 		if (lat1 == -1.0){
 			lat1 = tweet.coord[1];
@@ -422,14 +435,28 @@ var _speedList = function(userId){
 			//var timeHour = (timestamp2.getTime() - timestamp1.getTime())/1000/3600;
 			var timeHour = (Date.parse(timestamp2) - Date.parse(timestamp1))/1000/3600;
             var speedKmPerHour = Math.round(distanceKm/timeHour);
-			speedList.push(speedKmPerHour);
+            var speedMph = speedKmPerHour * 0.621371;
+			//speedList.push(speedKmPerHour);
 
+            if(maxUserSp == -1){
+                maxUserSp = speedMph;
+                minUserSp = speedMph;
+            }else{
+                if(speedMph > maxUserSp){
+                    maxUserSp = speedMph;
+                }else if(speedMph < minUserSp){
+                    minUserSp = speedMph;
+                }
+            }
+            
 			lat1 = lat2;
 			lon1 = lon2;
 			timestamp1 = timestamp2;
 		}
+        
 	}
-
+    speedList.push(maxUserSp);
+    speedList.push(minUserSp);
     if(speedList.length > 0){
         return speedList;
     }else{
@@ -623,7 +650,7 @@ filter.bySpeed = function(activeUsers) {
     
     // Handle the case where this filter makes no deletions (e.g. noting is
     // checked)
-    if(exclMaxSpeed >= 10000 && exclMinSpeed <= 0){
+    if(exclMaxSpeed >= 1000 && exclMinSpeed <= 0){
         return(activeUsers);
     }
     // Filtering operation happens here: Put all users you want to exclude into
@@ -631,20 +658,21 @@ filter.bySpeed = function(activeUsers) {
 
     var toFilter = [];
     for(var speed in filter.maxSpeedHashMap){
-        if(speed > exclMaxSpeed){
-            toFilter = excludedUsers.concat(filter.SpeedHashMap[speed.toString()]);
+        console.log(speed);
+        if(Number(speed) > exclMaxSpeed){
+            toFilter = toFilter.concat(filter.maxSpeedHashMap[speed]);
         }
     }
     for(var speed in filter.minSpeedHashMap){
-        if(speed < exclMinSpeed){
-            toFilter = excludedUsers.concat(filter.SpeedHashMap[speed.toString()]);
+        if(Number(speed) < exclMinSpeed){
+            toFilter = toFilter.concat(filter.minSpeedHashMap[speed]);
         }
 
-    uniqueArray = a.filter(function(toFilter, pos) {
-        return a.indexOf(toFilter) == pos;
-    });
+    //uniqueArray = a.filter(function(toFilter, pos) {
+        //return a.indexOf(toFilter) == pos;
+    //});
 
-    activeUsers = activeUsers.filter(byExclList(uniqueArray));
+    activeUsers = activeUsers.filter(byExclList(toFilter));
     return(activeUsers);
 
     }
