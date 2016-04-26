@@ -18,7 +18,7 @@ map.fakeRealData = function () {
                         
     }
     
-    jQuery.getJSON('../../data/sample_trips.json', processData);
+    jQuery.getJSON('../../data/main_data_trips.json', processData);
 
 
 }
@@ -84,7 +84,7 @@ map.filter = function (fullData, userlist) {
             lastAddedUserIndex++;
         }
 
-        if (lastAddedUserIndex === fullData.features.length - 1) {
+        if (lastAddedUserIndex === userlist.length) {
             break;
         }
 
@@ -92,10 +92,10 @@ map.filter = function (fullData, userlist) {
 
 
     // Dummy filter!
-    return fullData;
+    //return fullData;
 
     //return filteredData;
-    
+    return filteredData;
 
 }
 
