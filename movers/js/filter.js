@@ -8,14 +8,15 @@ filter.init = function() {
     st();
     // Set data
     filter.data = data;
-    filter.chunkSize = 20;
 
     filter.currentData = {};
     filter.currentData.users = filter.data.users;
     filter.currentData.tweets = filter.data.tweets; 
     filter.currentData.includedUsers = [];
-    filter.nTotalUsers = filter.data.users.length;
-    
+
+    // Get values for status table
+    filter.nTotalUsers = filter.data.users.length; 
+    filter.chunkSize = 20;
     filter.nCurrentChunk;
 
     // Generate a hashmap user -> tweets
@@ -37,9 +38,7 @@ filter.init = function() {
 
     filter.state.excludedMaxSpeed = 1000;
     filter.state.excludedMinSpeed = 0;
- 
-    
-    
+   
     // First filtering because of the chunker
     filter.filter(init=true);
     // Initialize visualizations
@@ -65,6 +64,16 @@ filter.init = function() {
  * =============================================================================
  */
 
+filter.exportState = function() {
+    var data = JSON.stringify(filter.state);
+    var url = 'data:text/json;charset=utf8,' + encodeURIComponent(data);
+    window.open(url, '_blank');
+    window.focus();
+}
+
+filter.importState = function() {
+
+}
 
 // update status table
  var _updateStatusTable = function() {
@@ -327,15 +336,6 @@ var _makeUserTweetHashMap = function() {
         }
     } 
     return(tweetsByUser);
-}
-
-// Take the excludedUsers generate a new currentData object and update all
-// visualizations
-filter.update = function() { 
-    //map.update();
-    //timeTravel.update();
-    //timeLine.update();
-    timeTravel.init();
 }
 
 // Check if current user should be included or excluded depending on language
