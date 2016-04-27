@@ -31,24 +31,42 @@ map.init = function () {
     // This is called when full geoJson data is loaded!
 
     // Build map and load baselayer tiles
-    map.leafletMap = L.map('map-container').setView([44.933, 24.003], 4);
+    // map.leafletMap = L.map('map-container').setView([44.933, 24.003], 4);
 
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
-        maxZoom: 18,
-        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-            '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-            'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-        id: 'mapbox.streets'
-    }).addTo(map.leafletMap);
+
+    var mbAttr = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+    '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+    'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    mbUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw';
+
+    var grayscale   = L.tileLayer(mbUrl, {id: 'mapbox.light', attribution: mbAttr, noWrap: true}),
+    streets  = L.tileLayer(mbUrl,{id: 'mapbox.streets', attribution: mbAttr, noWrap: true});
 
     // Grab filtered data and generate tile index
     map.update();
 
     // Create and add the movement layer
     map.tileLayer = L.canvasTiles()
-          .params({ debug: false, padding: 5 })
-          .drawing(map.drawingOnCanvas)
-          .addTo(map.leafletMap);
+          .params({ debug: false, padding: 5, noWrap: true})
+          .drawing(map.drawingOnCanvas);
+
+    map.leafletMap = L.map('map-container', {
+    center: [54.93, 10.003],
+    zoom: 2,
+    //maxBounds: L.latLngBounds(L.latLng(0, -180), L.latLng(75, 180)),
+    layers: [grayscale, map.tileLayer]
+    });
+
+    var baseLayers = {
+    "Grayscale": grayscale,
+    "Streets": streets
+    };
+
+    var overlays = {
+    "Trajectories": map.tileLayer
+    };
+
+    L.control.layers(baseLayers, overlays).addTo(map.leafletMap);
 
 
 }
@@ -106,7 +124,6 @@ map.update = function () {
     
     // Filter data
     map.filteredData = map.filter(data.geoJsonTrips, filter.currentData.includedUsers);
-    console.log("this is in map update ", map.filteredData.features.length);
 
     // Generate tiles
     var tileOptions = {
@@ -119,7 +136,6 @@ map.update = function () {
         indexMaxZoom: 0,        // max zoom in the initial tile index
         indexMaxPoints: 100000, // max number of points per tile in the index
     };
-
     map.tileIndex = geojsonvt(map.filteredData, tileOptions); //eslint-disable-line
 
 
