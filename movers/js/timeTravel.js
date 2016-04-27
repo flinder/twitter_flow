@@ -6,6 +6,7 @@ $(document).ready(function(){
 	timeTravel.cntry_val_map = {};
 	timeTravel.trips = [];
 	timeTravel.timerange = [];
+	timeTravel.opacity = 0.5;
 
 	mCntrys = 
 		["DEU",
@@ -49,7 +50,7 @@ $(document).ready(function(){
 		// timeTravel.cntrys = [];
 		// timeTravel.cntry_val_map = {};
 		timeTravel.timerange = [];
-		$("#timeTravel-container").html("");
+		$("#timeTravel-content").html("");
 
 		timeTravel.data = crossfilter(filter.currentData.tweets);
 		var timedataByTime = timeTravel.data.dimension(function(d) { return d.time; });
@@ -114,7 +115,7 @@ $(document).ready(function(){
 		    .y(function(d) { return y(d.cntry_val); });
 
 		// Adds the svg canvas
-		svg = d3.select("#timeTravel-container")
+		svg = d3.select("#timeTravel-content")
 		    .append("svg")
 		        .attr("width", width + margin.left + margin.right)
 		        .attr("height", height + margin.top + margin.bottom)
@@ -149,7 +150,7 @@ $(document).ready(function(){
 	            .attr("u_id", d.key)
 	            .attr("d", line(d.values))
 	            .attr("stroke", c)
-	            .attr("opacity", 0.5)
+	            .attr("opacity", timeTravel.opacity)
 			.on("mouseover", function(d) {
 			        d3.select(this).moveToFront();
 			        d3.select(this).classed("top", true);
@@ -288,7 +289,7 @@ $(document).ready(function(){
 	            .attr("u_id", d.key)
 	            .attr("d", line(d.values))
 	            .attr("stroke", c)
-	            .attr("opacity", 0.5)
+	            .attr("opacity", timeTravel.opacity)
 				.on("mouseover", function(d) {
 					d3.select(this).moveToFront();
 					d3.select(this).classed("top", true);

@@ -52,35 +52,45 @@ $(document).ready(function(){
 			console.log("Value changed");
 		})
 
+		$('#transparency-checkbox').checkbox({
+			onChecked: function() {
+				timeTravel.opacity = 0.5;
+				filter.filter();
+			},
+			onUnchecked: function() {
+				timeTravel.opacity = 1;
+				filter.filter();
+			}
+		});
 
-                // More and less Data Buttons
-                // -------------------------
-                $("body").on("click", "#more-data-bttn", function() {
+        // More and less Data Buttons
+        // -------------------------
+        $("body").on("click", "#more-data-bttn", function() {
 
-                                if(filter.nCurrentChunk >= filter.nTotalUsers) {
-                       alert("ERROR: There is no more data to add.");
-                       return(null);
-                   }
-                   filter.state.chunker++;
-                   filter.filter();
-                });
-                $("body").on("click", "#less-data-bttn", function() {
-                   if(filter.state.chunker === 1) {
-                       alert("ERROR: Can't remove more data.");
-                       return(null);
-                   }
-                   filter.state.chunker--;
-                   filter.filter();
-                });
-                
-                // Export Import Buttons
-                // --------------------
-                $("body").on("click", "#import-bttn", function() { 
-                   alert('Not implemented');
-                });
-                $("body").on("click", "#export-bttn", function() { 
-                   filter.exportState();
-                });
+                        if(filter.nCurrentChunk >= filter.nTotalUsers) {
+               alert("ERROR: There is no more data to add.");
+               return(null);
+           }
+           filter.state.chunker++;
+           filter.filter();
+        });
+        $("body").on("click", "#less-data-bttn", function() {
+           if(filter.state.chunker === 1) {
+               alert("ERROR: Can't remove more data.");
+               return(null);
+           }
+           filter.state.chunker--;
+           filter.filter();
+        });
+        
+        // Export Import Buttons
+        // --------------------
+        $("body").on("click", "#import-bttn", function() { 
+           alert('Not implemented');
+        });
+        $("body").on("click", "#export-bttn", function() { 
+           filter.exportState();
+        });
 
 
 
