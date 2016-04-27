@@ -6,6 +6,7 @@ $(document).ready(function(){
 	timeTravel.cntry_val_map = {};
 	timeTravel.trips = [];
 	timeTravel.timerange = [];
+	timeTravel.opacity = 0.5;
 
 	mCntrys = 
 		["DEU",
@@ -49,7 +50,7 @@ $(document).ready(function(){
 		// timeTravel.cntrys = [];
 		// timeTravel.cntry_val_map = {};
 		timeTravel.timerange = [];
-		$("#timeTravel-container").html("");
+		$("#timeTravel-content").html("");
 
 		timeTravel.data = crossfilter(filter.currentData.tweets);
 		var timedataByTime = timeTravel.data.dimension(function(d) { return d.time; });
@@ -114,7 +115,7 @@ $(document).ready(function(){
 		    .y(function(d) { return y(d.cntry_val); });
 
 		// Adds the svg canvas
-		svg = d3.select("#timeTravel-container")
+		svg = d3.select("#timeTravel-content")
 		    .append("svg")
 		        .attr("width", width + margin.left + margin.right)
 		        .attr("height", height + margin.top + margin.bottom)
@@ -149,23 +150,23 @@ $(document).ready(function(){
 	            .attr("u_id", d.key)
 	            .attr("d", line(d.values))
 	            .attr("stroke", c)
-	            .attr("opacity", 0.5)
-                            .on("mouseover", function(d) {
-                                    d3.select(this).moveToFront();
-                                    d3.select(this).classed("top", true);
-                            }).on("mouseout", function(d) {
-                                    d3.select(this).classed("top", false);
-                            }).on("contextmenu", function(data, index) {
-                                 var id_ = this.getAttribute("u_id");
-                                 filter.state.excludedUsers.push(id_);
-                                 console.log(filter.state);
-                                 d3.event.preventDefault();
-                                 //$(this).remove();
-                                filter.filter();
-                            }).on("click", function(d) {
-                                var id_ = this.getAttribute("u_id");
-                                tweetDisplay.show(id_);
-                            });
+	            .attr("opacity", timeTravel.opacity)
+			.on("mouseover", function(d) {
+			        d3.select(this).moveToFront();
+			        d3.select(this).classed("top", true);
+			}).on("mouseout", function(d) {
+			        d3.select(this).classed("top", false);
+			}).on("contextmenu", function(data, index) {
+			     var id_ = this.getAttribute("u_id");
+			     filter.state.excludedUsers.push(id_);
+			     console.log(filter.state);
+			     d3.event.preventDefault();
+			     //$(this).remove();
+			    filter.filter();
+			}).on("click", function(d) {
+			    var id_ = this.getAttribute("u_id");
+			    tweetDisplay.show(id_);
+			});
 
 			// svg.selectAll("dot")
 			// 	.data(d.values)
@@ -191,7 +192,7 @@ $(document).ready(function(){
 	        .call(yAxis);
 
 	    d3.select(".y.axis").selectAll(".tick").selectAll("text")
-	    	.text(function(d) { return mCntrys[d]; })
+	    	.text(function(d) { return Country.getFullFromAbbr(mCntrys[d]); })
 			.filter(function(d) { return mCntrys[d] === "DEU" || mCntrys[d] === "SYR"})
 			.style("font-weight", "bold");
 
@@ -288,7 +289,7 @@ $(document).ready(function(){
 	            .attr("u_id", d.key)
 	            .attr("d", line(d.values))
 	            .attr("stroke", c)
-	            .attr("opacity", 0.5)
+	            .attr("opacity", timeTravel.opacity)
 				.on("mouseover", function(d) {
 					d3.select(this).moveToFront();
 					d3.select(this).classed("top", true);
@@ -297,16 +298,16 @@ $(document).ready(function(){
 			    	d3.select(this).classed("top", false);
 			    })
 			    .on("contextmenu", function(data, index) {
-                                     var id_ = this.getAttribute("u_id");
-                                     filter.state.excludedUsers.push(id_);
-                                     console.log(filter.state);
-				     d3.event.preventDefault();
-				     //$(this).remove();
-                                     filter.filter();
-                            }).on("click", function(d) {
-                                var id_ = this.getAttribute("u_id");
-                                tweetDisplay.show(id_);
-                            });
+					var id_ = this.getAttribute("u_id");
+					filter.state.excludedUsers.push(id_);
+					console.log(filter.state);
+					d3.event.preventDefault();
+					//$(this).remove();
+					filter.filter();
+				}).on("click", function(d) {
+					var id_ = this.getAttribute("u_id");
+					tweetDisplay.show(id_);
+				});
 
 			// svg.selectAll("dot")
 			// 	.data(d.values)

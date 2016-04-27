@@ -8,14 +8,15 @@ filter.init = function() {
     st();
     // Set data
     filter.data = data;
-    filter.chunkSize = 20;
 
     filter.currentData = {};
     filter.currentData.users = filter.data.users;
     filter.currentData.tweets = filter.data.tweets; 
     filter.currentData.includedUsers = [];
-    filter.nTotalUsers = filter.data.users.length;
-    
+
+    // Get values for status table
+    filter.nTotalUsers = filter.data.users.length; 
+    filter.chunkSize = 20;
     filter.nCurrentChunk;
 
     // Generate a hashmap user -> tweets
@@ -23,15 +24,14 @@ filter.init = function() {
     // Generate hashmap language -> userIds
     filter.languageHashMap = _makeLanguageHashMap();
     // Generate a hashmap country -> user_id
-
     filter.countryHashMap = _makeCountryHashMap();
+    console.log(filter.countryHashMap);
     // Generate a hashmap speed->user_id
-    //filter.maxSpeedHashMap = _makeMaxSpeedHashMap();
-    //filter.minSpeedHashMap = _makeMinSpeedHashMap();
-    // Generate a hashmap number of visited counties -> user_id
-    filter.numctryHashMap = _makeCountryNumHashMap();
+    filter.maxSpeedHashMap = _makeMaxSpeedHashMap();
+    filter.minSpeedHashMap = _makeMinSpeedHashMap();
 
-    filter.countryHashMap = _makeCountryHashMap(); 
+    // Generate a hashmap number of visited counties -> user_id
+    filter.countryNumHashMap = _makeCountryNumHashMap();
 
 
     // Main object holding the status of all filter controls
@@ -41,13 +41,13 @@ filter.init = function() {
     filter.state.excludedCountries = [];
     filter.state.chunker = 1;
 
-    filter.state.excludedMaxSpeed = 10000;
+    filter.state.excludedMaxSpeed = 1000;
     filter.state.excludedMinSpeed = 0;
 
 
     filter.state.excludedCountryMaxNum = 50;
     filter.state.excludedCountryMinNum = 0;
-
+   
     // First filtering because of the chunker
     filter.filter(init=true);
     // Initialize visualizations
@@ -73,6 +73,16 @@ filter.init = function() {
  * =============================================================================
  */
 
+filter.exportState = function() {
+    var data = JSON.stringify(filter.state);
+    var url = 'data:text/json;charset=utf8,' + encodeURIComponent(data);
+    window.open(url, '_blank');
+    window.focus();
+}
+
+filter.importState = function() {
+
+}
 
 // update status table
  var _updateStatusTable = function() {
@@ -103,14 +113,15 @@ filter.updateStateLanguage = function(language, add) {
 // Function to update filter.excludedCountries from input in main.js
 filter.updateStateCountry = function(country, visit) {
     if(visit){
-	filter.state.excludedCountries.push(country);
+    filter.state.excludedCountries.push(country);
     } else {
-	index = filter.state.excludedCountries.indexof(country);
+
+	index = filter.state.excludedCountries.indexOf(country);
 	filter.state.excludedCountries.splice(index,1);
+
     }
 
 }
-
 
 // Funciton to update filter.max/minSpeed from imput in main.js
 filter.updateStateSpeed = function(maxSpeed, minSpeed){
@@ -118,12 +129,12 @@ filter.updateStateSpeed = function(maxSpeed, minSpeed){
     filter.state.excludedMinSpeed = minSpeed;
 }
 
+
 // Funciton to update filter.max/min numb from imput in main.js
 filter.updateStateNumctry = function(maxNumctry, minNumctry){
     filter.state.excludedCountryMaxNum = maxNumctry;
     filter.state.excludedCountryMinNum = minNumctry;
 }
-
 
 var _makeUserArray = function() {
     var out = []; 
@@ -162,12 +173,15 @@ filter.filter = function(init=false) {
     pt('filter.byLanguage()');
      
     // Filter by country visited
-    //activeUsers = filter.byCountryVisited(activeUsers);
+    activeUsers = filter.byCountryVisited(activeUsers);
+    pt('filter.byCountry()');
 
     // Filter by number of countris visited
-
-    // Filter by time
+    activeUsers = filter.byCountryNum(activeUsers);
    
+    // Filter by speed
+    activeUsers = filter.bySpeed(activeUsers);
+    pt('filter.bySpeed()')
 
     // Synchronized data (this updates filter.currentData)
     _synchData(activeUsers);
@@ -180,8 +194,8 @@ filter.filter = function(init=false) {
     if(!init) {
         timeTravel.update();
         pt('timeTravel.update()');
-        //map.update();
-        //pt('map.update()');
+        map.update();
+        pt('map.update()');
         // timeLine.update();
         _updateStatusTable();
     }
@@ -217,11 +231,18 @@ var _makeUserHash = function() {
 
 
 // Hashmap for countries {'country1': [user1, user2], 'country2':[user1], ...}
+
 var _makeCountryHashMap = function () {
+ 
     var countryHash = {};
-    
+
     for(i = 0; i < filter.data.tweets.length; i++) {
 	var currentCntry = filter.data.tweets[i]['cntry'];
+
+        if(mCntrys.indexOf(currentCntry) === -1 ) {
+            currentCntry = "Others";
+        }
+
 	if (currentCntry in countryHash){
 	    countryHash[currentCntry].add(filter.data.tweets[i]['u_id']);
 	} else {
@@ -229,17 +250,24 @@ var _makeCountryHashMap = function () {
 	    countryHash[currentCntry].add(filter.data.tweets[i]['u_id']);
 	}				  
     }   
+    // Convert sets to arrays for compatibility
+
+    for(var country in countryHash) {
+        countryHash[country] = Array.from(countryHash[country]);
+    }
+
     return(countryHash);
 }
 
-////Hashmap for max speed {'speed1': [user1, user2], 'speed2': [user3], ...}
+//Hashmap for max speed {'speed1': [user1, user2], 'speed2': [user3], ...}
 var _makeMaxSpeedHashMap = function (){
     var users = filter.data.users;
     var hSpeedHS = {};
 
     for(i = 0; i < users.length; i++) {
         var spList = _speedList(users[i]['u_id']);
-        var maxSp = Math.max(...spList);
+        //console.log(spList.length)
+        var maxSp = Math.round(Math.max(...spList));
         //var minSp = Math.min(...splist);
         
         if(maxSp in hSpeedHS) {
@@ -258,7 +286,7 @@ var _makeMinSpeedHashMap = function (){
 
     for(i = 0; i < users.length; i++) {
         var spList = _speedList(users[i]['u_id']);
-        var minSp = Math.min(...spList);
+        var minSp = Math.round(Math.min(...spList));
         //var minSp = Math.min(...splist);
         
         if(minSp in lSpeedHS) {
@@ -278,13 +306,13 @@ var _makeCountryNumHashMap = function () {
     var countryNumHash = {};
 
     for (i = 0; i < filter.data.users.length; i++) {
-	var currentNum = filter.data.users[i]['cntryCount'];
-	if (currentNum in countryNumHash) {
-	    countryNumHash[currentNum].push(filter.data.users[i]['u_id']);
-	} else {
-	    countryNumHash[currentNum] = [];
-	    countryNumHash[currentNum].push(filter.data.users[i]['u_id']);
-	}
+    var currentNum = filter.data.users[i]['cntryCount'];
+    if (currentNum in countryNumHash) {
+        countryNumHash[currentNum].push(filter.data.users[i]['u_id']);
+    } else {
+        countryNumHash[currentNum] = [];
+        countryNumHash[currentNum].push(filter.data.users[i]['u_id']);
+    }
     }
     return(countryNumHash);
 }
@@ -341,15 +369,6 @@ var _makeUserTweetHashMap = function() {
     return(tweetsByUser);
 }
 
-// Take the excludedUsers generate a new currentData object and update all
-// visualizations
-filter.update = function() { 
-    //map.update();
-    //timeTravel.update();
-    //timeLine.update();
-    timeTravel.init();
-}
-
 // Check if current user should be included or excluded depending on language
 // checkbox profile
 var _checkLanguage = function(userObj) {
@@ -362,12 +381,12 @@ var _checkLanguage = function(userObj) {
 // Check if current user speaks the language
 // Return true for yes and false for no
 var _checkLanguage2 = function(userObj, lang){
-	var profileLang = userObj.prof_lang;
-	if(profileLang == lang){
-	    return true;
-	} else {
-	    return false;
-	}
+    var profileLang = userObj.prof_lang;
+    if(profileLang == lang){
+        return true;
+    } else {
+        return false;
+    }
 }
 
 //Get all the languages in data, so the checkbox can be generated accordingly
@@ -396,20 +415,20 @@ filter.initLanguages = function(){
 //modified from "http://stackoverflow.com/questions/27928/
 //calculate-distance-between-two-latitude-longitude-points-haversine-formula"
 var _getDisLatLon = function(lat1,lon1,lat2,lon2){
-	
-	function deg2rad(deg) {
-  		return deg * (Math.PI/180)
-	}
+    
+    function deg2rad(deg) {
+        return deg * (Math.PI/180)
+    }
 
-	var R = 6371; // Radius of the earth in km
-  	var dLat = deg2rad(lat2-lat1);  // deg2rad below
-  	var dLon = deg2rad(lon2-lon1); 
-  	var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2-lat1);  // deg2rad below
+    var dLon = deg2rad(lon2-lon1); 
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
     Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
     Math.sin(dLon/2) * Math.sin(dLon/2); 
-  	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-  	var d = R * c; // Distance in km
-  	return d;
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    var d = R * c; // Distance in km
+    return d;
 }
 
 //Caculate a speed list for the user
@@ -423,38 +442,69 @@ var _getDisLatLon = function(lat1,lon1,lat2,lon2){
 // userId: u_id of users and tweets
 var _speedList = function(userId){
     //console.log(userId);
-	var speedList = [];
-	var lat1 = -1.0, lon1 = -1.0, lat2 = -1.0, lon2 = -1.0;
-	var timestamp1, timestamp2;
 
+    var speedList = [];
+    var lat1 = -1.0, lon1 = -1.0, lat2 = -1.0, lon2 = -1.0;
+    var timestamp1, timestamp2;
+    var maxUserSp = -1, minUserSp = -1;
     var tweetsByCurrentUser = filter.tweetsByUser[userId];
 
-	for (var i = 0; i < tweetsByCurrentUser.length; i++){
+    for (var i = 0; i < tweetsByCurrentUser.length; i++){
 
+        /*
+        var orderedTweets = tweetsByCurrentUser.sort(function(a,b){
+            return new Date(a.time).getTime() - new Date(b.time).getTime();
+        })
+        */
         var tweet = tweetsByCurrentUser[i];
-
+        
         //console.log(tweet);
-		if (lat1 == -1.0){
-			lat1 = tweet.coord[1];
-			lon1 = tweet.coord[0];
-			timestamp1 = tweet.time;
-		} else {
-			lat2 = tweet.coord[1];
-			lon2 = tweet.coord[0];
-			timestamp2 = tweet.time;
-			var distanceKm = _getDisLatLon(lat1,lon1,lat2,lon2);
 
-			//var timeHour = (timestamp2.getTime() - timestamp1.getTime())/1000/3600;
-			var timeHour = (Date.parse(timestamp2) - Date.parse(timestamp1))/1000/3600;
+        if(lat1 == -1.0){
+            lat1 = tweet.coord[1];
+            lon1 = tweet.coord[0];
+            timestamp1 = tweet.time;
+        } else {
+            lat2 = tweet.coord[1];
+            lon2 = tweet.coord[0];
+            timestamp2 = tweet.time;
+            var distanceKm = _getDisLatLon(lat1,lon1,lat2,lon2);
+
+            //var timeHour = (timestamp2.getTime() - timestamp1.getTime())/1000/3600;
+            var timeHour = (Date.parse(timestamp2) - Date.parse(timestamp1))/1000/3600;
+            //if(timeHour == 0){
+              //  continue;
+            //}
+            if(timeHour == 0 && distanceKm > 10){
+                timeHour = 1;
+            }else if(timeHour == 0){
+                continue;
+            }
             var speedKmPerHour = Math.round(distanceKm/timeHour);
-			speedList.push(speedKmPerHour);
+            var speedMph = speedKmPerHour * 0.621371;
 
-			lat1 = lat2;
-			lon1 = lon2;
-			timestamp1 = timestamp2;
-		}
-	}
+            if(maxUserSp == -1){
+                maxUserSp = speedMph;
+                minUserSp = speedMph;
+            }else{
+                if(speedMph > maxUserSp){
+                    maxUserSp = speedMph;
+                }else if(speedMph < minUserSp){
+                    minUserSp = speedMph;
+                }
+            }
+            
 
+            lat1 = lat2;
+            lon1 = lon2;
+            timestamp1 = timestamp2;
+        }
+        
+    }
+
+    //if(maxUserSp == "NaN")
+    speedList.push(maxUserSp);
+    speedList.push(minUserSp);
     if(speedList.length > 0){
         return speedList;
     }else{
@@ -608,7 +658,7 @@ filter.byCountryVisited = function (activeUsers) {
 
     // Handle empty selection
     if(_isEmpty(activeUsers)){
-	return(activeUsers);
+    return(activeUsers);
     }
 
     // Handle the case where this filter makes no deletions
@@ -619,19 +669,15 @@ filter.byCountryVisited = function (activeUsers) {
     // Filtering happens
     // Exclude users from activeUsers by input from filter box checking
     
-    var excludedUsers = [];
+    var toFilter = [];
     for(var country in filter.countryHashMap) {
 	if(exclCountry.indexOf(country) > -1) {
-	    excludedUsers = excludedUsers.concat(filter.countryHashMap[country]);
+	    toFilter = toFilter.concat(filter.countryHashMap[country]);
 	} else {
 	    continue;
 	}
     }
-
-    for(i= 0; i<excludedUser.length; i++) {
-	delete activeUsers[excludedUsers[i]];
-    }
-
+    activeUsers = activeUsers.filter(byExclList(toFilter));
     return(activeUsers);
 }
 
@@ -648,7 +694,7 @@ filter.bySpeed = function(activeUsers) {
     
     // Handle the case where this filter makes no deletions (e.g. noting is
     // checked)
-    if(exclMaxSpeed >= 10000 && exclMinSpeed <= 0){
+    if(exclMaxSpeed >= 1000 && exclMinSpeed <= 0){
         return(activeUsers);
     }
     // Filtering operation happens here: Put all users you want to exclude into
@@ -656,23 +702,24 @@ filter.bySpeed = function(activeUsers) {
 
     var toFilter = [];
     for(var speed in filter.maxSpeedHashMap){
-        if(speed > exclMaxSpeed){
-            toFilter = excludedUsers.concat(filter.SpeedHashMap[speed.toString()]);
+        //console.log(speed);
+        if(Number(speed) > exclMaxSpeed || Number(speed) < exclMinSpeed){
+            toFilter = toFilter.concat(filter.maxSpeedHashMap[speed]);
         }
     }
+    /*
     for(var speed in filter.minSpeedHashMap){
-        if(speed < exclMinSpeed){
-            toFilter = excludedUsers.concat(filter.SpeedHashMap[speed.toString()]);
+        if(Number(speed) < exclMinSpeed){
+            toFilter = toFilter.concat(filter.minSpeedHashMap[speed]);
         }
-
-    uniqueArray = a.filter(function(toFilter, pos) {
-        return a.indexOf(toFilter) == pos;
-    });
-
-    activeUsers = activeUsers.filter(byExclList(uniqueArray));
-    return(activeUsers);
-
+    
+    //uniqueArray = a.filter(function(toFilter, pos) {
+        //return a.indexOf(toFilter) == pos;
+    //});
     }
+    */
+    activeUsers = activeUsers.filter(byExclList(toFilter));
+    return(activeUsers);
 }
 
 filter.byCountryNum = function (activeUsers) {
@@ -681,22 +728,24 @@ filter.byCountryNum = function (activeUsers) {
     var exclMinNumCountry = filter.state.excludedCountryMinNum;
 
     if(_isEmpty(activeUsers)){
-	return(activeUsers);
+    return(activeUsers);
     }
 
     // Exclude users from active Users by input from country number slider
+    if(exclMaxNumCountry >= 50 && exclMinNumCountry <= 0){
+        return(activeUsers);
+    }
 
     var excludedUsers = [];
     for ( var num in filter.countryNumHashMap) {
-	if(num > exclMaxNumCountry || num < exclMinNumCountry) {
-	    excludedUsers = exludedUsers.concat(filter.countryNumHashMap[num]);
-	} else {
-	    continue;
-	}
+    if(num > exclMaxNumCountry || num < exclMinNumCountry) {
+        excludedUsers = excludedUsers.concat(filter.countryNumHashMap[num]);
+    } else {
+        continue;
     }
-    for (i = 0; i < excludedUser.length; i++) {
-	delete activeUsers[excludedUsers[i]];
     }
+
+    activeUsers = activeUsers.filter(byExclList(excludedUsers));
 
     return(activeUsers);
 }
