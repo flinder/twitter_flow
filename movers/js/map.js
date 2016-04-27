@@ -1,5 +1,6 @@
 var map = {};
 
+// This function is only for testing
 map.fakeRealData = function () {
 
     // Load GeoJSON
@@ -25,7 +26,6 @@ map.fakeRealData = function () {
 
 map.init = function () {
 
-    
     // Stuff that is done once at startup
 
     // This is called when full geoJson data is loaded!
@@ -41,13 +41,14 @@ map.init = function () {
         id: 'mapbox.streets'
     }).addTo(map.leafletMap);
 
-    
-
-    // Load current data
+    // Grab filtered data and generate tile index
     map.update();
-    
 
-
+    // Create and add the movement layer
+    map.tileLayer = L.canvasTiles()
+          .params({ debug: false, padding: 5 })
+          .drawing(map.drawingOnCanvas)
+          .addTo(map.leafletMap);
 
 
 }
@@ -105,6 +106,7 @@ map.update = function () {
     
     // Filter data
     map.filteredData = map.filter(data.geoJsonTrips, filter.currentData.includedUsers);
+    console.log("this is in map update ", map.filteredData.features.length);
 
     // Generate tiles
     var tileOptions = {
@@ -122,7 +124,10 @@ map.update = function () {
 
 
     // Update tiles
-    map.updateLayer();
+    if (map.tileLayer) {
+        map.updateLayer();
+    }
+    
     
 
 }
@@ -130,26 +135,9 @@ map.update = function () {
 map.updateLayer = function () {
     
 
+    // Redraw Canvas tileLayer 
 
-    
-
-
-    // Get current x, y, z
-    // ...
-
-    // Delete old data layer
-    // ...
-
-    // Add new data
-    var tileLayer = L.canvasTiles()
-              .params({ debug: false, padding: 5 })
-              .drawing(map.drawingOnCanvas);
-           
-
-    tileLayer.addTo(map.leafletMap);
-
-
-    tileLayer.redraw();
+    map.tileLayer.redraw();
 
 }
 
@@ -166,7 +154,7 @@ map.drawingOnCanvas = function (canvasOverlay, params) {
     ctx.globalCompositeOperation = 'source-over';
 
 
-    //console.log('getting tile z' + params.tilePoint.z + '-' + params.tilePoint.x + '-' + params.tilePoint.y);
+    // console.log('getting tile z' + params.tilePoint.z + '-' + params.tilePoint.x + '-' + params.tilePoint.y);
 
     var tile = map.tileIndex.getTile(params.tilePoint.z, params.tilePoint.x, params.tilePoint.y);
     if (!tile) {
