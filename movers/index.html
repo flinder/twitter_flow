@@ -25,6 +25,7 @@
         <script src="js/geojson-vt-dev.js"></script>
         <script src="http://www.sumbera.com/gist/js/leaflet/canvas/L.CanvasTiles.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.js"></script>
+        <script src="js/L.CanvasTiles.js"></script>
         <script src="js/colorbrewer.js" type="text/javascript"></script>
 
         <!-- Main code -->
@@ -107,7 +108,7 @@
                     <select name="languages" multiple="" class="ui fluid dropdown">
                         <option value="">Language(s)</option>
                         <option value="english">English</option>
-                        <option value="eussian">Russian</option>
+                        <option value="russian">Russian</option>
                         <option value="german">German</option>
                         <option value="turkish">Turkish</option>
                         <option value="hebrew">Hebrew</option>
@@ -129,14 +130,33 @@
             <!-- country panel -->
             Country
             <div id="filter-country-panel" class="ui attached segment">
-                <a id="filter-country-country1" class="ui label country-item">country1<i class="delete icon"></i></a>
-                <a id="filter-country-country2" class="ui label country-item">country2<i class="delete icon"></i></a>
                 <div id="country-selection-list" style="margin-top: 0.5em; width: calc(100% - 45px); display:inline-block;">
                     <select name="countries" multiple="" class="ui fluid dropdown">
-                        <option value="">Country(s)</option>
-                    <option value="country1">country1</option>
-                    <option value="country2">country2</option>
-                    <option value="country3">country3</option>
+                    <option value="">Country(s)</option>
+                    <option value="DEU">DEU</option>
+                    <option value="ITA">ITA</option>
+                    <option value="CHE">CHE</option>
+                    <option value="AUT">AUT</option>
+                    <option value="CZE">CZE</option>
+                    <option value="SVK">SVK</option>
+                    <option value="HUN">HUN</option>
+                    <option value="ROU">ROU</option>
+                    <option value="HRV">HRV</option>
+                    <option value="SVN">SVN</option>
+                    <option value="BIH">BIH</option>
+                    <option value="SRB">SRB</option>
+                    <option value="MKD">MKD</option>
+                    <option value="BGR">BGR</option>
+                    <option value="ALB">ALB</option>
+                    <option value="GRC">GRC</option>
+                    <option value="TUR">TUR</option>
+                    <option value="SYR">SYR</option>
+                    <option value="LBN">LBN</option>
+                    <option value="JOR">JOR</option>
+                    <option value="IRQ">IRQ</option>
+                    <option value="IRN">IRN</option>
+                    <option value="EGY">EGY</option>
+                    <option value="Others">Others</option>
                     </select>
                 </div>
                 <button id="filter-country-add" class="ui tiny icon button">
@@ -151,10 +171,18 @@
 
             <!-- speed range -->
             <p>
-                <label for="filter-speed-amount">Speed range:</label>
+                <label for="filter-speed-amount">Max Speed Range:</label>
                 <input type="text" id="filter-speed-amount" readonly style="border:0; color:#f6931f; font-weight:bold; width:150px;">
             </p>
             <div id="filter-speed-slider-range"></div>
+            <div style="height:0.5em;"></div>
+
+            <!-- number of countries -->
+            <p>
+                <label for="filter-numctry-slider">Number of Visited Countries:</label>
+                <input type="text" id="filter-numctry-slider" readonly style="border:0; color:#f6931f; font-weight:bold; width:150px;">
+            </p>
+            <div id="filter-numctry-slider-range"></div>
             <div style="height:0.5em;"></div>
 
         </div>

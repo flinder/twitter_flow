@@ -20,6 +20,7 @@ $(document).ready(function(){
 
 	function init_btns(){
 
+		//functions for the speed filter slider bar
 		$( "#filter-speed-slider-range" ).slider({
 			range: true,
 			//min: filter.state.excludedMinSpeed,
@@ -40,6 +41,27 @@ $(document).ready(function(){
 
 		$( "#filter-speed-amount" ).val( $( "#filter-speed-slider-range" ).slider( "values", 0 ) +
 		" - " + $( "#filter-speed-slider-range" ).slider( "values", 1 ) + " (mph)" );
+		
+		//functions for the number of country slider bar
+		$( "#filter-numctry-slider-range" ).slider({
+			range: true,
+			min: 0,
+			max: 50,
+			//values: [ 0, 10000 ],
+			values: [ filter.state.excludedMinNumCtry, filter.state.excludedMaxNumCtry ],
+			slide: function( event, ui ) {
+			$( "#filter-numctry-slider" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+			//console.log("Value changed");
+
+			filter.updateState(ui.values[1],ui.values[0]);
+			filter.filter();
+			}
+
+
+		});
+
+		$( "#filter-numctry-slider" ).val( $( "#filter-numctry-slider-range" ).slider( "values", 0 ) +
+		" - " + $( "#filter-numctry-slider-range" ).slider( "values", 1 ));
 
 		$("body").on("click", "#view-selector .item", function() {
 			$("#view-selector .item").removeClass("active");
@@ -92,24 +114,12 @@ $(document).ready(function(){
            filter.exportState();
         });
 
-
-
-		$('#country-selection-list .ui.dropdown').dropdown({
-			allowAdditions: true
-		});
-
-		$('#language-selection-list .ui.dropdown').dropdown({
+                
+                // Language Filter UI functionality
+                // -------------------------------
+ 		$('#language-selection-list .ui.dropdown').dropdown({
 				allowAdditions: true
 		});
-
-		$("body").on("click", "#filter-country-add", function() {
-			$('#country-selection-list').find(".label").each(function(){
-
-			});
-			filter.filter();
-			$('#country-selection-list .ui.dropdown').dropdown('clear');	
-		});
-
 		$("body").on("click", "#filter-language-add", function() {
 			$('#language-selection-list').find(".label").each(function(){
 				var language = $(this).attr("data-value");
@@ -131,72 +141,31 @@ $(document).ready(function(){
 			filter.filter();
 		});
 
-		var countryDropNumber = 1;
 
-		$("#filter-country-button").on("click", function() {
-
-			
-			var currentRowID = "#filter-country-row" + countryDropNumber;
-			countryDropNumber += 1;
-			var nextRowID = "filter-country-row" + countryDropNumber;
-
-			var countryList = ["Other World", "Other Europe", "Germany", "Italy", 
-			"Switzerland", "Austria", "Czech Rep", "SlovakiaHungary", "Romania", 
-			"Croatia", "Slovenia", "Bosnia & Herzegovina", "Serbia & Montenegro", 
-			"Macedonia", "Bulgaria", "Albania", "Greece", "Turkey", "Syria", 
-			"Lebanon", "Jordan", "Iraq", "Iran", "Egypt", "Other Asia", "Other Africa"];
-			
-			$("#filter-country").append(
-			//$(this).append(
-
-            	'<div class = "row" id="'+nextRowID+'">' +
-                    '<div class = "col s2">' +
-                        '<select>' +
-                            '<option value="" disabled selected>Select a country</option>' +
-                            '<option value="Greek">Greek</option>' +
-                            '<option value="Turkey">Turkey</option>' +
-                        '</select>' +
-                    '</div>' +
-                    '<div class = "col s1">' +
-                    '<form action = "#">' +
-                        '<input name="group'+countryDropNumber+'" type="radio" id="ctryKeep'+countryDropNumber+'" />' +
-                        '<label for="ctryKeep'+countryDropNumber+'">Keep</label>' +
-                        '<input name="group'+countryDropNumber+'" type="radio" id="ctryRmv'+countryDropNumber+'" />' +
-                        '<label for="ctryRmv'+countryDropNumber+'">Remove</label>' +
-                    '</div>' +
-                    '</form>' +
-                    '<div class = "col s1">' +
-                        '<button class = "ctryCancelButton" id="ctryCancelBtn'+countryDropNumber+'">Cancel</button>' +
-                    '</div>' +
-                '</div>'
-
-				);
-
-			var buttonID = "#ctryCancelBtn" +countryDropNumber
-
-			$(buttonID).on("click",function(){
-				//onsole.log($(this).attr('id'));
-				//ar theStr = $(this).attr('id')
-				var delNum = ($(this).attr('id')).replace(/^\D+/g, "");
-				var delRowID = "filter-country-row" + delNum;
-				console.log(delRowID);
-				var elem = document.getElementById(delRowID);
-	    		elem.parentNode.removeChild(elem);
-	    		//return false;
-	    		//console.log('cancel button clicked');
-			});
+                // Country Filter UI functionality
+                // -------------------------------
+ 		$('#country-selection-list .ui.dropdown').dropdown({
+				allowAdditions: true
 		});
-		
-		$("#ctryCancelBtn1").on("click",function(){
-			//console.log($(this).attr('id'));
-			//ar theStr = $(this).attr('id')
-			var delNum = ($(this).attr('id')).replace(/^\D+/g, "");
-			var delRowID = "filter-country-row" + delNum;
-			console.log(delRowID);
-			var elem = document.getElementById(delRowID);
-    		elem.parentNode.removeChild(elem);
-    		//return false;
-    		//console.log('cancel button clicked');
+		$("body").on("click", "#filter-country-add", function() {
+			$('#country-selection-list').find(".label").each(function(){
+				var country = $(this).attr("data-value");
+				var tmp = '<a class="ui label country-item" data-value=' + country + '>' + country + '<i class="delete icon"></i></a>'
+				$("#filter-country-panel").prepend(tmp);
+				$('#country-selection-list').find(".item[data-value='" + country + "']").hide();
+				filter.updateStateCountry(country, visit=true);
+			});
+			$('#country-selection-list .ui.dropdown').dropdown('clear');
+
+			filter.filter();
+		});
+
+		$("body").on("click", ".country-item .delete", function() {
+			var country = $(this).parent().attr("data-value");
+			$(this).parent().remove();
+			$('#country-selection-list').find(".item[data-value='" + country + "']").show();
+			filter.updateStateCountry(country, visit=false);
+			filter.filter();
 		});
 
 	};
