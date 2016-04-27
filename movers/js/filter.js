@@ -8,17 +8,15 @@ filter.init = function() {
     st();
     // Set data
     filter.data = data;
-    filter.chunkSize = 20;
 
     filter.currentData = {};
     filter.currentData.users = filter.data.users;
     filter.currentData.tweets = filter.data.tweets; 
     filter.currentData.includedUsers = [];
-    filter.nTotalUsers = filter.data.users.length;
 
     // Get values for status table
-    //filter.nTotalUsers = filter.data.users.length; 
-    //filter.chunkSize = 20;
+    filter.nTotalUsers = filter.data.users.length; 
+    filter.chunkSize = 20;
     filter.nCurrentChunk;
 
     // Generate a hashmap user -> tweets
@@ -30,8 +28,10 @@ filter.init = function() {
     // Generate a hashmap speed->user_id
     filter.maxSpeedHashMap = _makeMaxSpeedHashMap();
     filter.minSpeedHashMap = _makeMinSpeedHashMap();
+
     // Generate a hashmap number of visited counties -> user_id
     filter.numctryHashMap = _makeCountryNumHashMap();
+
 
     // Main object holding the status of all filter controls
     filter.state = {};
@@ -42,6 +42,7 @@ filter.init = function() {
 
     filter.state.excludedMaxSpeed = 1000;
     filter.state.excludedMinSpeed = 0;
+
 
     filter.state.excludedCountryMaxNum = 50;
     filter.state.excludedCountryMinNum = 0;
@@ -113,8 +114,10 @@ filter.updateStateCountry = function(country, visit) {
     if(visit){
     filter.state.excludedCountries.push(country);
     } else {
-    index = filter.state.excludedCountries.indexOf(country);
-    filter.state.excludedCountries.splice(index,1);
+
+	index = filter.state.excludedCountries.indexOf(country);
+	filter.state.excludedCountries.splice(index,1);
+
     }
 
 }
@@ -125,11 +128,13 @@ filter.updateStateSpeed = function(maxSpeed, minSpeed){
     filter.state.excludedMinSpeed = minSpeed;
 }
 
+
 // Funciton to update filter.max/min numb from imput in main.js
 filter.updateStateNumctry = function(maxNumctry, minNumctry){
     filter.state.excludedCountryMaxNum = maxNumctry;
     filter.state.excludedCountryMinNum = minNumctry;
 }
+
 
 var _makeUserArray = function() {
     var out = []; 
@@ -351,15 +356,6 @@ var _makeUserTweetHashMap = function() {
     return(tweetsByUser);
 }
 
-// Take the excludedUsers generate a new currentData object and update all
-// visualizations
-filter.update = function() { 
-    //map.update();
-    //timeTravel.update();
-    //timeLine.update();
-    timeTravel.init();
-}
-
 // Check if current user should be included or excluded depending on language
 // checkbox profile
 var _checkLanguage = function(userObj) {
@@ -433,6 +429,7 @@ var _getDisLatLon = function(lat1,lon1,lat2,lon2){
 // userId: u_id of users and tweets
 var _speedList = function(userId){
     //console.log(userId);
+
     var speedList = [];
     var lat1 = -1.0, lon1 = -1.0, lat2 = -1.0, lon2 = -1.0;
     var timestamp1, timestamp2;
@@ -440,6 +437,7 @@ var _speedList = function(userId){
     var tweetsByCurrentUser = filter.tweetsByUser[userId];
 
     for (var i = 0; i < tweetsByCurrentUser.length; i++){
+
         /*
         var orderedTweets = tweetsByCurrentUser.sort(function(a,b){
             return new Date(a.time).getTime() - new Date(b.time).getTime();
@@ -448,6 +446,7 @@ var _speedList = function(userId){
         var tweet = tweetsByCurrentUser[i];
         
         //console.log(tweet);
+
         if(lat1 == -1.0){
             lat1 = tweet.coord[1];
             lon1 = tweet.coord[0];
@@ -465,7 +464,6 @@ var _speedList = function(userId){
             }
             var speedKmPerHour = Math.round(distanceKm/timeHour);
             var speedMph = speedKmPerHour * 0.621371;
-            //speedList.push(speedKmPerHour);
 
             if(maxUserSp == -1){
                 maxUserSp = speedMph;
@@ -478,12 +476,14 @@ var _speedList = function(userId){
                 }
             }
             
+
             lat1 = lat2;
             lon1 = lon2;
             timestamp1 = timestamp2;
         }
         
     }
+
     //if(maxUserSp == "NaN")
     speedList.push(maxUserSp);
     speedList.push(minUserSp);
