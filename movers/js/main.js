@@ -47,8 +47,8 @@ $(document).ready(function(){
 			range: true,
 			min: 0,
 			max: 50,
-			//values: [ 0, 10000 ],
-			values: [ filter.state.excludedMinNumCtry, filter.state.excludedMaxNumCtry ],
+			values: [ 0, 10000 ],
+			//values: [ filter.state.excludedMinNumCtry, filter.state.excludedMaxNumCtry ],
 			slide: function( event, ui ) {
 			$( "#filter-numctry-slider" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
 			//console.log("Value changed");
