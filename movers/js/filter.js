@@ -25,6 +25,7 @@ filter.init = function() {
     filter.languageHashMap = _makeLanguageHashMap();
     // Generate a hashmap country -> user_id
     filter.countryHashMap = _makeCountryHashMap();
+    console.log(filter.countryHashMap);
     // Generate a hashmap speed->user_id
     filter.maxSpeedHashMap = _makeMaxSpeedHashMap();
     filter.minSpeedHashMap = _makeMinSpeedHashMap();
@@ -155,11 +156,11 @@ filter.filter = function(init=false) {
     pt('filter.byLanguage()');
      
     // Filter by country visited
-    //activeUsers = filter.byCountryVisited(activeUsers);
+    activeUsers = filter.byCountryVisited(activeUsers);
+    pt('filter.byCountry()');
 
     // Filter by number of countris visited
 
-    // Filter by time
    
     // Filter by speed
     activeUsers = filter.bySpeed(activeUsers);
@@ -213,11 +214,18 @@ var _makeUserHash = function() {
 
 
 // Hashmap for countries {'country1': [user1, user2], 'country2':[user1], ...}
+
 var _makeCountryHashMap = function () {
+ 
     var countryHash = {};
-    
+
     for(i = 0; i < filter.data.tweets.length; i++) {
 	var currentCntry = filter.data.tweets[i]['cntry'];
+
+        if(mCntrys.indexOf(currentCntry) === -1 ) {
+            currentCntry = "Others";
+        }
+
 	if (currentCntry in countryHash){
 	    countryHash[currentCntry].add(filter.data.tweets[i]['u_id']);
 	} else {
@@ -225,6 +233,12 @@ var _makeCountryHashMap = function () {
 	    countryHash[currentCntry].add(filter.data.tweets[i]['u_id']);
 	}				  
     }   
+    // Convert sets to arrays for compatibility
+
+    for(var country in countryHash) {
+        countryHash[country] = Array.from(countryHash[country]);
+    }
+
     return(countryHash);
 }
 
@@ -629,18 +643,15 @@ filter.byCountryVisited = function (activeUsers) {
     // Filtering happens
     // Exclude users from activeUsers by input from filter box checking
     
-    var excludedUsers = [];
+    var toFilter = [];
     for(var country in filter.countryHashMap) {
 	if(exclCountry.indexOf(country) > -1) {
-	    excludedUsers = excludedUsers.concat(filter.countryHashMap[country]);
+	    toFilter = toFilter.concat(filter.countryHashMap[country]);
 	} else {
 	    continue;
 	}
     }
-
-    for(i= 0; i<excludedUser.length; i++) {
-	delete activeUsers[excludedUsers[i]];
-    }
+    activeUsers = activeUsers.filter(byExclList(toFilter));
 
     return(activeUsers);
 }

@@ -133,6 +133,29 @@ $(document).ready(function(){
 
                 // Country Filter UI functionality
                 // -------------------------------
+ 		$('#country-selection-list .ui.dropdown').dropdown({
+				allowAdditions: true
+		});
+		$("body").on("click", "#filter-country-add", function() {
+			$('#country-selection-list').find(".label").each(function(){
+				var country = $(this).attr("data-value");
+				var tmp = '<a class="ui label country-item" data-value=' + country + '>' + country + '<i class="delete icon"></i></a>'
+				$("#filter-country-panel").prepend(tmp);
+				$('#country-selection-list').find(".item[data-value='" + country + "']").hide();
+				filter.updateStateCountry(country, visit=true);
+			});
+			$('#country-selection-list .ui.dropdown').dropdown('clear');
+
+			filter.filter();
+		});
+
+		$("body").on("click", ".country-item .delete", function() {
+			var country = $(this).parent().attr("data-value");
+			$(this).parent().remove();
+			$('#country-selection-list').find(".item[data-value='" + country + "']").show();
+			filter.updateStateCountry(country, visit=false);
+			filter.filter();
+		});
 
 	};
 
