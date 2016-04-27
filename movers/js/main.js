@@ -7,12 +7,12 @@ $(document).ready(function(){
         st(); 
 	$.getJSON("data/main_data.json", function(json) {
                 $.getJSON("data/main_data_trips.json", function(geojson) {
+                	init_btns();
                     data.geoJsonTrips = geojson;  
                     data.tweets = json.tweets;
                     data.users = json.users;
                     pt('Load data');
-                    filter.init();
-                    init_btns();                    
+                    filter.init();                  
                     pt('init_btns()');
                     console.log('All initialized');
                 });	
@@ -26,17 +26,16 @@ $(document).ready(function(){
 			//max: filter.state.excludedMaxSpeed,
 			min: 0,
 			max: 1000,
-			//values: [ 0, 10000 ],
-			values: [ filter.state.excludedMinSpeed, filter.state.excludedMaxSpeed ],
-			slide: function( event, ui ) {
-			$( "#filter-speed-amount" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] + " (mph)" );
-			console.log("Value changed");
-
-			filter.updateStateSpeed(ui.values[1],ui.values[0]);
-			filter.filter();
+			values: [ 0, 1000 ],
+			// values: [ filter.state.excludedMinSpeed, filter.state.excludedMaxSpeed ],
+			slide: function(event, ui) {
+				$( "#filter-speed-amount" ).val( ui.values[0] + " - " + ui.values[1] + " (mph)" );
+				console.log("Value changed");
+			},
+			stop: function(event, ui) {
+				filter.updateStateSpeed(ui.values[1], ui.values[0]);
+				filter.filter();				
 			}
-
-
 		});
 
 		$( "#filter-speed-amount" ).val( $( "#filter-speed-slider-range" ).slider( "values", 0 ) +
