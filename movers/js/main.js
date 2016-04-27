@@ -7,12 +7,12 @@ $(document).ready(function(){
         st(); 
 	$.getJSON("data/main_data.json", function(json) {
                 $.getJSON("data/main_data_trips.json", function(geojson) {
+                	init_btns();
                     data.geoJsonTrips = geojson;  
                     data.tweets = json.tweets;
                     data.users = json.users;
                     pt('Load data');
-                    filter.init();
-                    init_btns();                    
+                    filter.init();                  
                     pt('init_btns()');
                     console.log('All initialized');
                 });	
@@ -27,14 +27,15 @@ $(document).ready(function(){
 			//max: filter.state.excludedMaxSpeed,
 			min: 0,
 			max: 1000,
-			//values: [ 0, 10000 ],
-			values: [ filter.state.excludedMinSpeed, filter.state.excludedMaxSpeed ],
-			slide: function( event, ui ) {
-			$( "#filter-speed-amount" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] + " (mph)" );
-			//console.log("Value changed");
-
-			filter.updateStateSpeed(ui.values[1],ui.values[0]);
-			filter.filter();
+			values: [ 0, 1000 ],
+			// values: [ filter.state.excludedMinSpeed, filter.state.excludedMaxSpeed ],
+			slide: function(event, ui) {
+				$( "#filter-speed-amount" ).val( ui.values[0] + " - " + ui.values[1] + " (mph)" );
+				console.log("Value changed");
+			},
+			stop: function(event, ui) {
+				filter.updateStateSpeed(ui.values[1], ui.values[0]);
+				filter.filter();				
 			}
 		});
 
@@ -46,8 +47,10 @@ $(document).ready(function(){
 			range: true,
 			min: 0,
 			max: 50,
-			//values: [ 0, 10000 ],
-			values: [ filter.state.excludedCountryMinNum, filter.state.excludedCountryMaxNum ],
+
+			values: [ 0, 50],
+			//values: [ filter.state.excludedMinNumCtry, filter.state.excludedMaxNumCtry ],
+
 			slide: function( event, ui ) {
 			$( "#filter-numctry-slider" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
 			//console.log("Value changed");
@@ -73,35 +76,45 @@ $(document).ready(function(){
 			console.log("Value changed");
 		})
 
+		$('#transparency-checkbox').checkbox({
+			onChecked: function() {
+				timeTravel.opacity = 0.5;
+				filter.filter();
+			},
+			onUnchecked: function() {
+				timeTravel.opacity = 1;
+				filter.filter();
+			}
+		});
 
-                // More and less Data Buttons
-                // -------------------------
-                $("body").on("click", "#more-data-bttn", function() {
+        // More and less Data Buttons
+        // -------------------------
+        $("body").on("click", "#more-data-bttn", function() {
 
-                                if(filter.nCurrentChunk >= filter.nTotalUsers) {
-                       alert("ERROR: There is no more data to add.");
-                       return(null);
-                   }
-                   filter.state.chunker++;
-                   filter.filter();
-                });
-                $("body").on("click", "#less-data-bttn", function() {
-                   if(filter.state.chunker === 1) {
-                       alert("ERROR: Can't remove more data.");
-                       return(null);
-                   }
-                   filter.state.chunker--;
-                   filter.filter();
-                });
-                
-                // Export Import Buttons
-                // --------------------
-                $("body").on("click", "#import-bttn", function() { 
-                   alert('Not implemented');
-                });
-                $("body").on("click", "#export-bttn", function() { 
-                   filter.exportState();
-                });
+                        if(filter.nCurrentChunk >= filter.nTotalUsers) {
+               alert("ERROR: There is no more data to add.");
+               return(null);
+           }
+           filter.state.chunker++;
+           filter.filter();
+        });
+        $("body").on("click", "#less-data-bttn", function() {
+           if(filter.state.chunker === 1) {
+               alert("ERROR: Can't remove more data.");
+               return(null);
+           }
+           filter.state.chunker--;
+           filter.filter();
+        });
+        
+        // Export Import Buttons
+        // --------------------
+        $("body").on("click", "#import-bttn", function() { 
+           alert('Not implemented');
+        });
+        $("body").on("click", "#export-bttn", function() { 
+           filter.exportState();
+        });
 
                 
                 // Language Filter UI functionality
