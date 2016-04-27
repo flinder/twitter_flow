@@ -47,12 +47,12 @@ $(document).ready(function(){
 			min: 0,
 			max: 50,
 			//values: [ 0, 10000 ],
-			values: [ filter.state.excludedMinNumCtry, filter.state.excludedMaxNumCtry ],
+			values: [ filter.state.excludedCountryMinNum, filter.state.excludedCountryMaxNum ],
 			slide: function( event, ui ) {
 			$( "#filter-numctry-slider" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
 			//console.log("Value changed");
 
-			filter.updateState(ui.values[1],ui.values[0]);
+			filter.updateStateNumctry(ui.values[1],ui.values[0]);
 			filter.filter();
 			}
 

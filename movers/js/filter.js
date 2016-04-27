@@ -31,7 +31,7 @@ filter.init = function() {
     filter.minSpeedHashMap = _makeMinSpeedHashMap();
 
     // Generate a hashmap number of visited counties -> user_id
-    filter.numctryHashMap = _makeCountryNumHashMap();
+    filter.countryNumHashMap = _makeCountryNumHashMap();
 
 
     // Main object holding the status of all filter controls
@@ -136,7 +136,6 @@ filter.updateStateNumctry = function(maxNumctry, minNumctry){
     filter.state.excludedCountryMinNum = minNumctry;
 }
 
-
 var _makeUserArray = function() {
     var out = []; 
     for(i = 0; i < filter.data.users.length; i++){
@@ -178,7 +177,7 @@ filter.filter = function(init=false) {
     pt('filter.byCountry()');
 
     // Filter by number of countris visited
-
+    activeUsers = filter.byCountryNum(activeUsers);
    
     // Filter by speed
     activeUsers = filter.bySpeed(activeUsers);
@@ -473,7 +472,12 @@ var _speedList = function(userId){
 
             //var timeHour = (timestamp2.getTime() - timestamp1.getTime())/1000/3600;
             var timeHour = (Date.parse(timestamp2) - Date.parse(timestamp1))/1000/3600;
-            if(timeHour == 0){
+            //if(timeHour == 0){
+              //  continue;
+            //}
+            if(timeHour == 0 && distanceKm > 10){
+                timeHour = 1;
+            }else if(timeHour == 0){
                 continue;
             }
             var speedKmPerHour = Math.round(distanceKm/timeHour);
@@ -728,18 +732,20 @@ filter.byCountryNum = function (activeUsers) {
     }
 
     // Exclude users from active Users by input from country number slider
+    if(exclMaxNumCountry >= 50 && exclMinNumCountry <= 0){
+        return(activeUsers);
+    }
 
     var excludedUsers = [];
     for ( var num in filter.countryNumHashMap) {
     if(num > exclMaxNumCountry || num < exclMinNumCountry) {
-        excludedUsers = exludedUsers.concat(filter.countryNumHashMap[num]);
+        excludedUsers = excludedUsers.concat(filter.countryNumHashMap[num]);
     } else {
         continue;
     }
     }
-    for (i = 0; i < excludedUser.length; i++) {
-    delete activeUsers[excludedUsers[i]];
-    }
+
+    activeUsers = activeUsers.filter(byExclList(excludedUsers));
 
     return(activeUsers);
 }
