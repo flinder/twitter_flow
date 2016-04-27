@@ -69,7 +69,8 @@
     </div>
 </div>
 
-        <div id="filter-container" style="top: calc(53px + 1em);">
+        <div id="filter-container" style="height: 500px;">
+        <!-- ; top: calc(53px + 1em); -->
 
             <!-- Status panel -->
             Status
@@ -170,20 +171,24 @@
             <div style="height:0.5em;"></div>
 
             <!-- speed range -->
+            <div id="slider-container">
             <p>
                 <label for="filter-speed-amount">Max Speed Range:</label>
-                <input type="text" id="filter-speed-amount" readonly style="border:0; color:#f6931f; font-weight:bold; width:150px;">
+                <input type="text" id="filter-speed-amount" readonly style="border:0; color:#f6931f; font-weight:bold; width:140px;">
             </p>
             <div id="filter-speed-slider-range"></div>
             <div style="height:0.5em;"></div>
+            </div>
 
             <!-- number of countries -->
+            <div id="slider-container">
             <p>
                 <label for="filter-numctry-slider">Number of Visited Countries:</label>
-                <input type="text" id="filter-numctry-slider" readonly style="border:0; color:#f6931f; font-weight:bold; width:150px;">
+                <input type="text" id="filter-numctry-slider" readonly style="border:0; color:#f6931f; font-weight:bold; width:140px;">
             </p>
             <div id="filter-numctry-slider-range"></div>
             <div style="height:0.5em;"></div>
+            </div>
 
         </div>
 		<div id="main-container">
@@ -194,9 +199,9 @@
                 <a class="item" data-value="timeTravel-container">
                     Time Travel
                 </a>
-                <a class="item">
+               <!--  <a class="item">
                     Other View
-                </a>
+                </a> -->
             </div>
             <div id="map-container" class="ui segment view"></div>
 
