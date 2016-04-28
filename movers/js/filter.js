@@ -5,6 +5,10 @@ var pt = utils.printTime;
 filter = {};
 
 filter.init = function() {
+
+    userCF = crossfilter(data.users);
+    userByUserid = userCF.dimension(function(d) { return d.u_id; });
+    
     st();
     // Set data
     filter.data = data;

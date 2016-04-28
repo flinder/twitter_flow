@@ -6,16 +6,16 @@ $(document).ready(function(){
         var pt = utils.printTime;
         st(); 
 	$.getJSON("data/main_data.json", function(json) {
-                $.getJSON("data/main_data_trips.json", function(geojson) {
-                	init_btns();
-                    data.geoJsonTrips = geojson;  
-                    data.tweets = json.tweets;
-                    data.users = json.users;
-                    pt('Load data');
-                    filter.init();                  
-                    pt('init_btns()');
-                    console.log('All initialized');
-                });	
+        $.getJSON("data/main_data_trips.json", function(geojson) {
+        	init_btns();
+            data.geoJsonTrips = geojson;  
+            data.tweets = json.tweets;
+            data.users = json.users;
+            pt('Load data');
+            filter.init();                  
+            pt('init_btns()');
+            console.log('All initialized');
+        });	
 	});
 
 	function init_btns(){
@@ -84,6 +84,14 @@ $(document).ready(function(){
 				filter.filter();
 			}
 		});
+
+		$('#color-by .checkbox').checkbox({
+			onChecked: function() {
+				timeTravel.colorAttribute = $(this).attr("data-value");
+				filter.filter();
+			}			
+		});
+		
 
         // More and less Data Buttons
         // -------------------------
@@ -186,6 +194,13 @@ $(document).ready(function(){
 	        r = (num & 0xFF0000) >>> 16,
 	        a = 1 ;
 	    return "rgba(" + [r, g, b, a].join(",") + ")";
+	}
+
+	getUserById = function (u_id) {
+		userByUserid.filterAll();
+		userByUserid.filter(u_id);
+		if (userByUserid.top(1).length == 0) return {};
+		return userByUserid.top(1)[0];
 	}
 
 });
