@@ -9,7 +9,7 @@ $(document).ready(function(){
 	timeTravel.opacity = 0.5;
 	timeTravel.colorAttribute = "user";
 
-	mCntrys = 
+	mCntrys =
 		["DEU",
 		"ITA",
 		"CHE",
@@ -88,7 +88,7 @@ $(document).ready(function(){
 				item.cntry_val = mCntrys.indexOf(item.cntry);
 			    timeTravel.trips.push(item);
 			}
-			timedataByUserid.filterAll();	
+			timedataByUserid.filterAll();
 		});
 
 		// Set the dimensions of the canvas / graph
@@ -97,7 +97,7 @@ $(document).ready(function(){
 		    height = 500 - margin.top - margin.bottom;
 
 		// Parse the date / time
-		parseDate = d3.time.format("%Y-%m-%d %H:%M:%S").parse; 
+		parseDate = d3.time.format("%Y-%m-%d %H:%M:%S").parse;
 
 		// Set the ranges
 		x = d3.time.scale().range([0, width]);
@@ -121,7 +121,7 @@ $(document).ready(function(){
 		        .attr("width", width + margin.left + margin.right)
 		        .attr("height", height + margin.top + margin.bottom)
 		    .append("g")
-		        .attr("transform", 
+		        .attr("transform",
 		              "translate(" + margin.left + "," + margin.top + ")");
 
 	    mData = timeTravel.trips;
@@ -134,7 +134,7 @@ $(document).ready(function(){
 
 	    // Scale the range of the data
 	    x.domain(d3.extent(mData, function(d) { return d.date; }));
-	    y.domain([0, d3.max(mData, function(d) { return d.cntry_val; })]); 
+	    y.domain([0, d3.max(mData, function(d) { return d.cntry_val; })]);
 
 	    // Nest the entries by symbol
 	    var dataNest = d3.nest()
@@ -198,19 +198,22 @@ $(document).ready(function(){
 	    svg.append("g")
 	        .attr("class", "x axis")
 	        .attr("transform", "translate(0," + height + ")")
+					.style("fill", "white")
 	        .call(xAxis);
 
 	    // Add the Y Axis
 	    svg.append("g")
 	        .attr("class", "y axis")
+					.style("fill", "white")
 	        .call(yAxis);
 
 	    d3.select(".y.axis").selectAll(".tick").selectAll("text")
 	    	.text(function(d) { return Country.getFullFromAbbr(mCntrys[d]); })
 			.filter(function(d) { return mCntrys[d] === "DEU" || mCntrys[d] === "SYR"})
-			.style("font-weight", "bold");
+			.style("font-weight", "bold")
+			.style("fill", "white");
 
-		d3.selection.prototype.moveToFront = function() {  
+		d3.selection.prototype.moveToFront = function() {
 			return this.each(function(){
 				this.parentNode.appendChild(this);
 			});
@@ -271,7 +274,7 @@ $(document).ready(function(){
 				item.cntry_val = mCntrys.indexOf(item.cntry);
 			    timeTravel.trips.push(item);
 			}
-			timedataByUserid.filterAll();	
+			timedataByUserid.filterAll();
 		});
 
 		mData = timeTravel.trips;
@@ -284,7 +287,7 @@ $(document).ready(function(){
 
 	    // Scale the range of the data
 	    x.domain(d3.extent(mData, function(d) { return d.date; }));
-	    y.domain([0, d3.max(mData, function(d) { return d.cntry_val; })]); 
+	    y.domain([0, d3.max(mData, function(d) { return d.cntry_val; })]);
 
 	    // Nest the entries by symbol
 	    var dataNest = d3.nest()
