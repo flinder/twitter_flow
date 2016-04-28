@@ -31,7 +31,7 @@ Language.data = [{
         full: "arabic",
         abbr: "ar"
     }, {
-        full: "spainish",
+        full: "spanish",
         abbr: "es"
     }, {
         full: "dutch",
