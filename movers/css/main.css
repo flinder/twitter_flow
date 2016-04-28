@@ -20,18 +20,18 @@
 }
 
 .language-item {
-  margin-top: 0.5em !important; 
+  margin-top: 0.5em !important;
 }
 
 .country-item {
-  margin-top: 0.5em !important; 
+  margin-top: 0.5em !important;
 }
 
 #main-container {
   position: fixed;
   left: 260px;
   right: 0;
-  top: 53px; 
+  top: 53px;
 }
 
 #map-container {
@@ -42,9 +42,11 @@
 #timeTravel-content {
   height: 500px;
   padding: 0;
+  background-color:#545454;
+  color:#ffffff
 }
 
-path { 
+path {
     stroke-width: 2;
     fill: none;
 }
