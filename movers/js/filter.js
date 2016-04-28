@@ -8,11 +8,18 @@ filter.init = function() {
     st();
     // Set data
     filter.data = data;
-
+    
+    // Get an array of all user id's
+    var n = filter.data.users.length;
+    filter.data.allUsers = new Array(n);
+    for(var i = 0; i < n; i++) {
+        filter.data.allUsers[i] = filter.data.users[i]['u_id'];
+    }
     filter.currentData = {};
     filter.currentData.users = filter.data.users;
     filter.currentData.tweets = filter.data.tweets; 
     filter.currentData.includedUsers = [];
+
 
     // Get values for status table
     filter.nTotalUsers = filter.data.users.length; 
@@ -25,7 +32,7 @@ filter.init = function() {
     filter.languageHashMap = _makeLanguageHashMap();
     // Generate a hashmap country -> user_id
     filter.countryHashMap = _makeCountryHashMap();
-    console.log(filter.countryHashMap);
+
     // Generate a hashmap speed->user_id
     filter.maxSpeedHashMap = _makeMaxSpeedHashMap();
     filter.minSpeedHashMap = _makeMinSpeedHashMap();
@@ -39,11 +46,11 @@ filter.init = function() {
     filter.state.excludedUsers = [];
     filter.state.excludedLanguages = [];
     filter.state.excludedCountries = [];
+    filter.state.includeCountries = [];
     filter.state.chunker = 1;
 
     filter.state.excludedMaxSpeed = 1000;
     filter.state.excludedMinSpeed = 0;
-
 
     filter.state.excludedCountryMaxNum = 50;
     filter.state.excludedCountryMinNum = 0;
@@ -72,6 +79,11 @@ filter.init = function() {
  * Helper Funcitons
  * =============================================================================
  */
+
+// Get difference of two arrays
+var _arrayDiff = function(arr, allUsers) {
+    return allUsers.filter(function(i) {return arr.indexOf(i) < 0;});
+};
 
 filter.exportState = function() {
     var data = JSON.stringify(filter.state);
@@ -113,14 +125,21 @@ filter.updateStateLanguage = function(language, add) {
 // Function to update filter.excludedCountries from input in main.js
 filter.updateStateCountry = function(country, visit) {
     if(visit){
-    filter.state.excludedCountries.push(country);
+        filter.state.excludedCountries.push(country);
     } else {
-
 	index = filter.state.excludedCountries.indexOf(country);
 	filter.state.excludedCountries.splice(index,1);
-
     }
+}
 
+// Function to update filter.includeCountries from input in main.js
+filter.updateStateCountryIncl = function(country, visit) {
+    if(visit){
+        filter.state.includeCountries.push(country);
+    } else {
+	index = filter.state.includeCountries.indexOf(country);
+	filter.state.includeCountries.splice(index,1);
+    }
 }
 
 // Funciton to update filter.max/minSpeed from imput in main.js
@@ -172,9 +191,14 @@ filter.filter = function(init=false) {
     activeUsers = filter.byLanguage(activeUsers);
     pt('filter.byLanguage()');
      
-    // Filter by country visited
+    // Filter by country visited (exclude)
     activeUsers = filter.byCountryVisited(activeUsers);
     pt('filter.byCountry()');
+    
+    // Filter by country not visited (include)
+    activeUsers = filter.byCountryVisited(activeUsers, negative=true);
+    pt('filter.byCountry()');
+
 
     // Filter by number of countris visited
     activeUsers = filter.byCountryNum(activeUsers);
@@ -186,6 +210,7 @@ filter.filter = function(init=false) {
     // Synchronized data (this updates filter.currentData)
     _synchData(activeUsers);
     pt('_synchData()');
+    console.log(filter.currentData.includedUsers);
     
     // Update data status display
     _updateStatusTable();
@@ -231,7 +256,6 @@ var _makeUserHash = function() {
 
 
 // Hashmap for countries {'country1': [user1, user2], 'country2':[user1], ...}
-
 var _makeCountryHashMap = function () {
  
     var countryHash = {};
@@ -652,9 +676,13 @@ filter.byLanguage = function(activeUsers) {
     return(activeUsers);
 }
 
-filter.byCountryVisited = function (activeUsers) {
-
-    var exclCountry = filter.state.excludedCountries;
+filter.byCountryVisited = function (activeUsers, negative=false) {
+    
+    if(negative) { 
+        var exclCountry = filter.state.includeCountries;
+    } else {
+        var exclCountry = filter.state.excludedCountries;
+    }
 
     // Handle empty selection
     if(_isEmpty(activeUsers)){
@@ -670,9 +698,15 @@ filter.byCountryVisited = function (activeUsers) {
     // Exclude users from activeUsers by input from filter box checking
     
     var toFilter = [];
+    var usrs;
     for(var country in filter.countryHashMap) {
 	if(exclCountry.indexOf(country) > -1) {
-	    toFilter = toFilter.concat(filter.countryHashMap[country]);
+            usrs = filter.countryHashMap[country];
+            console.log(usrs) 
+            if(negative) {
+                usrs = _arrayDiff(usrs, filter.data.allUsers);
+            }
+	    toFilter = toFilter.concat(usrs);
 	} else {
 	    continue;
 	}
