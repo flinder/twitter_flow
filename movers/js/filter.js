@@ -44,6 +44,8 @@ filter.init = function() {
     // Generate a hashmap number of visited counties -> user_id
     filter.countryNumHashMap = _makeCountryNumHashMap();
 
+    // Generate a hashmap for user-->maxspeed
+    filter.userMaxSpeedHashMap = _makeUserSpeedHashMap();
 
     // Main object holding the status of all filter controls
     filter.state = {};
@@ -305,6 +307,25 @@ var _makeMaxSpeedHashMap = function (){
         }
     }
     return(hSpeedHS);
+}
+
+//hashmap for user --> max speed
+var _makeUserSpeedHashMap = function (){
+    var users = filter.data.users;
+    var uSpeedHS = {};
+
+    for(i = 0; i < users.length; i++) {
+        var spList = _speedList(users[i]['u_id']);
+        //console.log(spList.length)
+        var maxSp = Math.round(Math.max(...spList));
+        //var minSp = Math.min(...splist);
+        var uu = users[i]['u_id']
+
+        uSpeedHS[uu] = maxSp;
+    }
+        
+    return(uSpeedHS);
+
 }
 
 //Hashmap for min speed {'speed1': [user1, user2], 'speed2': [user3], ...}
