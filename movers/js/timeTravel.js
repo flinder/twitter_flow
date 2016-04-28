@@ -174,7 +174,6 @@ $(document).ready(function(){
 			}).on("contextmenu", function(data, index) {
 			     var id_ = this.getAttribute("u_id");
 			     filter.state.excludedUsers.push(id_);
-			     console.log(filter.state);
 			     d3.event.preventDefault();
 			     //$(this).remove();
 			    filter.filter();

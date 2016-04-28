@@ -47,13 +47,15 @@ $(document).ready(function(){
 			range: true,
 			min: 0,
 			max: 50,
-			values: [ 0, 10000 ],
+
+			values: [ 0, 50],
 			//values: [ filter.state.excludedMinNumCtry, filter.state.excludedMaxNumCtry ],
+
 			slide: function( event, ui ) {
 			$( "#filter-numctry-slider" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
 			//console.log("Value changed");
 
-			filter.updateState(ui.values[1],ui.values[0]);
+			filter.updateStateNumctry(ui.values[1],ui.values[0]);
 			filter.filter();
 			}
 
@@ -150,7 +152,7 @@ $(document).ready(function(){
 		});
 
 
-                // Country Filter UI functionality
+                // Country Filter UI functionality (Exclude filter)
                 // -------------------------------
  		$('#country-selection-list .ui.dropdown').dropdown({
 				allowAdditions: true
@@ -173,6 +175,33 @@ $(document).ready(function(){
 			$(this).parent().remove();
 			$('#country-selection-list').find(".item[data-value='" + country + "']").show();
 			filter.updateStateCountry(country, visit=false);
+			filter.filter();
+		});
+            
+
+                // Country Filter UI functionality (Include filter)
+                // -------------------------------
+ 		$('#country-selection-list-incl .ui.dropdown').dropdown({
+				allowAdditions: true
+		});
+		$("body").on("click", "#filter-country-add-incl", function() {
+			$('#country-selection-list-incl').find(".label").each(function(){
+				var country = $(this).attr("data-value");
+				var tmp = '<a class="ui label country-item" data-value=' + country + '>' + country + '<i class="delete icon"></i></a>'
+				$("#filter-country-panel-incl").prepend(tmp);
+				$('#country-selection-list-incl').find(".item[data-value='" + country + "']").hide();
+				filter.updateStateCountryIncl(country, visit=true);
+			});
+			$('#country-selection-list-incl .ui.dropdown').dropdown('clear');
+
+			filter.filter();
+		});
+
+		$("body").on("click", ".country-item .delete", function() {
+			var country = $(this).parent().attr("data-value");
+			$(this).parent().remove();
+			$('#country-selection-list-incl').find(".item[data-value='" + country + "']").show();
+			filter.updateStateCountryIncl(country, visit=false);
 			filter.filter();
 		});
 

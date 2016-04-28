@@ -7,11 +7,16 @@
 }
 
 #filter-container {
-  width: 250px;
+  width: 260px;
+  overflow-y: scroll;
   position: fixed;
   left: 0;
-  top: 53px;
+  top: calc(53px + 1em);
   padding: 0 0.5em;
+}
+
+#slider-container{
+  width:200px;
 }
 
 .language-item {
@@ -24,7 +29,7 @@
 
 #main-container {
   position: fixed;
-  left: 250px;
+  left: 260px;
   right: 0;
   top: 53px; 
 }
