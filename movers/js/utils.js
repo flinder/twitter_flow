@@ -92,7 +92,7 @@ Country.data = [{
         full: "Austria",
         abbr: "AUT"
     }, {
-        full: "Czech Republic",
+        full: "Czech R.",
         abbr: "CZE"
     }, {
         full: "Slovakia",
@@ -110,7 +110,7 @@ Country.data = [{
         full: "Slovenia",
         abbr: "SVN"
     }, {
-        full: "Bosnia and Herzegovina",
+        full: "Bos. & Herz.",
         abbr: "BIH"
     }, {
         full: "Serbia",
@@ -177,7 +177,7 @@ Country.getFullFromAbbr = function(abbr) {
 }
 
 Country.breaks = [10, 20, 30, 40, 50, 60]; // 7 cat
-Country.colorbrewer7 = colorbrewer["YlOrRd"][7];
+Country.colorbrewer7 = colorbrewer["YlGnBu"][7];
 Country.getColorByNumOfCountry = function(numOfCountry) {
 	var color = Country.colorbrewer7[6];
 	for (var i = 0, len = Country.breaks.length; i < len; i++) {
