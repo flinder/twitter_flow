@@ -79,8 +79,34 @@
                 </tfoot>
             </table>
 
+
+ <!-- speed range -->
+            <div id="slider-container">
+            <p>
+                <label for="filter-speed-amount">Max Speed Range:</label>
+                <div style="padding-left: 10px">
+                <input type="text" id="filter-speed-amount" readonly style="border:0; color:#f6931f; font-weight:bold; width:180px; padding-left: 10px;">
+            </p>
+            <div id="filter-speed-slider-range"></div>
+            </div>
+            <div style="height:0.5em;"></div>
+            </div>
+
+            <!-- number of countries -->
+            <div id="slider-container">
+            <p>
+                <label for="filter-numctry-slider">Number of Visited Countries:</label>
+                <div style="padding-left: 10px">
+                <input type="text" id="filter-numctry-slider" readonly style="border:0; color:#f6931f; font-weight:bold; width:180px;">
+            </p>
+            <div id="filter-numctry-slider-range"></div>
+            	</div>
+            <div style="height:0.5em;"></div>
+            </div>
+
+
             <!-- language panel -->
-            <b>Countries</b> (excluded)
+            <b>Languages</b> (excluded)
             <div id="filter-language-panel" class="ui attached segment">
                 <!-- <a id="filter-language-sample1" class="ui label language-item">Sample1<i class="delete icon"></i></a>
                 <a id="filter-language-sample2" class="ui label language-item">Sample2<i class="delete icon"></i></a> -->
@@ -192,29 +218,7 @@
             <div style="height:0.5em;"></div>
 
 
-            <!-- speed range -->
-            <div id="slider-container">
-            <p>
-                <label for="filter-speed-amount">Max Speed Range:</label>
-                <div style="padding-left: 10px">
-                <input type="text" id="filter-speed-amount" readonly style="border:0; color:#f6931f; font-weight:bold; width:180px; padding-left: 10px;">
-            </p>
-            <div id="filter-speed-slider-range"></div>
-            </div>
-            <div style="height:0.5em;"></div>
-            </div>
-
-            <!-- number of countries -->
-            <div id="slider-container">
-            <p>
-                <label for="filter-numctry-slider">Number of Visited Countries:</label>
-                <div style="padding-left: 10px">
-                <input type="text" id="filter-numctry-slider" readonly style="border:0; color:#f6931f; font-weight:bold; width:180px;">
-            </p>
-            <div id="filter-numctry-slider-range"></div>
-            	</div>
-            <div style="height:0.5em;"></div>
-            </div>
+           
 
             <!-- import/export filter status -->
             <div style="height:10px;"></div>
@@ -249,29 +253,29 @@
                         </div>
                     </div>
                     <div class="ui segment form" style="margin:0; margin-left:1em;">
-                        <div class="inline fields" style="margin:0;">
-                            <label>Focus property</label>
+                        <div id="color-by" class="inline fields" style="margin:0;">
+                            <label>Color</label>
                             <div class="field">
                                 <div class="ui radio checkbox">
-                                <input type="radio" name="property" checked="checked">
+                                <input type="radio" name="property" data-value="user" checked="checked">
                                 <label>User</label>
                                 </div>
                             </div>
                             <div class="field">
                                 <div class="ui radio checkbox">
-                                <input type="radio" name="property">
+                                <input type="radio" name="property" data-value="numOfCountry">
                                 <label>#Country</label>
                                 </div>
                             </div>
                             <div class="field">
                                 <div class="ui radio checkbox">
-                                <input type="radio" name="property">
+                                <input type="radio" name="property" data-value="language">
                                 <label>Language</label>
                                 </div>
                             </div>
                             <div class="field">
                                 <div class="ui radio checkbox">
-                                <input type="radio" name="property">
+                                <input type="radio" name="property" data-value="speed">
                                 <label>Speed</label>
                                 </div>
                             </div>

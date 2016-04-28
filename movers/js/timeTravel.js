@@ -7,6 +7,7 @@ $(document).ready(function(){
 	timeTravel.trips = [];
 	timeTravel.timerange = [];
 	timeTravel.opacity = 0.5;
+	timeTravel.colorAttribute = "user";
 
 	mCntrys = 
 		["DEU",
@@ -143,13 +144,27 @@ $(document).ready(function(){
 	    // Loop through each symbol / key
 	    dataNest.forEach(function(d) {
 
-	    	var c = toColor(d.key);
+	    	var color = toColor(d.key);
+	    	var userObj = getUserById(d.key);
+
+			switch(timeTravel.colorAttribute) {
+			    case "numOfCountry":
+			        color = Country.getColorByNumOfCountry(userObj.cntryCount);
+			        break;
+			    case "speed":
+			        color = Speed.getColorBySpeed(userObj.voc);
+			        break;
+			    case "language":
+			    	color = Language.getColorByAbbr(userObj.prof_lang);
+			    	break;
+			    default:
+			}
 
 	        svg.append("path")
 	            .attr("class", "line")
 	            .attr("u_id", d.key)
 	            .attr("d", line(d.values))
-	            .attr("stroke", c)
+	            .attr("stroke", color)
 	            .attr("opacity", timeTravel.opacity)
 			.on("mouseover", function(d) {
 			        d3.select(this).moveToFront();
@@ -281,13 +296,27 @@ $(document).ready(function(){
 	    // Loop through each symbol / key
 	    dataNest.forEach(function(d) {
 
-	    	var c = toColor(d.key);
+	    	var color = toColor(d.key);
+	    	var userObj = getUserById(d.key);
+
+			switch(timeTravel.colorAttribute) {
+			    case "numOfCountry":
+			        color = Country.getColorByNumOfCountry(userObj.cntryCount);
+			        break;
+			    case "speed":
+			        color = Speed.getColorBySpeed(userObj.voc);
+			        break;
+			    case "language":
+			    	color = Language.getColorByAbbr(userObj.prof_lang);
+			    	break;
+			    default:
+			}
 
 	        svg.append("path")
 	            .attr("class", "line")
 	            .attr("u_id", d.key)
 	            .attr("d", line(d.values))
-	            .attr("stroke", c)
+	            .attr("stroke", color)
 	            .attr("opacity", timeTravel.opacity)
 				.on("mouseover", function(d) {
 					d3.select(this).moveToFront();
