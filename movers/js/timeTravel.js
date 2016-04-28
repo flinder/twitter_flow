@@ -394,7 +394,7 @@ $(document).ready(function(){
 				    return size;
 				}).text(function (d, i) {
 				    return d;
-				})			
+				})
 		} else if (timeTravel.colorAttribute == "language") {
 			_svg.selectAll("rect").data([0, 1, 2, 3, 4, 5, 6, 7, 8])
 		    	.enter().append("rect")
@@ -426,7 +426,7 @@ $(document).ready(function(){
 				    return size;
 				}).text(function (d, i) {
 				    return Language.data[i].abbr;
-				})		
+				})
 		} else if (timeTravel.colorAttribute == "speed") {
 			_svg.selectAll("rect").data([0, 1, 2, 3, 4, 5, 6])
 		    	.enter().append("rect")
@@ -458,8 +458,8 @@ $(document).ready(function(){
 				    return size;
 				}).text(function (d, i) {
 				    return d;
-				})			
-		} 
+				})
+		}
 	}
 
 });
