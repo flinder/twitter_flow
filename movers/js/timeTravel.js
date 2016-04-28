@@ -309,7 +309,7 @@ $(document).ready(function(){
 			        color = Country.getColorByNumOfCountry(userObj.cntryCount);
 			        break;
 			    case "speed":
-			        color = Speed.getColorBySpeed(userObj.voc);
+			        color = Speed.getColorBySpeed(filter.userMaxSpeedHashMap[userObj.u_id]);
 			        break;
 			    case "language":
 			    	color = Language.getColorByAbbr(userObj.prof_lang);
@@ -426,7 +426,39 @@ $(document).ready(function(){
 				}).text(function (d, i) {
 				    return Language.data[i].abbr;
 				})		
-		}
+		} else if (timeTravel.colorAttribute == "speed") {
+			_svg.selectAll("rect").data([0, 1, 2, 3, 4, 5, 6])
+		    	.enter().append("rect")
+		    	.attr("x", function (d, i) {
+				    var x = Math.floor(i * size);
+				    return x;
+				}).attr("y", function (d, i) {
+				    var y = 10;
+				    return y;
+				}).attr("width", function (d, i) {
+				    return size - 2;
+				}).attr("height", function (d, i) {
+				    return size;
+				}).attr("fill", function (d, i) {
+				    return Speed.colorbrewer7[i];
+				});
+
+			_svg.selectAll("text").data(Speed.breaks)
+		    	.enter().append("text")
+		    	.attr("x", function (d, i) {
+				    var x = Math.floor(i * size + size - 3);
+				    return x;
+				}).attr("y", function (d, i) {
+				    var y = 10;
+				    return y;
+				}).attr("width", function (d, i) {
+				    return size - 2;
+				}).attr("height", function (d, i) {
+				    return size;
+				}).text(function (d, i) {
+				    return d;
+				})			
+		} 
 	}
 
 });
