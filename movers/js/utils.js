@@ -65,7 +65,7 @@ Language.getFullFromAbbr = function(abbr){
 }
 
 Language.getColorByAbbr = function(abbr){
-	var color = "#595959"; // grey for other languagues not in the list
+	var color = "#858585"; // grey for other languagues not in the list
 	// #countrys should not exceed 9
 	for(var i = 0, len = Language.data.length; i < len; i++) {
 	    if (Language.data[i].abbr === abbr) {
@@ -177,10 +177,10 @@ Country.getFullFromAbbr = function(abbr) {
 
 Country.getColorByNumOfCountry = function(numOfCountry) {
 	var cut = [10, 20, 30, 40, 50, 60];  // 7 categories
-	var color = colorbrewer["YlOrRd"][7][6];
+	var color = colorbrewer["YlGnBu"][7][6];
 	for (var i = 0, len = cut.length; i < len; i++) {
 	    if(numOfCountry < cut[i]) {
-	    	color = colorbrewer["YlOrRd"][7][i];
+	    	color = colorbrewer["YlGnBu"][7][i];
 	        break;
 	    }
 	}
