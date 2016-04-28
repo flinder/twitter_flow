@@ -52,22 +52,21 @@
     </div>
 </div>
 
-        <div id="filter-container" style="height: 500px;">
+        <div id="filter-container" style="height: 600px">
         <!-- ; top: calc(53px + 1em); -->
-
             <!-- Status panel -->
-            Status
-            <table class="ui celled table">
+            <b>Number of Tweets</b>
+            <table class="ui celled table" style="text-align:center; ">
                 <thead><tr>
-                    <th>Filtered</th>
-                    <th>In Chunk</th>
+                    <th>Visible</th>
+                    <th>Loaded</th>
                     <th>Total</th>
                 </tr></thead>
                 <tbody>
                     <tr>
-                        <td><span id="nActiveUsers"></td>
-                        <td><span id="nCurrentChunk"></td>
-                        <td><span id="nTotalUsers"></td>
+                        <td style= "font-weight:bold; color:#3bab4f"><span id="nActiveUsers"></td>
+                        <td style= "font-weight:bold; color:#787878"><span id="nCurrentChunk"></td>
+                        <td style= "font-weight:bold; color:#1a1a1a; background-color:#ededed"><span id="nTotalUsers"></td>
                     </tr>
                 </tbody>
                 <tfoot>
@@ -76,15 +75,12 @@
                         <div class="ui right floated tiny button" id="more-data-bttn" value="More Data">More Data</div>
                         <div class="ui tiny button" id="less-data-bttn" value="Less Data">Less Data</div>
                     </div></th></tr>
-                         <div class="ui tiny button" id="export-bttn"
-                            value="Download Filter State">Export</div>
-                        <div class="ui tiny button" id="import-bttn"
-                            value="Download Filter State">Import</div>
+
                 </tfoot>
             </table>
 
             <!-- language panel -->
-            Languages (excluded)
+            <b>Countries</b> (excluded)
             <div id="filter-language-panel" class="ui attached segment">
                 <!-- <a id="filter-language-sample1" class="ui label language-item">Sample1<i class="delete icon"></i></a>
                 <a id="filter-language-sample2" class="ui label language-item">Sample2<i class="delete icon"></i></a> -->
@@ -112,7 +108,7 @@
             <div style="height:0.5em;"></div>
 
             <!-- country panel (excluded) -->
-            Countries (excluded)
+            <b>Countries</b> (excluded)
             <div id="filter-country-panel" class="ui attached segment">
                 <div id="country-selection-list" style="margin-top: 0.5em; width: calc(100% - 45px); display:inline-block;">
                     <select name="countries" multiple="" class="ui fluid dropdown">
@@ -154,7 +150,7 @@
             <div style="height:0.5em;"></div>
 
             <!-- country panel (included) -->
-            Countries (included)
+            <b>Countries</b> (included)
             <div id="filter-country-panel-incl" class="ui attached segment">
                 <div id="country-selection-list-incl" style="margin-top: 0.5em; width: calc(100% - 45px); display:inline-block;">
                     <select name="countries" multiple="" class="ui fluid dropdown">
@@ -219,6 +215,15 @@
             	</div>
             <div style="height:0.5em;"></div>
             </div>
+
+            <!-- import/export filter status -->
+            <div style="height:10px;"></div>
+            Save/Load Filter Settings
+            <div style="height:5px;"></div>
+            <div class="ui tiny button" id="export-bttn"
+               value="Download Filter State">Save</div>
+            <div class="ui tiny button" id="import-bttn"
+               value="Download Filter State">Load</div>
 
         </div>
 		<div id="main-container">
