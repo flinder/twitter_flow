@@ -130,7 +130,7 @@ Country.data = [{
         full: "Turkey",
         abbr: "TUR"
     }, {
-        full: "Syrian Arab Republic",
+        full: "Syria",
         abbr: "SYR"
     }, {
         full: "Lebanon",
