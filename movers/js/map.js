@@ -195,10 +195,13 @@ map.drawingOnCanvas = function (canvasOverlay, params) {
         return;
     }
 
+
+
     ctx.clearRect(0, 0, params.canvas.width, params.canvas.height);
 
     var features = tile.features;
 
+    ctx.lineWidth = 1 + params.tilePoint.z/8;
 
     for (var i = 0; i < features.length; i++) {
         var feature = features[i],
@@ -230,4 +233,12 @@ map.drawingOnCanvas = function (canvasOverlay, params) {
         ctx.stroke();
     }
 
-};
+}
+
+// map.tileLayer.onmousemove = function (e) {
+//     if (!tileIndex) return;
+
+// var mouseX = e.layerX - 5,
+//     mouseY = e.layerY - 5,
+// }
+
