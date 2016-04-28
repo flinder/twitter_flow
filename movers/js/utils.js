@@ -64,12 +64,13 @@ Language.getFullFromAbbr = function(abbr){
 	return res;
 }
 
+Language.colorbrewer9 = colorbrewer["Set1"][9];
 Language.getColorByAbbr = function(abbr){
 	var color = "#d9d9d9"; // grey for other languagues not in the list
 	// #countrys should not exceed 9
 	for(var i = 0, len = Language.data.length; i < len; i++) {
 	    if (Language.data[i].abbr === abbr) {
-	        color = colorbrewer["Set1"][9][i];
+	        color = Language.colorbrewer9[i];
 	        break;
 	    }
 	}
@@ -175,12 +176,13 @@ Country.getFullFromAbbr = function(abbr) {
 	return res;
 }
 
+Country.breaks = [10, 20, 30, 40, 50, 60]; // 7 cat
+Country.colorbrewer7 = colorbrewer["YlOrRd"][7];
 Country.getColorByNumOfCountry = function(numOfCountry) {
-	var cut = [10, 20, 30, 40, 50, 60];  // 7 categories
-	var color = colorbrewer["YlOrRd"][7][6];
-	for (var i = 0, len = cut.length; i < len; i++) {
-	    if(numOfCountry < cut[i]) {
-	    	color = colorbrewer["YlOrRd"][7][i];
+	var color = Country.colorbrewer7[6];
+	for (var i = 0, len = Country.breaks.length; i < len; i++) {
+	    if(numOfCountry < Country.breaks[i]) {
+	    	color = Country.colorbrewer7[i];
 	        break;
 	    }
 	}
@@ -188,12 +190,13 @@ Country.getColorByNumOfCountry = function(numOfCountry) {
 }
 
 Speed = {}
+Speed.breaks = [1, 5, 10, 20, 50, 100];	// 7 categories
+Speed.colorbrewer7 = colorbrewer["YlOrRd"][7];
 Speed.getColorBySpeed = function(speed) {
-	var cut = [1, 5, 10, 20, 50, 100];  // 7 categories
-	var color = colorbrewer["YlOrRd"][7][6];
-	for (var i = 0, len = cut.length; i < len; i++) {
-	    if(speed < cut[i]) {
-	    	color = colorbrewer["YlOrRd"][7][i];
+	var color = Speed.colorbrewer7[6];
+	for (var i = 0, len = Speed.breaks.length; i < len; i++) {
+	    if(speed < Speed.breaks[i]) {
+	    	color = Speed.colorbrewer7[i];
 	        break;
 	    }
 	}

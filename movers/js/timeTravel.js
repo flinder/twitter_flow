@@ -44,6 +44,11 @@ $(document).ready(function(){
 	var parseDate;
 	var svg;
 
+	// Set the dimensions of the canvas / graph
+	var margin = {top: 30, right: 20, bottom: 30, left: 50},
+	    width = $("#main-container").width() - margin.left - margin.right,
+	    height = 500 - margin.top - margin.bottom;
+
 	timeTravel.init = function() {
 
 		timeTravel.u_ids = [];
@@ -52,6 +57,8 @@ $(document).ready(function(){
 		// timeTravel.cntry_val_map = {};
 		timeTravel.timerange = [];
 		$("#timeTravel-content").html("");
+		$("#timeTravel-legend").html("");
+		timeTravel.createLengend();
 
 		timeTravel.data = crossfilter(filter.currentData.tweets);
 		var timedataByTime = timeTravel.data.dimension(function(d) { return d.time; });
@@ -90,11 +97,6 @@ $(document).ready(function(){
 			}
 			timedataByUserid.filterAll();	
 		});
-
-		// Set the dimensions of the canvas / graph
-		var margin = {top: 30, right: 20, bottom: 30, left: 50},
-		    width = $("#main-container").width() - margin.left - margin.right,
-		    height = 500 - margin.top - margin.bottom;
 
 		// Parse the date / time
 		parseDate = d3.time.format("%Y-%m-%d %H:%M:%S").parse; 
@@ -230,6 +232,9 @@ $(document).ready(function(){
 
 	timeTravel.update = function() {
 
+		$("#timeTravel-legend").html("");
+		timeTravel.createLengend();
+
 		timeTravel.u_ids = [];
 		timeTravel.trips = [];
 		// timeTravel.cntrys = [];
@@ -348,6 +353,80 @@ $(document).ready(function(){
 			// 	.attr("opacity", 0.5);
 
 	    });
-
 	}
+
+	timeTravel.createLengend = function() {
+
+		var size = 30;
+		var _svg = d3.select("#timeTravel-legend").append("svg")
+				.attr("width", size * 9).attr("height", size)
+			.append("g").attr("width", size).attr("height", size);
+
+		if (timeTravel.colorAttribute == "numOfCountry") {
+			_svg.selectAll("rect").data([0, 1, 2, 3, 4, 5, 6])
+		    	.enter().append("rect")
+		    	.attr("x", function (d, i) {
+				    var x = Math.floor(i * size);
+				    return x;
+				}).attr("y", function (d, i) {
+				    var y = 10;
+				    return y;
+				}).attr("width", function (d, i) {
+				    return size - 2;
+				}).attr("height", function (d, i) {
+				    return size;
+				}).attr("fill", function (d, i) {
+				    return Country.colorbrewer7[i];
+				});
+
+			_svg.selectAll("text").data(Country.breaks)
+		    	.enter().append("text")
+		    	.attr("x", function (d, i) {
+				    var x = Math.floor(i * size + size - 3);
+				    return x;
+				}).attr("y", function (d, i) {
+				    var y = 10;
+				    return y;
+				}).attr("width", function (d, i) {
+				    return size - 2;
+				}).attr("height", function (d, i) {
+				    return size;
+				}).text(function (d, i) {
+				    return d;
+				})			
+		} else if (timeTravel.colorAttribute == "language") {
+			_svg.selectAll("rect").data([0, 1, 2, 3, 4, 5, 6, 7, 8])
+		    	.enter().append("rect")
+		    	.attr("x", function (d, i) {
+				    var x = Math.floor(i * size);
+				    return x;
+				}).attr("y", function (d, i) {
+				    var y = 10;
+				    return y;
+				}).attr("width", function (d, i) {
+				    return size - 2;
+				}).attr("height", function (d, i) {
+				    return size;
+				}).attr("fill", function (d, i) {
+				    return Language.colorbrewer9[i];
+				});
+
+			_svg.selectAll("text").data([0, 1, 2, 3, 4, 5, 6, 7])
+		    	.enter().append("text")
+		    	.attr("x", function (d, i) {
+				    var x = Math.floor(i * size + 5);
+				    return x;
+				}).attr("y", function (d, i) {
+				    var y = 10;
+				    return y;
+				}).attr("width", function (d, i) {
+				    return size - 2;
+				}).attr("height", function (d, i) {
+				    return size;
+				}).text(function (d, i) {
+				    return Language.data[i].abbr;
+				})		
+		}
+	}
+
 });

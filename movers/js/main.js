@@ -216,6 +216,7 @@ $(document).ready(function(){
 	    }
 	    return color;
 	}
+	
 	toColor = function (num) {
 	    num >>>= 0;
 	    var b = num & 0xFF,
