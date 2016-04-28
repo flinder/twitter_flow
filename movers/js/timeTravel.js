@@ -242,11 +242,9 @@ $(document).ready(function(){
 		timeTravel.trips = [];
 		// timeTravel.cntrys = [];
 		// timeTravel.cntry_val_map = {};
-		timeTravel.timerange = [];
 
 		timeTravel.data = crossfilter(filter.currentData.tweets);
 		var timedataByTime = timeTravel.data.dimension(function(d) { return d.time; });
-		timeTravel.timerange = [timedataByTime.bottom(Infinity)[0].time, timedataByTime.top(Infinity)[0].time];
 		var timedataByUserid = timeTravel.data.dimension(function(d) { return d.u_id; });
 		var timedataByCountry = timeTravel.data.dimension(function(d) { return d.cntry; });
 		var timedataGroupsByUserid = timedataByUserid.group(function(u_id) { return u_id; });
@@ -360,7 +358,7 @@ $(document).ready(function(){
 
 	timeTravel.createLengend = function() {
 
-		var size = 30;
+		var size = 40;
 		var _svg = d3.select("#timeTravel-legend").append("svg")
 				.attr("width", size * 9).attr("height", size)
 			.append("g").attr("width", size).attr("height", size);

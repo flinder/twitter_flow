@@ -190,7 +190,7 @@ Country.getColorByNumOfCountry = function(numOfCountry) {
 }
 
 Speed = {}
-Speed.breaks = [1, 10, 100, 1000, 10000, 100000];	// 7 categories
+Speed.breaks = [1, 10, 50, 100, 300, 1000];	// 7 categories
 Speed.colorbrewer7 = colorbrewer["YlOrRd"][7];
 Speed.getColorBySpeed = function(speed) {
 	var color = Speed.colorbrewer7[6];
