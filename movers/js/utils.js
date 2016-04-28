@@ -13,7 +13,7 @@ utils.startTimer = function() {
 }
 
 
-// language helpers 
+// language helpers
 Language = {}
 Language.data = [{
         full: "russian",
@@ -31,7 +31,7 @@ Language.data = [{
         full: "arabic",
         abbr: "ar"
     }, {
-        full: "spainish",
+        full: "spanish",
         abbr: "es"
     }, {
         full: "dutch",
@@ -66,7 +66,7 @@ Language.getFullFromAbbr = function(abbr){
 
 Language.colorbrewer9 = colorbrewer["Set1"][9];
 Language.getColorByAbbr = function(abbr){
-	var color = "#d9d9d9"; // grey for other languagues not in the list
+	var color = "#858585"; // grey for other languagues not in the list
 	// #countrys should not exceed 9
 	for(var i = 0, len = Language.data.length; i < len; i++) {
 	    if (Language.data[i].abbr === abbr) {
@@ -77,7 +77,7 @@ Language.getColorByAbbr = function(abbr){
 	return color;
 }
 
-// Country Helpers 
+// Country Helpers
 Country = {}
 Country.data = [{
         full: "Germany",
@@ -131,7 +131,7 @@ Country.data = [{
         full: "Turkey",
         abbr: "TUR"
     }, {
-        full: "Syrian Arab Republic",
+        full: "Syria",
         abbr: "SYR"
     }, {
         full: "Lebanon",

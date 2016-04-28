@@ -41,6 +41,15 @@ map.init = function () {
 
     var grayscale   = L.tileLayer(mbUrl, {id: 'mapbox.light', attribution: mbAttr, noWrap: true}),
     streets  = L.tileLayer(mbUrl,{id: 'mapbox.streets', attribution: mbAttr, noWrap: true});
+    satellite = L.tileLayer(mbUrl,{id: 'mapbox.satellite', attribution: mbAttr, noWrap: true});
+    var cdbdark = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+        subdomains: 'abcd',
+        minZoom: 0,
+        maxZoom: 20,
+        maxNativeZoom: 18,
+        noWrap: true
+    });
 
     // Grab filtered data and generate tile index
     map.update();
@@ -51,7 +60,7 @@ map.init = function () {
           .drawing(map.drawingOnCanvas);
 
     map.leafletMap = L.map('map-container', {
-    center: [54.93, 10.003],
+    center: [44.93, 10.003],
     zoom: 2,
     //maxBounds: L.latLngBounds(L.latLng(0, -180), L.latLng(75, 180)),
     layers: [grayscale, map.tileLayer]
@@ -59,7 +68,10 @@ map.init = function () {
 
     var baseLayers = {
     "Grayscale": grayscale,
-    "Streets": streets
+    "Streets": streets,
+    "Dark Matter":cdbdark,
+    "Satellite": satellite
+
     };
 
     var overlays = {
@@ -109,7 +121,6 @@ map.filter = function (fullData, userlist) {
 
     }
 
-
     // Dummy filter!
     //return fullData;
 
@@ -157,6 +168,11 @@ map.updateLayer = function () {
 
 }
 
+// map.colorizeFeatures = function(gjData) {
+//     for (var i = 0; i < gjData.features.length; i++) {
+//         gjData.features[i].properties.color = toColor(gjData.features[i].properties.u_id);
+//     }
+// }
 
 
 map.drawingOnCanvas = function (canvasOverlay, params) {
@@ -168,6 +184,7 @@ map.drawingOnCanvas = function (canvasOverlay, params) {
 
     var ctx = params.canvas.getContext('2d');
     ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 0.4;
 
 
     // console.log('getting tile z' + params.tilePoint.z + '-' + params.tilePoint.x + '-' + params.tilePoint.y);
@@ -182,13 +199,11 @@ map.drawingOnCanvas = function (canvasOverlay, params) {
 
     var features = tile.features;
 
-    ctx.strokeStyle = 'grey';
-
 
     for (var i = 0; i < features.length; i++) {
         var feature = features[i],
             type = feature.type;
-
+        ctx.strokeStyle = toColor(feature.tags.u_id);
         ctx.fillStyle = feature.tags.color ? feature.tags.color : 'rgba(255,0,0,0.05)';
         ctx.beginPath();
 
