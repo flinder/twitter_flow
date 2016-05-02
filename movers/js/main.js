@@ -187,7 +187,7 @@ $(document).ready(function(){
 		$("body").on("click", "#filter-country-add-incl", function() {
 			$('#country-selection-list-incl').find(".label").each(function(){
 				var country = $(this).attr("data-value");
-				var tmp = '<a class="ui label country-item" data-value=' + country + '>' + country + '<i class="delete icon"></i></a>'
+				var tmp = '<a class="ui label country-item-incl" data-value=' + country + '>' + country + '<i class="delete icon"></i></a>'
 				$("#filter-country-panel-incl").prepend(tmp);
 				$('#country-selection-list-incl').find(".item[data-value='" + country + "']").hide();
 				filter.updateStateCountryIncl(country, visit=true);
@@ -197,7 +197,7 @@ $(document).ready(function(){
 			filter.filter();
 		});
 
-		$("body").on("click", ".country-item .delete", function() {
+		$("body").on("click", ".country-item-incl .delete", function() {
 			var country = $(this).parent().attr("data-value");
 			$(this).parent().remove();
 			$('#country-selection-list-incl').find(".item[data-value='" + country + "']").show();
