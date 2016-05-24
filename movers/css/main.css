@@ -7,11 +7,22 @@
 }
 
 #filter-container {
-  width: 260px;
+  width: 250px;
   overflow-y: scroll;
   position: fixed;
   left: 0;
-  top: calc(53px + 1em);
+  top: 0;
+  bottom: 0;
+  padding: 0 0.5em;
+}
+
+#twitter-list-container {
+  width: 200px;
+  overflow-y: scroll;
+  position: fixed;
+  left: 250px;
+  top: 0;
+  bottom: 0;
   padding: 0 0.5em;
 }
 
@@ -29,18 +40,40 @@
 
 #main-container {
   position: fixed;
-  left: 260px;
+  left: 450px;
   right: 0;
-  top: 53px;
+  top: 0;
+  bottom: 0;
 }
 
 #map-container {
-  height: 500px;
-  padding: 0;
+  position: absolute;
+  top: 0;
+  bottom: 66%;
+  left: 0;
+  right: 0;
+}
+
+#middle-container {
+  position: absolute;
+  top: 33%;
+  bottom: 33%;
+  left: 0;
+  right: 0;
+}
+
+
+#timeTravel-container {
+  position: absolute;
+  top: 66%;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color:#545454;
+  color:#ffffff
 }
 
 #timeTravel-content {
-  height: 500px;
   padding: 0;
   background-color:#545454;
   color:#ffffff

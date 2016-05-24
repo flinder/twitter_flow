@@ -46,8 +46,8 @@ $(document).ready(function(){
 
 	// Set the dimensions of the canvas / graph
 	var margin = {top: 30, right: 20, bottom: 30, left: 50},
-	    width = $("#main-container").width() - margin.left - margin.right,
-	    height = 500 - margin.top - margin.bottom;
+	    width = $("#timeTravel-container").width() - margin.left - margin.right,
+	    height = $("#timeTravel-container").height() - margin.top - margin.bottom;
 
 	timeTravel.init = function() {
 
