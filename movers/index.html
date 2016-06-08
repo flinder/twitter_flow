@@ -35,13 +35,21 @@
         <script src="js/filter.js" type="text/javascript" charset="utf-8"></script>
         <script src="js/map.js" type="text/javascript" charset="utf-8"></script>
         <script src="js/timeTravel.js" type="text/javascript" charset="utf-8"></script>
-        <script src="js/timeLine.js" type="text/javascript" charset="utf-8"></script>
         <script src="js/main.js" type="text/javascript" charset="utf-8"></script>
 
     </head>
     <body>
 
-        <div id="filter-container" style="height: 600px">
+        <div class="ui top fixed menu">
+            <div class="item">
+                Movers
+            </div>
+            <a class="item">Option 1</a>
+            <a class="item">Option 2</a>
+            <a class="item">Option 3</a>
+        </div>
+
+        <div id="filter-container">
             <!-- Status panel -->
             
             <b>Number of Twitter Users</b>
@@ -229,49 +237,45 @@
         </div>
 
 		<div id="main-container">
+                <div id="toolbar-container" class="ui segment form" style="width:100%;">
+                    <span id="transparency-checkbox" class="ui checkbox">
+                        <input type="checkbox" checked="checked" name="newsletter">
+                        <label>Transparent</label>
+                    </span>
+                    <span> | </span>
+                    <span id="color-by" class="inline fields" style="display:inline-flex; margin:0;">
+                        <label>Color</label>
+                        <div class="field">
+                            <div class="ui radio checkbox">
+                            <input type="radio" name="property" data-value="user" checked="checked">
+                            <label>User</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui radio checkbox">
+                            <input type="radio" name="property" data-value="numOfCountry">
+                            <label>#Country</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui radio checkbox">
+                            <input type="radio" name="property" data-value="language">
+                            <label>Language</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui radio checkbox">
+                            <input type="radio" name="property" data-value="speed">
+                            <label>Speed</label>
+                            </div>
+                        </div>
+                    </span>
+                    <div id="timeTravel-legend"></div>
+            </div>
+
             <div id="map-container" class="view"></div>
 
-            <div id="middler-container" class="view"></div>
-
             <div id="timeTravel-container" class="view">
-<!--                 <div id="timeTravel-toolbar" style="display:inline-flex;">
-                    <div class="ui segment" style="margin:0;">
-                        <div id="transparency-checkbox" class="ui slider checkbox">
-                            <input type="checkbox" checked="checked" name="newsletter">
-                            <label>Transparent</label>
-                        </div>
-                    </div>
-                    <div class="ui segment form" style="margin:0; margin-left:1em;">
-                        <div id="color-by" class="inline fields" style="margin:0;">
-                            <label>Color</label>
-                            <div class="field">
-                                <div class="ui radio checkbox">
-                                <input type="radio" name="property" data-value="user" checked="checked">
-                                <label>User</label>
-                                </div>
-                            </div>
-                            <div class="field">
-                                <div class="ui radio checkbox">
-                                <input type="radio" name="property" data-value="numOfCountry">
-                                <label>#Country</label>
-                                </div>
-                            </div>
-                            <div class="field">
-                                <div class="ui radio checkbox">
-                                <input type="radio" name="property" data-value="language">
-                                <label>Language</label>
-                                </div>
-                            </div>
-                            <div class="field">
-                                <div class="ui radio checkbox">
-                                <input type="radio" name="property" data-value="speed">
-                                <label>Speed</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-                <!-- <div id="timeTravel-legend"></div> -->
                 <div id="timeTravel-content" class="ui segment" style="background-color:#545454"></div>
             </div>
 	</div>

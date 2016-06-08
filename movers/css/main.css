@@ -2,6 +2,10 @@
  * Custom
  */
 
+.ui.segment {
+  border-radius:0 !important; 
+}
+
 #main-container{
   padding: 0 0.5em;
 }
@@ -11,17 +15,17 @@
   overflow-y: scroll;
   position: fixed;
   left: 0;
-  top: 0;
+  top: 40px;
   bottom: 0;
   padding: 0 0.5em;
 }
 
 #twitter-list-container {
-  width: 200px;
+  width: 250px;
   overflow-y: scroll;
   position: fixed;
   left: 250px;
-  top: 0;
+  top: 40px;
   bottom: 0;
   padding: 0 0.5em;
 }
@@ -40,35 +44,25 @@
 
 #main-container {
   position: fixed;
-  left: 450px;
+  left: 500px;
   right: 0;
-  top: 0;
+  top: 40px;
   bottom: 0;
+  overflow-y: scroll;
+}
+
+#toolbar-container {
+  position: fixed;
+  z-index: 100000;
 }
 
 #map-container {
-  position: absolute;
-  top: 0;
-  bottom: 66%;
-  left: 0;
-  right: 0;
+  height: 500px;
+  margin-top: 100px;
 }
-
-#middle-container {
-  position: absolute;
-  top: 33%;
-  bottom: 33%;
-  left: 0;
-  right: 0;
-}
-
 
 #timeTravel-container {
-  position: absolute;
-  top: 66%;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  height: 500px;
   background-color:#545454;
   color:#ffffff
 }
