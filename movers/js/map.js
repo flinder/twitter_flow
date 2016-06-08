@@ -252,6 +252,26 @@ map.drawingOnCanvas = function (canvasOverlay, params) {
             }
         }
     }// end of onmousemove function
+
+    params.canvas.ondblclick = function (e){
+        var rect = params.canvas.getBoundingClientRect();
+        var mouseX = e.clientX-rect.left;
+        var mouseY = e.clientY-rect.top;
+
+        for (var n = 0; n<paths.length; n++){
+            if(ctx.isPointInStroke(paths[n], mouseX, mouseY)){
+                console.log("here you go path ", n)
+                // console.log(n);
+                // console.log(mouseX, mouseY);
+                // params.canvas.style.cursor = 'pointer';
+            }else{
+                console.log("nothing selected")
+                // params.canvas.style.cursor = 'default';
+            }
+        }
+    }// end of onmousemove function
+
+
 }
 
 
