@@ -202,9 +202,8 @@ map.drawingOnCanvas = function (canvasOverlay, params) {
     var features = tile.features;
 
     ctx.lineWidth = 1 + params.tilePoint.z/8;
-    var paths = new Array(features.length);
     var extent = 4096;
-    var trips = new Array(map.features.length);
+    var trips = new Array(features.length);
 
     for (var i = 0; i < features.length; i++) {
         var feature = features[i],
@@ -244,11 +243,13 @@ map.drawingOnCanvas = function (canvasOverlay, params) {
         var mouseX = e.clientX-rect.left;
         var mouseY = e.clientY-rect.top;
 
-        for (var n = 0; n<paths.length; n++){
-            if(ctx.isPointInStroke(paths[n], mouseX, mouseY)){
+        for (var n = 0; n<trips.length; n++){
+            if(ctx.isPointInStroke(trips[n].trip, mouseX, mouseY)){
                 selectPathID = trips[n].id;
                 console.log(selectPathID);
                 console.log(mouseX, mouseY);
+                // var index = filter.currentData.includedUsers.indexOf(selectPathID);
+                // filter.currentData.includedUsers.splice(index, 1);
                 // params.canvas.style.cursor = 'pointer';
             }else{
                 // params.canvas.style.cursor = 'default';
