@@ -9,32 +9,8 @@ $(document).ready(function(){
 	timeTravel.opacity = 0.5;
 	timeTravel.colorAttribute = "user";
 
-	mCntrys =
-		["DEU",
-		"ITA",
-		"CHE",
-		"AUT",
-		"CZE",
-		"SVK",
-		"HUN",
-		"ROU",
-		"HRV",
-		"SVN",
-		"BIH",
-		"SRB",
-		"MKD",
-		"BGR",
-		"ALB",
-		"GRC",
-		"TUR",
-		"SYR",
-		"LBN",
-		"JOR",
-		"IRQ",
-		"IRN",
-		"EGY",
-		"Others"];
-	mCntrys.reverse();
+	// default order
+	mCntrys = ["Others", "EGY", "IRN", "IRQ", "JOR", "LBN", "SYR", "TUR", "GRC", "ALB", "BGR", "MKD", "SRB", "BIH", "SVN", "HRV", "ROU", "HUN", "SVK", "CZE", "AUT", "CHE", "ITA", "DEU"];
 
 	var x;
 	var y;
@@ -205,15 +181,39 @@ $(document).ready(function(){
 
 	    // Add the Y Axis
 	    svg.append("g")
-	        .attr("class", "y axis")
+	        .attr("class", "y axis country-names")
 					.style("fill", "white")
 	        .call(yAxis);
 
-	    d3.select(".y.axis").selectAll(".tick").selectAll("text")
-	    	.text(function(d) { return Country.getFullFromAbbr(mCntrys[d]); })
-			.filter(function(d) { return mCntrys[d] === "DEU" || mCntrys[d] === "SYR"})
-			.style("font-weight", "bold")
-			.style("fill", "white");
+	    d3.select(".y.axis").selectAll(".tick")
+	    		.attr("data-content", function(d) { return mCntrys[d]; })
+	    	.selectAll("text")
+	    		.text(function(d) { return Country.getFullFromAbbr(mCntrys[d]); })
+				.filter(function(d) { return mCntrys[d] === "DEU" || mCntrys[d] === "SYR"})
+				.style("font-weight", "bold")
+				.style("fill", "white");
+
+		$(".country-names .tick").off('click').on("click", function(ev){
+			ev.preventDefault();
+			var chosen_country_name_abbr = $(this).attr("data-content");
+			var index = mCntrys.indexOf(chosen_country_name_abbr);
+			if (index < mCntrys.length - 1) {
+				var tmp = mCntrys[index];
+				mCntrys[index] = mCntrys[index + 1];
+				mCntrys[index + 1] = tmp;
+			}
+			timeTravel.init();
+		}).off('contextmenu').on("contextmenu", function(ev){
+			ev.preventDefault();
+			var chosen_country_name_abbr = $(this).attr("data-content");
+			var index = mCntrys.indexOf(chosen_country_name_abbr);
+			if (index > 0) {
+				var tmp = mCntrys[index];
+				mCntrys[index] = mCntrys[index - 1];
+				mCntrys[index - 1] = tmp;
+			}
+			timeTravel.init();
+		});
 
 		d3.selection.prototype.moveToFront = function() {
 			return this.each(function(){
