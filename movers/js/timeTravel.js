@@ -185,7 +185,7 @@ $(document).ready(function(){
 					.style("fill", "white")
 	        .call(yAxis);
 
-	    d3.select(".y.axis").selectAll(".tick")
+	    d3.select(".y.axis.country-names").selectAll(".tick")
 	    		.attr("data-content", function(d) { return mCntrys[d]; })
 	    	.selectAll("text")
 	    		.text(function(d) { return Country.getFullFromAbbr(mCntrys[d]); })

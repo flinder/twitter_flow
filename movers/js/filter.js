@@ -289,6 +289,63 @@ var _makeCountryHashMap = function () {
     return(countryHash);
 }
 
+var _generateSpeedHistogram = function(hSpeedHS) {
+
+    var margin = {top: 0, right: 0, bottom: 0, left: 0},
+        width = 210 - margin.left - margin.right,
+        height = 200 - margin.top - margin.bottom;
+
+    var x = d3.scale.ordinal()
+        .rangeRoundBands([0, width], 0);
+
+    var y = d3.scale.linear()
+        .range([height, 0]);
+
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left")
+        .ticks(5);
+
+    var svg = d3.select("#filter-speed-hist").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var interval = 10;
+    var n = 999;
+    var data = [];
+    for (var i = 0; i <= Math.floor(n / interval); i++) {
+        data.push({
+            "speed": (i).toString(),
+            "count": 0
+        });   
+    }
+
+    for (var i = 0; i <= n; i++) {
+        if (i in hSpeedHS) {
+            data[Math.floor(i / interval)].count += hSpeedHS[i].length;
+        }
+    }
+
+    x.domain(data.map(function(d) { return d.speed; }));
+    y.domain([0, d3.max(data, function(d) { return d.count; })]);
+
+    var area = d3.svg.area()
+        .x(function(d) { return x(d.speed); })
+        .y0(height)
+        .y1(function(d) { return y(d.count); });
+
+    svg.append("path")
+          .datum(data)
+          .attr("class", "area")
+          .attr("d", area);
+}
+
 //Hashmap for max speed {'speed1': [user1, user2], 'speed2': [user3], ...}
 var _makeMaxSpeedHashMap = function (){
     var users = filter.data.users;
@@ -306,6 +363,7 @@ var _makeMaxSpeedHashMap = function (){
             hSpeedHS[maxSp.toString()] = [users[i]['u_id']];
         }
     }
+    _generateSpeedHistogram(hSpeedHS);
     return(hSpeedHS);
 }
 
