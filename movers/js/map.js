@@ -202,13 +202,13 @@ map.drawingOnCanvas = function (canvasOverlay, params) {
     var features = tile.features;
 
     ctx.lineWidth = 1 + params.tilePoint.z/8;
-    var paths = new Array(features.length);
     var extent = 4096;
+    var trips = new Array(features.length);
 
     for (var i = 0; i < features.length; i++) {
         var feature = features[i],
             type = feature.type;
-            paths[i] = new Path2D();
+            trips[i] = {"id":feature.tags.u_id, "trip": new Path2D()};
         ctx.strokeStyle = toColor(feature.tags.u_id);
         ctx.fillStyle = feature.tags.color ? feature.tags.color : 'rgba(255,0,0,0.05)';
         // ctx.beginPath();
@@ -217,8 +217,8 @@ map.drawingOnCanvas = function (canvasOverlay, params) {
             var geom = feature.geometry[j];
 
             if (type === 1) {
-                paths[i].arc(geom[0] / extent * 256 + pad, geom[1] / extent * 256 + pad, 2, 0, 2 * Math.PI, false);
-                paths[i].closePath();
+                trips[i].trip.arc(geom[0]/extent * 256, geom[1]/extent * 256, 5, 0, 2 * Math.PI, false);
+                trips[i].trip.pathclosePath();
                 continue;
             }
 
@@ -228,24 +228,28 @@ map.drawingOnCanvas = function (canvasOverlay, params) {
                
                 var x = p[0] / extent * 256;
                 var y = p[1] / extent * 256;
-                if (k) paths[i].lineTo(x  + pad, y   + pad);
-                else paths[i].moveTo(x  + pad, y  + pad);
+                if (k) trips[i].trip.lineTo(x  + pad, y   + pad);
+                else trips[i].trip.moveTo(x  + pad, y  + pad);
             }
         }
 
         if (type === 3 || type === 1) ctx.fill('evenodd');
-        ctx.stroke(paths[i]);
+        ctx.stroke(trips[i].trip);
     }
 
+    var selectPathID;
     params.canvas.onmousemove = function (e){
         var rect = params.canvas.getBoundingClientRect();
         var mouseX = e.clientX-rect.left;
         var mouseY = e.clientY-rect.top;
 
-        for (var n = 0; n<paths.length; n++){
-            if(ctx.isPointInStroke(paths[n], mouseX, mouseY)){
-                console.log(n);
+        for (var n = 0; n<trips.length; n++){
+            if(ctx.isPointInStroke(trips[n].trip, mouseX, mouseY)){
+                selectPathID = trips[n].id;
+                console.log(selectPathID);
                 console.log(mouseX, mouseY);
+                // var index = filter.currentData.includedUsers.indexOf(selectPathID);
+                // filter.currentData.includedUsers.splice(index, 1);
                 // params.canvas.style.cursor = 'pointer';
             }else{
                 // params.canvas.style.cursor = 'default';
@@ -253,23 +257,23 @@ map.drawingOnCanvas = function (canvasOverlay, params) {
         }
     }// end of onmousemove function
 
-    params.canvas.ondblclick = function (e){
-        var rect = params.canvas.getBoundingClientRect();
-        var mouseX = e.clientX-rect.left;
-        var mouseY = e.clientY-rect.top;
+    // params.canvas.ondblclick = function (e){
+    //     var rect = params.canvas.getBoundingClientRect();
+    //     var mouseX = e.clientX-rect.left;
+    //     var mouseY = e.clientY-rect.top;
 
-        for (var n = 0; n<paths.length; n++){
-            if(ctx.isPointInStroke(paths[n], mouseX, mouseY)){
-                console.log("here you go path ", n)
-                // console.log(n);
-                // console.log(mouseX, mouseY);
-                // params.canvas.style.cursor = 'pointer';
-            }else{
-                console.log("nothing selected")
-                // params.canvas.style.cursor = 'default';
-            }
-        }
-    }// end of onmousemove function
+    //     for (var n = 0; n<paths.length; n++){
+    //         if(ctx.isPointInStroke(paths[n], mouseX, mouseY)){
+    //             console.log("here you go path ", n)
+    //             // console.log(n);
+    //             // console.log(mouseX, mouseY);
+    //             // params.canvas.style.cursor = 'pointer';
+    //         }else{
+    //             console.log("nothing selected")
+    //             // params.canvas.style.cursor = 'default';
+    //         }
+    //     }
+    // }// end of onmousemove function
 
 
 }
