@@ -185,8 +185,25 @@ $(document).ready(function(){
 					.style("fill", "white")
 	        .call(yAxis);
 
+		var tooltip = d3.select("#timeTravel-content").append("div")	
+		    .attr("class", "tooltip")				
+		    .style("opacity", 0);
+
 	    d3.select(".y.axis.country-names").selectAll(".tick")
 	    		.attr("data-content", function(d) { return mCntrys[d]; })
+	    		.on("mouseover", function(d) {
+		            tooltip.transition()		
+		                .duration(200)		
+		                .style("opacity", .9);		
+		            tooltip.html(Country.getFullFromAbbr(mCntrys[d]) + "</br>" + "left click to move UP" + "</br>" + "right click to move DOWN")	
+		                .style("left", (d3.event.pageX - $("#timeTravel-content").offset().left) + "px")		
+		                .style("top", (d3.event.pageY - 28 - $("#timeTravel-content").offset().top) + "px");	
+		        })					
+		        .on("mouseout", function(d) {		
+		            tooltip.transition()		
+		                .duration(500)		
+		                .style("opacity", 0);	
+		        })
 	    	.selectAll("text")
 	    		.text(function(d) { return Country.getFullFromAbbr(mCntrys[d]); })
 				.filter(function(d) { return mCntrys[d] === "DEU" || mCntrys[d] === "SYR"})

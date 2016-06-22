@@ -94,7 +94,7 @@ path {
 
 
 
-
+/* area plot for speed */
 .axis path,
 .axis line {
   fill: none;
@@ -104,4 +104,15 @@ path {
 
 .area {
   fill: steelblue;
+}
+
+/* tooltip for timetravel */
+div.tooltip { 
+    position: absolute;     
+    text-align: center;     
+    width: 160px;               
+    font: 12px sans-serif;    
+    background: lightsteelblue; 
+    border: 0px;    
+    pointer-events: none;     
 }
