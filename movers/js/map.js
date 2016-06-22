@@ -1,4 +1,4 @@
-    var map = {};
+var map = {};
 
 // This function is only for testing
 map.fakeRealData = function () {
@@ -201,7 +201,7 @@ map.drawingOnCanvas = function (canvasOverlay, params) {
 
     var features = tile.features;
 
-    ctx.lineWidth = 1 + params.tilePoint.z/8;
+    ctx.lineWidth = 1.5 + params.tilePoint.z/4;
     var extent = 4096;
     var trips = new Array(features.length);
 
@@ -238,42 +238,57 @@ map.drawingOnCanvas = function (canvasOverlay, params) {
     }
 
     var selectPathID;
-    params.canvas.onmousemove = function (e){
+
+    // right click to remove twitter user
+    params.canvas.addEventListener('contextmenu', function(e){
+        // params.canvas.onclick = function (e){
+        e.preventDefault();
         var rect = params.canvas.getBoundingClientRect();
         var mouseX = e.clientX-rect.left;
         var mouseY = e.clientY-rect.top;
+
+        // map.originalEvent.preventDefault();
 
         for (var n = 0; n<trips.length; n++){
             if(ctx.isPointInStroke(trips[n].trip, mouseX, mouseY)){
                 selectPathID = trips[n].id;
                 console.log(selectPathID);
-                console.log(mouseX, mouseY);
+                console.log("U clicked on ", mouseX, mouseY);
                 // var index = filter.currentData.includedUsers.indexOf(selectPathID);
+                filter.state.excludedUsers.push(selectPathID);
                 // filter.currentData.includedUsers.splice(index, 1);
-                // params.canvas.style.cursor = 'pointer';
+                filter.filter();
+                break;
             }else{
-                // params.canvas.style.cursor = 'default';
+                // console.log("nope");
             }
-        }
-    }// end of onmousemove function
+        }// end of for loop
+        },false);// end of onclick function
 
-    // params.canvas.ondblclick = function (e){
-    //     var rect = params.canvas.getBoundingClientRect();
-    //     var mouseX = e.clientX-rect.left;
-    //     var mouseY = e.clientY-rect.top;
+    // click to show the tweets for selected user
+    params.canvas.addEventListener('click', function(e){
+        // params.canvas.onclick = function (e){
+        e.preventDefault();
+        var rect = params.canvas.getBoundingClientRect();
+        var mouseX = e.clientX-rect.left;
+        var mouseY = e.clientY-rect.top;
 
-    //     for (var n = 0; n<paths.length; n++){
-    //         if(ctx.isPointInStroke(paths[n], mouseX, mouseY)){
-    //             console.log("here you go path ", n)
-    //             // console.log(n);
-    //             // console.log(mouseX, mouseY);
-    //             // params.canvas.style.cursor = 'pointer';
-    //         }else{
-    //             console.log("nothing selected")
-    //             // params.canvas.style.cursor = 'default';
-    //         }
-    //     }
-    // }// end of onmousemove function
+        // map.originalEvent.preventDefault();
+
+        for (var n = 0; n<trips.length; n++){
+            if(ctx.isPointInStroke(trips[n].trip, mouseX, mouseY)){
+                selectPathID = trips[n].id;
+                console.log(selectPathID);
+                console.log("U clicked on ", mouseX, mouseY);
+                tweetDisplay.show(selectPathID);
+                break;
+            }else{
+                // console.log("nope");
+            }
+        }// end of for loop
+        },false);// end of onclick function
+
+
 
 
 }
