@@ -183,35 +183,44 @@ filter.filter = function(init=false) {
     // TODO: This is a hack! Find a better way to keep original users and make
     // active users a reference to the respective users:
     var activeUsers = _makeUserArray(); 
-    pt('_makeUserArray()'); 
-    // NO FILTERS ABOVE THIS POINT!
-    // Filter by Chunker
-    activeUsers = filter.byChunker(activeUsers);
-    pt('filter.byChunker()');
+//    pt('_makeUserArray()'); 
+//    // NO FILTERS ABOVE THIS POINT!
+//    // Filter by Chunker
+//    activeUsers = filter.byChunker(activeUsers);
+//    pt('filter.byChunker()');
+//
+//    // Filter excluded users 
+//    activeUsers = filter.byId(activeUsers);
+//    pt('filter.byId()');
+//
+//    // Filter by language
+//    activeUsers = filter.byLanguage(activeUsers);
+//    pt('filter.byLanguage()');
+//     
+//    // Filter by country visited (exclude)
+//    activeUsers = filter.byCountryVisited(activeUsers);
+//    pt('filter.byCountry()');
+//    
+//    // Filter by country not visited (include)
+//    activeUsers = filter.byCountryVisited(activeUsers, negative=true);
+//    pt('filter.byCountry()');
+//
+//
+//    // Filter by number of countris visited
+//    activeUsers = filter.byCountryNum(activeUsers);
+//   
+//    // Filter by speed
+//    activeUsers = filter.bySpeed(activeUsers);
+//    pt('filter.bySpeed()')
 
-    // Filter excluded users 
-    activeUsers = filter.byId(activeUsers);
-    pt('filter.byId()');
+    // Placeholder
+    // Put query code here
+    // Make query
 
-    // Filter by language
-    activeUsers = filter.byLanguage(activeUsers);
-    pt('filter.byLanguage()');
-     
-    // Filter by country visited (exclude)
-    activeUsers = filter.byCountryVisited(activeUsers);
-    pt('filter.byCountry()');
+    // make request
+    // should generate var response = [{...}, {...}]
     
-    // Filter by country not visited (include)
-    activeUsers = filter.byCountryVisited(activeUsers, negative=true);
-    pt('filter.byCountry()');
-
-
-    // Filter by number of countris visited
-    activeUsers = filter.byCountryNum(activeUsers);
-   
-    // Filter by speed
-    activeUsers = filter.bySpeed(activeUsers);
-    pt('filter.bySpeed()')
+    // update data
 
     // Synchronized data (this updates filter.currentData)
     _synchData(activeUsers);
@@ -220,6 +229,8 @@ filter.filter = function(init=false) {
     
     // Update data status display
     _updateStatusTable();
+    
+
 
     // Update everything
     if(!init) {
