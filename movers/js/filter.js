@@ -182,7 +182,7 @@ filter.filter = function(init=false) {
     // Apply all filters to original data
     // TODO: This is a hack! Find a better way to keep original users and make
     // active users a reference to the respective users:
-    var activeUsers = _makeUserArray(); 
+//    var activeUsers = _makeUserArray(); 
 //    pt('_makeUserArray()'); 
 //    // NO FILTERS ABOVE THIS POINT!
 //    // Filter by Chunker
@@ -223,7 +223,7 @@ filter.filter = function(init=false) {
     // update data
 
     // Synchronized data (this updates filter.currentData)
-    _synchData(activeUsers);
+    _synchData(response);
     pt('_synchData()');
     console.log(filter.currentData.includedUsers);
     
@@ -436,29 +436,29 @@ var _makeCountryNumHashMap = function () {
 }
 
 // Synchronize the user and tweet array given the activeUsers object
-var _synchData = function(activeUsers) {
+// Params: response: array of json objects as returned by the database
+var _synchData = function(response) {
 
-    filter.currentData.users = activeUsers;
-    var n = 0, t, i, j, k = 0, u_id;
-    for(i = 0; i < activeUsers.length; i++) { 
-        t = filter.tweetsByUser[activeUsers[i]['u_id']];
-        n += t.length;
-    }
+    //filter.currentData.users = activeUsers;
+    //var n = 0, t, i, j, k = 0, u_id;
+    //for(i = 0; i < response.length; i++) { 
+    //    t = filter.tweetsByUser[activeUsers[i]['u_id']];
+    //    n += t.length;
+    //}
 
     filter.currentData.tweets = new Array(n);
     filter.currentData.includedUsers = new Array(filter.currentData.users.length);
 
     // If no selected Users stop here and keep current data empty
-    if(activeUsers.length === 0) {
+    if(response.length === 0) {
         return(null)
     } else {  // otherwise push the relevant data into the arrays
         for(i = 0; i < activeUsers.length; i++) { 
-            u_id = activeUsers[i]['u_id'];
-            t = filter.tweetsByUser[u_id];
+            u_id = response[i]['_id'];
+            t = response[i]['tweets'];
             filter.currentData.includedUsers[i] = u_id;
             for(j = 0; j < t.length; j++) { 
                 filter.currentData.tweets[k + j] = t[j];
-
             }
             k += j
         }
