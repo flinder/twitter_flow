@@ -1,7 +1,6 @@
 # General Stuff
 data/
 *.csv
-*.json
 *.txt
 *.RData
 *.log
