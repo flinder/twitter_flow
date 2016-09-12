@@ -216,7 +216,20 @@ filter.filter = function(init=false) {
     // Placeholder
     // Put query code here
     // Make query
+    //-------------------------------------------
+    //MongoDB Query here; put as comment
+    /*
+    db.alldata.find({
+        "_id":{$nin:filter.state.excludedUsers}, "spd":{$lt:excludedMaxSpeed, $gt:excludedMinSpeed},
+        "lang":{$nin:filter.state.excludedLanguages}, "cntryCount":{$gt:excludedCountryMinNum, $lt:excludedCountryMaxNum}, 
+        "cntries":{$nin:excludedCountries, $in:includeCountries}}).limit(chunker * 500)
+    */
 
+    //Test case here
+    /*
+    db.alldata.find({"_id": {$nin: ["542075983155974144"]}, "spd":{$lt:500, $gt:30}, "lang":{$nin: ["en"]}, "cntryCount":{$gt:2, $lt:10}, "cntries": {$nin:["TUR"], $in:["DEU"]}}).limit(2)
+    */
+    //------------------------------------------
     // make request
     // should generate var response = [{...}, {...}]
     
