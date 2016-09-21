@@ -182,44 +182,68 @@ filter.filter = function(init=false) {
     // Apply all filters to original data
     // TODO: This is a hack! Find a better way to keep original users and make
     // active users a reference to the respective users:
-    var activeUsers = _makeUserArray(); 
-    pt('_makeUserArray()'); 
-    // NO FILTERS ABOVE THIS POINT!
-    // Filter by Chunker
-    activeUsers = filter.byChunker(activeUsers);
-    pt('filter.byChunker()');
+//    var activeUsers = _makeUserArray(); 
+//    pt('_makeUserArray()'); 
+//    // NO FILTERS ABOVE THIS POINT!
+//    // Filter by Chunker
+//    activeUsers = filter.byChunker(activeUsers);
+//    pt('filter.byChunker()');
+//
+//    // Filter excluded users 
+//    activeUsers = filter.byId(activeUsers);
+//    pt('filter.byId()');
+//
+//    // Filter by language
+//    activeUsers = filter.byLanguage(activeUsers);
+//    pt('filter.byLanguage()');
+//     
+//    // Filter by country visited (exclude)
+//    activeUsers = filter.byCountryVisited(activeUsers);
+//    pt('filter.byCountry()');
+//    
+//    // Filter by country not visited (include)
+//    activeUsers = filter.byCountryVisited(activeUsers, negative=true);
+//    pt('filter.byCountry()');
+//
+//
+//    // Filter by number of countris visited
+//    activeUsers = filter.byCountryNum(activeUsers);
+//   
+//    // Filter by speed
+//    activeUsers = filter.bySpeed(activeUsers);
+//    pt('filter.bySpeed()')
 
-    // Filter excluded users 
-    activeUsers = filter.byId(activeUsers);
-    pt('filter.byId()');
+    // Placeholder
+    // Put query code here
+    // Make query
+    //-------------------------------------------
+    //MongoDB Query here; put as comment
+    /*
+    db.alldata.find({
+        "_id":{$nin:filter.state.excludedUsers}, "spd":{$lt:excludedMaxSpeed, $gt:excludedMinSpeed},
+        "lang":{$nin:filter.state.excludedLanguages}, "cntryCount":{$gt:excludedCountryMinNum, $lt:excludedCountryMaxNum}, 
+        "cntries":{$nin:excludedCountries, $in:includeCountries}}).limit(chunker * 500)
+    */
 
-    // Filter by language
-    activeUsers = filter.byLanguage(activeUsers);
-    pt('filter.byLanguage()');
-     
-    // Filter by country visited (exclude)
-    activeUsers = filter.byCountryVisited(activeUsers);
-    pt('filter.byCountry()');
+    //Test case here
+    /*
+    db.alldata.find({"_id": {$nin: ["542075983155974144"]}, "spd":{$lt:500, $gt:30}, "lang":{$nin: ["en"]}, "cntryCount":{$gt:2, $lt:10}, "cntries": {$nin:["TUR"], $in:["DEU"]}}).limit(2)
+    */
+    //------------------------------------------
+    // make request
+    // should generate var response = [{...}, {...}]
     
-    // Filter by country not visited (include)
-    activeUsers = filter.byCountryVisited(activeUsers, negative=true);
-    pt('filter.byCountry()');
-
-
-    // Filter by number of countris visited
-    activeUsers = filter.byCountryNum(activeUsers);
-   
-    // Filter by speed
-    activeUsers = filter.bySpeed(activeUsers);
-    pt('filter.bySpeed()')
+    // update data
 
     // Synchronized data (this updates filter.currentData)
-    _synchData(activeUsers);
+    _synchData(response);
     pt('_synchData()');
     console.log(filter.currentData.includedUsers);
     
     // Update data status display
     _updateStatusTable();
+    
+
 
     // Update everything
     if(!init) {
@@ -425,29 +449,29 @@ var _makeCountryNumHashMap = function () {
 }
 
 // Synchronize the user and tweet array given the activeUsers object
-var _synchData = function(activeUsers) {
+// Params: response: array of json objects as returned by the database
+var _synchData = function(response) {
 
-    filter.currentData.users = activeUsers;
-    var n = 0, t, i, j, k = 0, u_id;
-    for(i = 0; i < activeUsers.length; i++) { 
-        t = filter.tweetsByUser[activeUsers[i]['u_id']];
-        n += t.length;
-    }
+    //filter.currentData.users = activeUsers;
+    //var n = 0, t, i, j, k = 0, u_id;
+    //for(i = 0; i < response.length; i++) { 
+    //    t = filter.tweetsByUser[activeUsers[i]['u_id']];
+    //    n += t.length;
+    //}
 
     filter.currentData.tweets = new Array(n);
     filter.currentData.includedUsers = new Array(filter.currentData.users.length);
 
     // If no selected Users stop here and keep current data empty
-    if(activeUsers.length === 0) {
+    if(response.length === 0) {
         return(null)
     } else {  // otherwise push the relevant data into the arrays
         for(i = 0; i < activeUsers.length; i++) { 
-            u_id = activeUsers[i]['u_id'];
-            t = filter.tweetsByUser[u_id];
+            u_id = response[i]['_id'];
+            t = response[i]['tweets'];
             filter.currentData.includedUsers[i] = u_id;
             for(j = 0; j < t.length; j++) { 
                 filter.currentData.tweets[k + j] = t[j];
-
             }
             k += j
         }
