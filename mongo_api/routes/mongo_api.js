@@ -20,8 +20,15 @@ router.get('/one', function(req, res, next) {
   });
 });
 
-router.get('/lang=:lang&spd=:spd&limit=:limit', function(req, res, next) {
+router.get('/lang=:lang&spd=:spd', function(req, res, next) {
   mongo_api.find({lang: req.params.lang, spd: {$gt: req.params.spd}} , '-tweets',  function (err, doc) {
+    if (err) return next(err);
+    res.json(doc);
+  }).limit(req.params.limit);
+});
+
+router.get('/lang=:lang', function(req, res, next) {
+  mongo_api.find({lang: req.params.lang} , '-tweets',  function (err, doc) {
     if (err) return next(err);
     res.json(doc);
   }).limit(req.params.limit);

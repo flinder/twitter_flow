@@ -20,6 +20,36 @@ $(document).ready(function(){
 
 	function init_btns(){
 
+		// https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi/related
+		// this extention (chrome) is required to allow "Allow-Control-Allow-Origin: *"
+		$("body").on("click", ".lang-btn", function() {
+			var lang = $(this).attr("data-value");
+			$.ajax({
+	            type: "GET",
+	            url: "http://localhost:3000/mongo_api/lang=" + lang,
+	            dataType: "text",
+	            async:false,
+	            data: JSON.stringify({ }),
+	            contentType: "jsonp",
+	            success: function (data) {
+	            	$("#user-list-container").find(".segments").empty();
+	            	var users = JSON.parse(data);
+	            	for (var i = 0; i < users.length; i++) {
+	            		var str = '<div class="ui segment">'
+	            				+ "id:" + users[i].id
+	            		 		+ "; lang:" + users[i].lang
+	            		 		+ "; cntryCount:" + users[i].cntryCount
+	            		 		+ "; spd" + users[i].spd
+	            		 		+ "</div>";
+	            		$("#user-list-container").find(".segments").append(str);
+	            	}
+	            },
+	            error: function (textStatus, errorThrown) {
+	                console.log("fail")
+	            }
+        	});
+		});
+
 		//functions for the speed filter slider bar
 		$( "#filter-speed-slider-range" ).slider({
 			range: true,
