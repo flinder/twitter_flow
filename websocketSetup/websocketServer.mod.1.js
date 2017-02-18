@@ -142,12 +142,15 @@ websocketServer.initServer = function() {
 
 
 websocketServer.broadcastEvent = function (event, sourceConnection) {
-    console.log(event);
+
     // do stuff with collection
     if (websocketServer.mdbCollection) {
 
-        var queryObj = event.textQuery, 
-            findOptions = {tweets[0].text:true,lang: true};
+	var textQuery = JSON.parse(event).textQuery;
+	console.log(textQuery);
+	
+        var queryObj = {"tweets.text": textQuery}, 
+            findOptions = {lang:true,cntries:true,cntryCount:true};
 
         websocketServer.mdbCollection.find(queryObj, findOptions).limit(2).toArray(function(err, docs) {
 
