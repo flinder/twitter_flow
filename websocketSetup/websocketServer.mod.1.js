@@ -149,19 +149,44 @@ websocketServer.broadcastEvent = function (event, sourceConnection) {
 	var textQuery = JSON.parse(event).textQuery;
 	console.log(textQuery);
 	
-        var queryObj = {"tweets.text": textQuery}, 
-            findOptions = {lang:true,cntries:true,cntryCount:true};
-
-        websocketServer.mdbCollection.find(queryObj, findOptions).limit(2).toArray(function(err, docs) {
+        // db.alldata.createIndex({"tweets.text": 'text'}); in shell first
+        // var queryObj = {"tweets.text": textQuery}, 
+        var queryObj = { $text: { $search: textQuery } },
+            findOptions = {};
+        // websocketServer.mdbCollection.find(queryObj, findOptions).limit(2).toArray(function(err, docs) {
+        websocketServer.mdbCollection.find(queryObj, findOptions).toArray(function(err, docs) {
 
             if (!err) {
 
+                var response = []
                 // process query results
+                for (var i = 0; i < docs.length; i++) {
+                    var user = docs[i]
+                    var tweets = docs[i].tweets
+                    for (var j = 0; j < tweets.length; j++) {
+                        var tweet = tweets[j];
+                        
+                        var isAllFound = true;
+                        var q = textQuery.split(" ");
+                        for (var k = 0; k < q.length; k++) {
+                            if (!tweet.text.includes(q[k])) {
+                                // console.log(q[k]);
+                                isAllFound = false;
+                                break;
+                            }
+                        }
+                        // console.log("isAllFound", isAllFound);
+                        if (isAllFound) {
+                            tweet["u_id"] = user["_id"];
+                            tweet["lang"] = user.lang;
+                            response.push(tweet);
+                            // console.log(tweet);                         
+                        }
+                    }
+                }
 
-                 console.log(docs);
-
-                var stringDocs = JSON.stringify(docs);
-		sourceConnection.sendUTF(stringDocs);
+                var stringDocs = JSON.stringify(response);
+		          sourceConnection.sendUTF(stringDocs);
 
                // websocketServer.activeConnections.forEach(function (connection) {
                  //   connection.sendUTF(stringDocs);

@@ -5,18 +5,111 @@ $(document).ready(function(){
         var st = utils.startTimer;
         var pt = utils.printTime;
         st(); 
-	$.getJSON("data/main_data.json", function(json) {
-        $.getJSON("data/main_data_trips.json", function(geojson) {
-        	init_btns();
-            data.geoJsonTrips = geojson;  
-            data.tweets = json.tweets;
-            data.users = json.users;
-            pt('Load data');
-            filter.init();                  
-            pt('init_btns()');
-            console.log('All initialized');
-        });	
-	});
+
+    init_socket();
+	init_btns();
+    // data.geoJsonTrips = {};  
+    // data.tweets = json.tweets;
+    // data.users = json.users;
+    // pt('Load data');
+    // filter.init();                  
+    // pt('init_btns()');
+    // console.log('All initialized');
+
+	// $.getJSON("data/main_data.json", function(json) {
+ //        $.getJSON("data/main_data_trips.json", function(geojson) {
+ //        	init_btns();
+ //            data.geoJsonTrips = geojson;  
+ //            data.tweets = json.tweets;
+ //            data.users = json.users;
+ //            pt('Load data');
+ //            filter.init();                  
+ //            pt('init_btns()');
+ //            console.log('All initialized');
+ //        });	
+	// });
+
+	function init_socket(){
+		var networkInterface = {};
+
+        // establish persistent connection with the remote websocket server
+        var launchSocketRequest = function (wsUrl) {
+
+            var protocol = 'http';
+
+            var socket = new WebSocket(wsUrl, protocol);
+            console.log("Requested a socket connection with " + wsUrl + " using " + protocol + " as protocol.");
+
+            socket.onopen = function(event) {
+                console.log("Socket connection established.");
+            }
+            
+            socket.onmessage = function (event) {
+
+                // console.log("Received data from server: " + event.data);
+
+                var queryMatches = JSON.parse(event.data);
+
+                queryMatches.forEach(function(match) {
+                    console.log(match);
+                });
+            }
+            
+            socket.onclose = function (event) {
+                console.log("Socket connection closed.");
+            }
+
+            socket.onerror = function (event) {
+                console.log("Socket error.")
+            }
+            
+            return socket;
+        }
+
+
+        var initSocket = function (ip, port) {
+
+            // Form the request
+            var wsUrl = "ws://" + ip + ":" + port;  // 128.118.54.231
+            
+            // Launch the request
+            networkInterface.socket = launchSocketRequest(wsUrl);
+
+        }
+
+
+        // send a message over the websocket connection
+        var sendMessage = function (jsonObject) {
+
+            if (networkInterface.socket.readyState == WebSocket.OPEN) {
+                networkInterface.socket.send(JSON.stringify(jsonObject));
+            } else {
+                console.log("Socket isn't ready for data to be sent.")
+            }
+        }
+
+        // event handler for link click
+        var onSendEventClick = function () {
+
+        	var queryTerms = $("#search-tweet-btn").siblings("input").val();
+
+            console.log("Link clicked");
+
+            var sampleMessage = {
+                message: "Ying!",
+                textQuery: 	queryTerms
+            };
+
+            // send a message to the server
+            sendMessage(sampleMessage);
+        }
+        
+        // connect to websocket server
+        initSocket("127.0.0.1", 8080);
+
+        // register event handler for link click
+        $("#search-tweet-btn").click(onSendEventClick);
+	}
 
 	function init_btns(){
 
