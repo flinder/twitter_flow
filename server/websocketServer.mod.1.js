@@ -1,5 +1,17 @@
 "use strict";
 
+
+//MongoDB Query here; put as comment
+    /*
+    db.alldata.find({
+        "_id":{$nin:filter.state.excludedUsers}, "spd":{$lt:excludedMaxSpeed, $gt:excludedMinSpeed},
+        "lang":{$nin:filter.state.excludedLanguages}, "cntryCount":{$gt:excludedCountryMinNum, $lt:excludedCountryMaxNum}, 
+        "cntries":{$nin:excludedCountries, $in:includeCountries}}).limit(chunker * 500)
+    */
+
+
+
+
 // Imports
 var socketServer    = require('websocket').server,
     http            = require('http'),
@@ -122,6 +134,12 @@ websocketServer.initServer = function() {
 
     // Connect to MongoDB
      websocketServer.connectToMongoDb();
+
+
+    // Get some initial numbers for the app:
+    // - number of users in db
+    // - all languages in the dataset
+    // - all countries in the dataset 
     
 }
 
