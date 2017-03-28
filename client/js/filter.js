@@ -1,7 +1,16 @@
 // "Import" profiling funcions
 var st = utils.startTimer;
 var pt = utils.printTime;
- 
+
+// Websocket utilities
+var initSocket = websocket.initSocket;
+var sendMessage = websocket.sendMessage;
+
+// Server IP and PORT
+var IP = '127.0.0.1'
+var PORT = 8000
+
+
 filter = {};
 
 filter.init = function() {
@@ -22,7 +31,10 @@ filter.init = function() {
 
     filter.state.excludedCountryMaxNum = 50;
     filter.state.excludedCountryMinNum = 0;
-   
+
+    // Initialize persistend websocket connection
+    filter.socket = initSocket(IP, PORT);
+
     // First filtering because of the chunker
     filter.filter(init=true);
     // Initialize visualizations
@@ -52,15 +64,14 @@ filter.filter = function(init=false) {
     console.log('Filtering...');
     st();
     
-    // TODO: 
     // Send filter.state via websocket to server 
-    // response = send_request(filter.state, init)
-    //
-    // Process the response and push data in corresponding elemetns
-    // if(init) {
-    //     get initial data (total number of users, languages, etc.
-    //     get first chunck of data
-    // }
+    if(init) {
+        filter.state.init = true;
+    } else {
+        filter.state.init = false;
+    }
+
+    response = sendMessage(filter.state, filter.socket)
 
     // Update everything
     if(!init) {
