@@ -3,12 +3,11 @@ var st = utils.startTimer;
 var pt = utils.printTime;
 
 // Websocket utilities
-var initSocket = websocket.initSocket;
-var sendMessage = websocket.sendMessage;
+import {initSocket, sendMessage} from websocket;
 
 // Server IP and PORT
 var IP = '127.0.0.1'
-var PORT = 8000
+var PORT = 8080
 
 
 filter = {};

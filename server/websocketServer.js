@@ -9,9 +9,6 @@
         "cntries":{$nin:excludedCountries, $in:includeCountries}}).limit(chunker * 500)
     */
 
-
-
-
 // Imports
 var socketServer    = require('websocket').server,
     http            = require('http'),
@@ -26,22 +23,10 @@ websocketServer.init = function () {
     
     // Initialize web server
     this.initServer();
-
-    // Turn on the beacon
-    // setInterval(function() {
-
-    //     var beaconMessage = (new Date).toLocaleTimeString() + " [SERVER] " + "Ping!";
-        
-    //     websocketServer.activeConnections.forEach(function (connection) {
-
-    //         if (connection) {
-    //             console.log("Pinging a client..")
-    //             connection.sendUTF(beaconMessage);
-    //         }
-    //     });
-
-    // }, 3000);
     
+    // Send initialization data to client
+    //
+  
 }
 
 websocketServer.initServer = function() {
@@ -49,9 +34,7 @@ websocketServer.initServer = function() {
     // Variables
     var port = 8080;
     
-    
     // Create an HTTP server to which WebSocket server will be attached
-    
     var server = http.createServer(function(request, response) {
 
         console.log((new Date).toLocaleTimeString() + " [SERVER] " + "Received request for " + request.url);
@@ -78,18 +61,19 @@ websocketServer.initServer = function() {
     // Create a WebSocket server
     
     var wsServer = new socketServer({
-        httpServer: server                                                      // the http server instance to attach WebSocket server to
+        httpServer: server  // the http server instance to attach WebSocket server to
     });
     
     
     // Register event listeners for the WebSocket server
-    
     wsServer.on('request', function(wsRequest) {
-        
-        var acceptedProtocol = 'http';                                          // protocol MUST be the same as requested by the client
-        
+
+        // protocol MUST be the same as requested by the client
+        var acceptedProtocol = 'http';             
+
         // Accept the incoming connection
         var wsConnection = wsRequest.accept(acceptedProtocol, wsRequest.origin);
+
         console.log((new Date).toLocaleTimeString() + " [SERVER] " + 'Connection from origin ' + wsRequest.origin + ' at ' + wsConnection.remoteAddress + ' accepted.');
 
         // ////////////////////////////
@@ -103,11 +87,11 @@ websocketServer.initServer = function() {
         
         
         // Register event listeners for the connection
-        
         wsConnection.on('message', function(message) {
+
+            // Get filter status
             
             // Send a file to the client
-
             console.log((new Date).toLocaleTimeString() + " [SERVER] " + 'Received Message: ' + message.utf8Data);
 
             // console.log((new Date).toLocaleTimeString() + " [SERVER] " + "Sending file..");
